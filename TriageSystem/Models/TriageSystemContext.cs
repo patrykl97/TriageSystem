@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace TriageSystemAPI.Models
 {
-    public class TriageSystemContext : DbContext
+    public class TriageSystemContext : IdentityDbContext<IdentityUser>
     {
         public TriageSystemContext() : base()
         {
@@ -25,6 +27,7 @@ namespace TriageSystemAPI.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             //modelBuilder.Entity<Hospital>().ToTable("Hospitals");
             modelBuilder.Entity<Staff>().ToTable("Staff");
             modelBuilder.Entity<User>().ToTable("Users");
