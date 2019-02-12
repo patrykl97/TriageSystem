@@ -13,6 +13,7 @@ using TriageSystem.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TriageSystemAPI.Models;
+using TriageSystem.Areas.Identity.Data;
 
 namespace TriageSystem
 {
@@ -38,7 +39,7 @@ namespace TriageSystem
             services.AddDbContext<TriageSystemContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<TriageSystemUser>()
                 .AddEntityFrameworkStores<TriageSystemContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

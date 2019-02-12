@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace TriageSystemAPI.Models
 {
     public class User
     {
+        [Key]
         public int UserID { get; set; }
         public int StaffID { get; set; }
         public string Username { get; set; }
