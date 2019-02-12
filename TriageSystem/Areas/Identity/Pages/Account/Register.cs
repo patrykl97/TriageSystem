@@ -21,6 +21,7 @@ namespace TriageSystem.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+
         public RegisterModel(
             UserManager<TriageSystemUser> userManager,
             SignInManager<TriageSystemUser> signInManager,

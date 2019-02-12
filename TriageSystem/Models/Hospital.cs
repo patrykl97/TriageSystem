@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace TriageSystemAPI.Models
+namespace TriageSystem.Models
 {
     public class Hospital
     {

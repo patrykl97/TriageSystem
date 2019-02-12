@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace TriageSystemAPI.Models
+namespace TriageSystem.Models
 {
     public class User
     {

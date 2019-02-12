@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using TriageSystem.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TriageSystemAPI.Models;
+using TriageSystem.Models;
 using TriageSystem.Areas.Identity.Data;
 
 namespace TriageSystem

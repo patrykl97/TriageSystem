@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using TriageSystem.Models;
 
 namespace TriageSystem.Areas.Identity.Data
 {
     // Add profile data for application users by adding properties to the TriageSystemUser class
     public class TriageSystemUser : IdentityUser
     {
+        public int StaffID { get; set; }
+        public string UserType { get; set; }
+        public bool Admin { get; set; }
+
+        public Staff Staff { get; set; }
     }
 }

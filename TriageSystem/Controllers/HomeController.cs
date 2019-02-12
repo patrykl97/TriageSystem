@@ -34,6 +34,11 @@ namespace TriageSystem.Controllers
             return View();
         }
 
+        //public IActionResult Register(RegisterModel model)
+        //{
+        //    return View(model);
+        //}
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

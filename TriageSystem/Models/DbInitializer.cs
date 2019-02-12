@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TriageSystemAPI.Models;
+using TriageSystem.Models;
 
 namespace TriageSystem.Models
 {
