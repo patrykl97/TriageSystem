@@ -14,6 +14,6 @@ namespace TriageSystem.Areas.Identity.Data
         public string UserType { get; set; }
         public bool Admin { get; set; }
 
-        public Staff Staff { get; set; }
+        //public Staff StaffID { get; set; }
     }
 }

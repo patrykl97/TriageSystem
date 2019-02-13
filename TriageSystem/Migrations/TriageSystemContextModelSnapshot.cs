@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TriageSystem.Models;
 
-namespace TriageSystem.Data.Migrations
+namespace TriageSystem.Migrations
 {
     [DbContext(typeof(TriageSystemContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    partial class TriageSystemContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,7 @@ namespace TriageSystem.Data.Migrations
                         .HasName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -136,9 +136,12 @@ namespace TriageSystem.Data.Migrations
             modelBuilder.Entity("TriageSystem.Areas.Identity.Data.TriageSystemUser", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("UserId");
 
                     b.Property<int>("AccessFailedCount");
+
+                    b.Property<bool>("Admin");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -166,10 +169,14 @@ namespace TriageSystem.Data.Migrations
 
                     b.Property<string>("SecurityStamp");
 
+                    b.Property<int?>("StaffID1");
+
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
+
+                    b.Property<string>("UserType");
 
                     b.HasKey("Id");
 
@@ -181,10 +188,12 @@ namespace TriageSystem.Data.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers");
+                    b.HasIndex("StaffID1");
+
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TriageSystemAPI.Models.Staff", b =>
+            modelBuilder.Entity("TriageSystem.Models.Staff", b =>
                 {
                     b.Property<int>("StaffID")
                         .ValueGeneratedOnAdd()
@@ -252,6 +261,13 @@ namespace TriageSystem.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TriageSystem.Areas.Identity.Data.TriageSystemUser", b =>
+                {
+                    b.HasOne("TriageSystem.Models.Staff", "StaffID")
+                        .WithMany()
+                        .HasForeignKey("StaffID1");
                 });
 #pragma warning restore 612, 618
         }
