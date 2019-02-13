@@ -10,6 +10,7 @@ namespace TriageSystem.Models
         public string Name { get; set; }
         public string Location { get; set; }
         public string Coordinates { get; set; }
-        public IEnumerable<Staff> StaffList { get; set; }
+
+        public virtual ICollection<Staff> StaffList { get; set; }
     }
 }

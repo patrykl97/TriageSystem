@@ -1,4 +1,6 @@
-﻿@{
+﻿@using TriageSystem.Areas.Identity.Data
+@model TriageSystemUser
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -89,6 +91,19 @@
             <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
             <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
             <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
+            <li>
+                @{ if (@Model != null)
+                    {
+                        <h4>Staff ID - @Model.StaffID</h4>
+                    }
+                    else
+                    {
+                        <h4>Model is empty!</h4>
+                    }
+                }
+            </li>
         </ul>
     </div>
+
+
 </div>
