@@ -10,8 +10,8 @@ using TriageSystem.Models;
 namespace TriageSystem.Migrations
 {
     [DbContext(typeof(TriageSystemContext))]
-    [Migration("20190213105955_Init")]
-    partial class Init
+    [Migration("20190213225023_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -171,7 +171,7 @@ namespace TriageSystem.Migrations
 
                     b.Property<string>("SecurityStamp");
 
-                    b.Property<int?>("StaffID1");
+                    b.Property<int>("StaffID");
 
                     b.Property<bool>("TwoFactorEnabled");
 
@@ -190,7 +190,7 @@ namespace TriageSystem.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("StaffID1");
+                    b.HasIndex("StaffID");
 
                     b.ToTable("Users");
                 });
@@ -267,9 +267,10 @@ namespace TriageSystem.Migrations
 
             modelBuilder.Entity("TriageSystem.Areas.Identity.Data.TriageSystemUser", b =>
                 {
-                    b.HasOne("TriageSystem.Models.Staff", "StaffID")
+                    b.HasOne("TriageSystem.Models.Staff", "Staff")
                         .WithMany()
-                        .HasForeignKey("StaffID1");
+                        .HasForeignKey("StaffID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

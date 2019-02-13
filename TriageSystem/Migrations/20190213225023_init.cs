@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TriageSystem.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -81,9 +81,9 @@ namespace TriageSystem.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
+                    StaffID = table.Column<int>(nullable: false),
                     UserType = table.Column<string>(nullable: true),
-                    Admin = table.Column<bool>(nullable: false),
-                    StaffID = table.Column<int>(nullable: true)
+                    Admin = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,7 +93,7 @@ namespace TriageSystem.Migrations
                         column: x => x.StaffID,
                         principalTable: "Staff",
                         principalColumn: "StaffID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,9 +221,9 @@ namespace TriageSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_StaffID1",
+                name: "IX_Users_StaffID",
                 table: "Users",
-                column: "StaffID1");
+                column: "StaffID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TriageSystem.Areas.Identity.Data;
@@ -10,13 +11,16 @@ using TriageSystem.Models;
 
 namespace TriageSystem.Controllers
 {
+    [Authorize] // User needs to be singed in to display this view
     public class HomeController : Controller
     {
         UserManager<TriageSystemUser> _userManager;
+        private readonly TriageSystemContext _context;
 
-        public HomeController(UserManager<TriageSystemUser> userManager)
+        public HomeController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
         {
             _userManager = userManager;
+            _context = context;
 
         }
 
