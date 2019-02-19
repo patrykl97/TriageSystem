@@ -9,9 +9,9 @@ using TriageSystem.Models;
 
 namespace TriageSystem.Migrations
 {
-    [DbContext(typeof(TriageSystemContext))]
-    [Migration("20190213225023_init")]
-    partial class init
+    [DbContext(typeof(OnConfiguring))]
+    [Migration("20190219183007_InitCreate")]
+    partial class InitCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -195,6 +195,91 @@ namespace TriageSystem.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TriageSystem.Models.Hospital", b =>
+                {
+                    b.Property<int>("HospitalID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Coordinates");
+
+                    b.Property<string>("Location");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("HospitalID");
+
+                    b.ToTable("Hospitals");
+                });
+
+            modelBuilder.Entity("TriageSystem.Models.Patient", b =>
+                {
+                    b.Property<string>("PPS")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Address");
+
+                    b.Property<string>("Date_of_birth");
+
+                    b.Property<string>("Full_name");
+
+                    b.Property<string>("Gender");
+
+                    b.Property<string>("Nationality");
+
+                    b.HasKey("PPS");
+
+                    b.ToTable("Patients");
+                });
+
+            modelBuilder.Entity("TriageSystem.Models.PatientCheckIn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Condition");
+
+                    b.Property<int>("HospitalID");
+
+                    b.Property<string>("PPS");
+
+                    b.Property<DateTime>("Time_checked_in");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HospitalID");
+
+                    b.HasIndex("PPS");
+
+                    b.ToTable("PatientCheckIns");
+                });
+
+            modelBuilder.Entity("TriageSystem.Models.PatientWaitingList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Condition");
+
+                    b.Property<int>("HospitalID");
+
+                    b.Property<string>("PPS");
+
+                    b.Property<int>("Priority");
+
+                    b.Property<DateTime>("Time_checked_in");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HospitalID");
+
+                    b.HasIndex("PPS");
+
+                    b.ToTable("PatientWaitingList");
+                });
+
             modelBuilder.Entity("TriageSystem.Models.Staff", b =>
                 {
                     b.Property<int>("StaffID")
@@ -211,11 +296,13 @@ namespace TriageSystem.Migrations
 
                     b.Property<string>("Gender");
 
-                    b.Property<int>("Hospital_id");
+                    b.Property<int>("HospitalID");
 
                     b.Property<string>("Position");
 
                     b.HasKey("StaffID");
+
+                    b.HasIndex("HospitalID");
 
                     b.ToTable("Staff");
                 });
@@ -270,6 +357,38 @@ namespace TriageSystem.Migrations
                     b.HasOne("TriageSystem.Models.Staff", "Staff")
                         .WithMany()
                         .HasForeignKey("StaffID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TriageSystem.Models.PatientCheckIn", b =>
+                {
+                    b.HasOne("TriageSystem.Models.Hospital", "Hospital")
+                        .WithMany("PatientCheckInList")
+                        .HasForeignKey("HospitalID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TriageSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PPS");
+                });
+
+            modelBuilder.Entity("TriageSystem.Models.PatientWaitingList", b =>
+                {
+                    b.HasOne("TriageSystem.Models.Hospital", "Hospital")
+                        .WithMany("PatientWaitingList")
+                        .HasForeignKey("HospitalID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TriageSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PPS");
+                });
+
+            modelBuilder.Entity("TriageSystem.Models.Staff", b =>
+                {
+                    b.HasOne("TriageSystem.Models.Hospital", "Hospital")
+                        .WithMany("StaffList")
+                        .HasForeignKey("HospitalID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

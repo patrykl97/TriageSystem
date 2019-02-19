@@ -23,7 +23,7 @@ namespace TriageSystem
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<TriageSystemContext>();
+                    var context = services.GetRequiredService<OnConfiguring>();
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)

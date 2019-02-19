@@ -6,15 +6,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20190213105955_Init.cs" />
-    <Compile Remove="Migrations\20190213105955_Init.Designer.cs" />
-    <Compile Remove="Migrations\20190213224805_init.cs" />
-    <Compile Remove="Migrations\20190213224805_init.Designer.cs" />
+    <Compile Remove="Migrations\20190214163919_InitCreate.cs" />
+    <Compile Remove="Migrations\20190214163919_InitCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190219173417_New.cs" />
+    <Compile Remove="Migrations\20190219173417_New.Designer.cs" />
+    <Compile Remove="Migrations\20190219174414_InitCreate.cs" />
+    <Compile Remove="Migrations\20190219174414_InitCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190219175039_InitCreate.cs" />
+    <Compile Remove="Migrations\20190219175039_InitCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190219175537_InitCreate.cs" />
+    <Compile Remove="Migrations\20190219175537_InitCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190219180535_InitCreate.cs" />
+    <Compile Remove="Migrations\20190219180535_InitCreate.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.6" PrivateAssets="All" />
   </ItemGroup>
 

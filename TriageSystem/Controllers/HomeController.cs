@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Models;
 
@@ -15,9 +16,9 @@ namespace TriageSystem.Controllers
     public class HomeController : Controller
     {
         UserManager<TriageSystemUser> _userManager;
-        private readonly TriageSystemContext _context;
+        private readonly OnConfiguring _context;
 
-        public HomeController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
+        public HomeController(UserManager<TriageSystemUser> userManager, OnConfiguring context)
         {
             _userManager = userManager;
             _context = context;
@@ -28,7 +29,13 @@ namespace TriageSystem.Controllers
         {
             var user = _userManager.GetUserAsync(User).Result;
 
+            //var user = _context.GetUser().Include(u => u.Staff).FirstOrDefault(s => s.StaffID)
             //TriageSystemUser user = _userManager.GetUserAsync(User);
+
+            var staff = _context.Staff.Where(s => s.StaffID == user.StaffID).First();
+            //var staff = (ICollection<Staff>)_context.Staff;
+            //staff.Include(s => s.Hospital);
+            //user.Staff = staff;
             return View(user);
         }
 

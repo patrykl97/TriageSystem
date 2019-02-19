@@ -22,7 +22,7 @@ namespace TriageSystem.Areas.Identity.Pages.Account
         private readonly UserManager<TriageSystemUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly TriageSystemContext _context;
+        private readonly OnConfiguring _context;
 
 
         public RegisterModel(
@@ -30,7 +30,7 @@ namespace TriageSystem.Areas.Identity.Pages.Account
             SignInManager<TriageSystemUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            TriageSystemContext context)
+            OnConfiguring context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -85,9 +85,10 @@ namespace TriageSystem.Areas.Identity.Pages.Account
                 // Check whether the Staff ID is valid
                 int staffId = Int32.Parse(Input.StaffId);
                 var staff = await _context.Staff.FirstOrDefaultAsync(m => m.StaffID == staffId);
-                if (staff != null)
+                if(staff != null)
                 {
                     var user = new TriageSystemUser { UserName = Input.Email, Email = Input.Email, StaffID = staffId };
+                    //var user = new TriageSystemUser { UserName = Input.Email, Email = Input.Email};
                     var result = await _userManager.CreateAsync(user, Input.Password);
                     if (result.Succeeded)
                     {

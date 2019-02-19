@@ -1,30 +1,36 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Collections.Generic;
 using TriageSystem.Areas.Identity.Data;
 
 namespace TriageSystem.Models
 {
-    public class TriageSystemContext : IdentityDbContext<TriageSystemUser>
+    public class OnConfiguring : IdentityDbContext<TriageSystemUser>
     {
-        public TriageSystemContext() : base()
+
+        public OnConfiguring() : base()
         {
 
         }
 
-        public TriageSystemContext(DbContextOptions<TriageSystemContext> options) : base(options)
+        public OnConfiguring(DbContextOptions<OnConfiguring> options) : base(options)
         {
-
+            
         }
 
-        //public virtual DbSet<Hospital> Hospitals { get; set; }
+        //public OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseLazyLoadingProxies();
+        //}
+
+        public virtual DbSet<Hospital> Hospitals { get; set; }
         public virtual DbSet<Staff> Staff { get; set; }
-        //public virtual DbSet<ApplicationUser> Users { get; set; }
-        //public virtual DbSet<Patient> Patients { get; set; }
-        //public virtual DbSet<PatientCheckIn> PatientCheckIns { get; set; }
-        //public virtual DbSet<PatientWaitingList> PatientWaitingList { get; set; }
-
-        
+        public virtual DbSet<Patient> Patients { get; set; }
+        public virtual DbSet<PatientCheckIn> PatientCheckIns { get; set; }
+        public virtual DbSet<PatientWaitingList> PatientWaitingList { get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

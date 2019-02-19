@@ -38,16 +38,16 @@ namespace TriageSystem
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.Cookie.Expiration = TimeSpan.FromDays(1);
+                    //options.Cookie.Expiration = TimeSpan.FromDays(1);
                     options.LoginPath = "/Identity/Account/Login"; // redirect to login when authentication is needed
                 });
 
 
-            services.AddDbContext<TriageSystemContext>(options =>
-                options.UseSqlServer(
+            services.AddDbContext<OnConfiguring>(options =>
+                options.UseLazyLoadingProxies().UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<TriageSystemUser>()
-                .AddEntityFrameworkStores<TriageSystemContext>();
+                .AddEntityFrameworkStores<OnConfiguring>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

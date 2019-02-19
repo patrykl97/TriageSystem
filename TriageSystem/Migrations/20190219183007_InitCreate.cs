@@ -4,10 +4,41 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TriageSystem.Migrations
 {
-    public partial class init : Migration
+    public partial class InitCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Hospitals",
+                columns: table => new
+                {
+                    HospitalID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    Location = table.Column<string>(nullable: true),
+                    Coordinates = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Hospitals", x => x.HospitalID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Patients",
+                columns: table => new
+                {
+                    PPS = table.Column<string>(nullable: false),
+                    Full_name = table.Column<string>(nullable: true),
+                    Gender = table.Column<string>(nullable: true),
+                    Date_of_birth = table.Column<string>(nullable: true),
+                    Nationality = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Patients", x => x.PPS);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -28,7 +59,7 @@ namespace TriageSystem.Migrations
                 {
                     StaffID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Hospital_id = table.Column<int>(nullable: false),
+                    HospitalID = table.Column<int>(nullable: false),
                     Full_name = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Gender = table.Column<string>(nullable: true),
@@ -39,6 +70,69 @@ namespace TriageSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Staff", x => x.StaffID);
+                    table.ForeignKey(
+                        name: "FK_Staff_Hospitals_HospitalID",
+                        column: x => x.HospitalID,
+                        principalTable: "Hospitals",
+                        principalColumn: "HospitalID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientCheckIns",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    PPS = table.Column<string>(nullable: true),
+                    Condition = table.Column<string>(nullable: true),
+                    Time_checked_in = table.Column<DateTime>(nullable: false),
+                    HospitalID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientCheckIns", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientCheckIns_Hospitals_HospitalID",
+                        column: x => x.HospitalID,
+                        principalTable: "Hospitals",
+                        principalColumn: "HospitalID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientCheckIns_Patients_PPS",
+                        column: x => x.PPS,
+                        principalTable: "Patients",
+                        principalColumn: "PPS",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientWaitingList",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    PPS = table.Column<string>(nullable: true),
+                    Condition = table.Column<string>(nullable: true),
+                    Priority = table.Column<int>(nullable: false),
+                    Time_checked_in = table.Column<DateTime>(nullable: false),
+                    HospitalID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientWaitingList", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientWaitingList_Hospitals_HospitalID",
+                        column: x => x.HospitalID,
+                        principalTable: "Hospitals",
+                        principalColumn: "HospitalID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PatientWaitingList_Patients_PPS",
+                        column: x => x.PPS,
+                        principalTable: "Patients",
+                        principalColumn: "PPS",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,11 +296,36 @@ namespace TriageSystem.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PatientCheckIns_HospitalID",
+                table: "PatientCheckIns",
+                column: "HospitalID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientCheckIns_PPS",
+                table: "PatientCheckIns",
+                column: "PPS");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientWaitingList_HospitalID",
+                table: "PatientWaitingList",
+                column: "HospitalID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientWaitingList_PPS",
+                table: "PatientWaitingList",
+                column: "PPS");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "Roles",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Staff_HospitalID",
+                table: "Staff",
+                column: "HospitalID");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -244,13 +363,25 @@ namespace TriageSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "PatientCheckIns");
+
+            migrationBuilder.DropTable(
+                name: "PatientWaitingList");
+
+            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
+                name: "Patients");
+
+            migrationBuilder.DropTable(
                 name: "Staff");
+
+            migrationBuilder.DropTable(
+                name: "Hospitals");
         }
     }
 }

@@ -11,9 +11,9 @@ namespace TriageSystem.Controllers
 {
     public class StaffController : Controller
     {
-        private readonly TriageSystemContext _context;
+        private readonly OnConfiguring _context;
 
-        public StaffController(TriageSystemContext context)
+        public StaffController(OnConfiguring context)
         {
             _context = context;
         }
