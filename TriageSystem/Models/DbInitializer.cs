@@ -15,6 +15,7 @@ namespace TriageSystem.Models
             CreateHospital(context);
             CreateStaff(context);
             CreatePatient(context);
+            CreateLists(context);
         }
 
         private static void CreateHospital(OnConfiguring context)
@@ -52,8 +53,46 @@ namespace TriageSystem.Models
             }
 
             var patient = new Patient { PPS = "390849 F", Full_name = "Adam Smith", Address = "Limerick", Date_of_birth = "12/04/1990", Gender = "M", Nationality = "Irish"  };
-
             context.Patients.Add(patient);
+            patient = new Patient { PPS = "310149 F", Full_name = "Gerry Warren", Address = "Clare", Date_of_birth = "12/05/1990", Gender = "M", Nationality = "Irish" };
+            context.Patients.Add(patient);
+            patient = new Patient { PPS = "344849 F", Full_name = "Gavin O'Connell", Address = "Limerick", Date_of_birth = "12/04/1995", Gender = "M", Nationality = "Irish" };
+            context.Patients.Add(patient);
+            patient = new Patient { PPS = "351049 R", Full_name = "Adam O'Reilly", Address = "Limerick", Date_of_birth = "17/06/1980", Gender = "M", Nationality = "Irish" };
+            context.Patients.Add(patient);
+            patient = new Patient { PPS = "390049 S", Full_name = "Patrick Smith", Address = "Limerick", Date_of_birth = "18/02/1993", Gender = "M", Nationality = "Irish" };
+            context.Patients.Add(patient);
+
+            context.SaveChanges();
+        }
+
+        private static void CreateLists(OnConfiguring context)
+        {
+            if (context.PatientCheckIns.Any())
+            {
+                return;   // DB has been seeded
+            }
+
+            DateTime myDate = DateTime.ParseExact("2019-02-20 19:14:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
+            var checkIn = new PatientCheckIn { PPS = "390849 F", HospitalID = 1, Condition = "Broken leg", Time_checked_in = myDate };
+            context.PatientCheckIns.Add(checkIn);
+
+            myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
+            checkIn = new PatientCheckIn { PPS = "310149 F", HospitalID = 1, Condition = "Headache", Time_checked_in = myDate };
+            context.PatientCheckIns.Add(checkIn);
+
+            myDate = DateTime.ParseExact("2019-02-20 19:19:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
+            checkIn = new PatientCheckIn { PPS = "344849 F", HospitalID = 1, Condition = "Vomiting", Time_checked_in = myDate };
+            context.PatientCheckIns.Add(checkIn);
+
+            myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
+            var waiting = new PatientWaitingList { PPS = "351049 R", HospitalID = 1, Condition = "Heart attack", Time_checked_in = myDate, Priority = 1 };
+            context.PatientWaitingList.Add(waiting);
+
+            myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
+            waiting = new PatientWaitingList { PPS = "390049 S", HospitalID = 1, Condition = "Sprained ankle", Time_checked_in = myDate, Priority = 4 };
+            context.PatientWaitingList.Add(waiting);
+
             context.SaveChanges();
         }
     }

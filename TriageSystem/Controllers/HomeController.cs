@@ -28,14 +28,9 @@ namespace TriageSystem.Controllers
         public ActionResult Index()
         {
             var user = _userManager.GetUserAsync(User).Result;
-
-            //var user = _context.GetUser().Include(u => u.Staff).FirstOrDefault(s => s.StaffID)
-            //TriageSystemUser user = _userManager.GetUserAsync(User);
-
-            var staff = _context.Staff.Where(s => s.StaffID == user.StaffID).First();
-            //var staff = (ICollection<Staff>)_context.Staff;
-            //staff.Include(s => s.Hospital);
-            //user.Staff = staff;
+            user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
+            user.Staff.Hospital.PatientWaitingList.OrderBy(p => p.Priority).ThenBy(t => t.Time_checked_in); // orders by priority, then by time checked in
+            user.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition = "hello";
             return View(user);
         }
 
