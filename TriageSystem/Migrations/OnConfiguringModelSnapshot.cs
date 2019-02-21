@@ -9,7 +9,7 @@ using TriageSystem.Models;
 namespace TriageSystem.Migrations
 {
     [DbContext(typeof(OnConfiguring))]
-    partial class TriageSystemContextModelSnapshot : ModelSnapshot
+    partial class OnConfiguringModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

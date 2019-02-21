@@ -29,8 +29,8 @@ namespace TriageSystem.Controllers
         {
             var user = _userManager.GetUserAsync(User).Result;
             user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
-            user.Staff.Hospital.PatientWaitingList.OrderBy(p => p.Priority).ThenBy(t => t.Time_checked_in); // orders by priority, then by time checked in
-            user.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition = "hello";
+            var orderedList = user.Staff.Hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
+            user.Staff.Hospital.PatientWaitingList = orderedList;
             return View(user);
         }
 

@@ -10,7 +10,7 @@ namespace TriageSystem.Models
         [ForeignKey("Patient")]
         public string PPS { get; set; }
         public string Condition { get; set; }
-        public int Priority { get; set; }
+        public Priority Priority { get; set; }
         public DateTime Time_checked_in { get; set; }
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
