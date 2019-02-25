@@ -37,8 +37,53 @@ namespace TriageSystem.Controllers
         public IActionResult TriageAssessment()
         {
             var user = _userManager.GetUserAsync(User).Result;
+            var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
+            var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Condition = patientCheckedIn.Condition };
+            return View(patientData);
+        }
 
-            return View(user);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TriageAssessment(int id, [Bind("PPS,HospitalID,Condition,Priority")] PatientWaitingList patientData)
+        {
+            if (id != patientData.Id)
+            {
+                return NotFound();
+            }
+
+            int x = 1;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    patientData.Time_checked_in = GetNow();
+                    if (x==0)
+                    {
+                        //_context.Update(patientData);
+                        //_context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS));
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    //if (!PatientWaitingListExists(staff.StaffID))
+                    //{
+                    //    return NotFound();
+                    //}
+                    //else
+                    //{
+                        throw;
+                    //}
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(patientData);
+        }
+
+        private static DateTime GetNow()
+        {
+            return DateTime.Now;
         }
 
         public IActionResult About()
