@@ -31,6 +31,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<h2 id="hospitalID">@Html.DisplayFor(model => model.Staff.HospitalID)</h2><h2>@Html.DisplayFor(model => model.Staff.Hospital.Name)</h2>
 <table class="table">
     <thead>
         <tr>
@@ -50,26 +51,27 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Staff.Hospital.PatientCheckInList) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Patient.Full_name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PPS)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Condition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time_checked_in)
-            </td>
-            <td>
-                <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
+        @foreach (var item in Model.Staff.Hospital.PatientCheckInList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PPS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Condition)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time_checked_in)
+                </td>
+                <td>
+                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
 
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <br />
@@ -97,27 +99,29 @@
     <tbody>
         @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
         {
-        <tr >
-            <td>
-                @Html.DisplayFor(modelItem => item.Patient.Full_name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PPS)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Condition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time_checked_in)
-            </td>
-            <td class="@item.Priority">
-                @Html.DisplayFor(modelItem => item.Priority)
-            </td>
-            <td>
-                <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PPS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Condition)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time_checked_in)
+                </td>
+                <td class="@item.Priority">
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
 
-            </td>
-        </tr>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/notification.js"></script>

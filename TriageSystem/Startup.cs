@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TriageSystem.Models;
 using TriageSystem.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using TriageSystem.Hubs;
 
 namespace TriageSystem
 {
@@ -42,6 +43,8 @@ namespace TriageSystem
                     options.LoginPath = "/Identity/Account/Login"; // redirect to login when authentication is needed
                 });
 
+            services.AddSignalR();
+
 
             services.AddDbContext<OnConfiguring>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(
@@ -69,6 +72,10 @@ namespace TriageSystem
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NotificationHub>("/notificationHub");
+            });
 
             app.UseAuthentication();
 

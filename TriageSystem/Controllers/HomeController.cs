@@ -34,6 +34,13 @@ namespace TriageSystem.Controllers
             return View(user);
         }
 
+        public IActionResult TriageAssessment()
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+
+            return View(user);
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
