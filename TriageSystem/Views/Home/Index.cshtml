@@ -29,7 +29,7 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="RegisterPatient">Register Patient</a>
 </p>
 <h2 id="hospitalID">@Html.DisplayFor(model => model.Staff.HospitalID)</h2><h2>@Html.DisplayFor(model => model.Staff.Hospital.Name)</h2>
 <table class="table">
@@ -126,5 +126,3 @@
         }
     </tbody>
 </table>
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/notification.js"></script>

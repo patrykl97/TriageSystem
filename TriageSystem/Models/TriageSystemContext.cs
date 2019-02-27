@@ -30,7 +30,8 @@ namespace TriageSystem.Models
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<PatientCheckIn> PatientCheckIns { get; set; }
         public virtual DbSet<PatientWaitingList> PatientWaitingList { get; set; }
-       
+        
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

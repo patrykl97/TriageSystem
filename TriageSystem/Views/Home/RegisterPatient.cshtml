@@ -1,0 +1,46 @@
+﻿@model TriageSystem.Models.PatientCheckIn
+
+@{
+    ViewData["Title"] = "RegisterPatient";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="~/js/jquery-customselect.js"></script>
+<link href="~/js/jquery-customselect.css" rel="stylesheet" />
+
+
+<h2>RegisterPatient</h2>
+
+<h4>PatientCheckIn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="RegisterPatient">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" id="hospitalID" asp-for="HospitalID" />
+            <div class="form-group">
+                <label asp-for="PPS" class="control-label"></label>
+                <select asp-for="PPS" class="custom-select" asp-items="ViewBag.PPS" id="PPS"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Condition" class="control-label"></label>
+                <input asp-for="Condition" class="form-control" />
+                <span asp-validation-for="Condition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input id="sendButton" type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/notification.js"></script>
