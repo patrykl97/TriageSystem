@@ -27,9 +27,6 @@ namespace TriageSystem.Controllers
 
         public ActionResult Index()
         {
-            var connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:53353/ChatHub")
-             .Build();
 
             var user = _userManager.GetUserAsync(User).Result;
             user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
