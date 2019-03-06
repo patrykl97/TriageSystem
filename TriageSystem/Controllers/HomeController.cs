@@ -93,8 +93,7 @@ namespace TriageSystem.Controllers
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TriageAssessment(int HospitalID, [Bind("PPS,Condition,Priority")] PatientWaitingList patientData)
+        public async Task<IActionResult> TriageAssessment([FromBody] PatientWaitingList patientData)
         {
 
 
@@ -103,7 +102,7 @@ namespace TriageSystem.Controllers
                 try
                 {
                     patientData.Time_checked_in = GetNow();
-                    patientData.HospitalID = HospitalID;
+                    //patientData.HospitalID = HospitalID;
                     _context.PatientWaitingList.Add(patientData);
                     _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
                     await _context.SaveChangesAsync();

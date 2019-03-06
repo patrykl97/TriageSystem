@@ -65,15 +65,42 @@
     });
 
 
-
     document.getElementById("sendButton").addEventListener("click", function (event) {
-        
+
         var hospitalID = document.getElementById("hospitalID").value;
-        console.log("Hospital ID", hospitalID);
+        var patient = {};
+
+        patient.PPS = document.getElementById("PPS").value;
+        patient.Condition = document.getElementById("Condition").value;
+        patient.HospitalID = parseInt(hospitalID);
+        patient.Priority = document.getElementById("Priority").value;
+        console.log(patient);
+        console.log(typeof (patient.HospitalID));
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            url: "/Home/TriageAssessment",
+            data: JSON.stringify(patient),
+            success: function (response) {
+
+
+
+            }
+            //error: function (response) {
+            //    console.log("wrong");
+            //}
+        });
+
         connection.invoke("SendNotification", hospitalID).catch(function (err) {
             console.log(err);
             return console.error(err.toString());
         });
         event.preventDefault();
+
+        setTimeout(redirect, 100)
+        function redirect() {
+            window.location.href = '@Url.Action("Index", "Home")';
+        }
     });
 </script>
