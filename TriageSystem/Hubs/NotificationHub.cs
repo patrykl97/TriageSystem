@@ -8,9 +8,9 @@ namespace TriageSystem.Hubs
 {
     public class NotificationHub : Hub
     {
-        public async Task SendNotification()
+        public async Task SendNotification(string hospitalID)
         {
-            await Clients.All.SendAsync("ReceiveNotification");
+            await Clients.All.SendAsync("ReceiveNotification", hospitalID);
         }
     }
 }

@@ -28,11 +28,19 @@ namespace TriageSystem.Controllers
         public ActionResult Index()
         {
 
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ListView()
+        {
+            System.Threading.Thread.Sleep(100); // sleep for 100ms
             var user = _userManager.GetUserAsync(User).Result;
             user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
             var orderedList = user.Staff.Hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
             user.Staff.Hospital.PatientWaitingList = orderedList;
-            return View(user);
+            return PartialView(user);
         }
 
         public IActionResult RegisterPatient()
@@ -46,9 +54,9 @@ namespace TriageSystem.Controllers
         }
 
 
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterPatient([Bind("PPS,Condition,Priority,HospitalID")] PatientCheckIn patientData)
+        public async Task<IActionResult> RegisterPatient([FromBody] PatientCheckIn patientData)
         {
             if (ModelState.IsValid)
             {
@@ -69,9 +77,9 @@ namespace TriageSystem.Controllers
                     throw;
                     //}
                 }
-                return RedirectToAction(nameof(Index));
+                return Json("Fail");
             }
-            return View(patientData);
+            return Json("Success");
         
         }
 

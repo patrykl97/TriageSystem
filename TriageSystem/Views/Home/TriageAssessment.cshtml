@@ -54,4 +54,26 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/notification.js"></script>
+<script>
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
+    connection.logging = true;
+    //Disable send button until connection is established
+    //document.getElementById("sendButton").disabled = true;
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+
+
+
+    document.getElementById("sendButton").addEventListener("click", function (event) {
+        
+        var hospitalID = document.getElementById("hospitalID").value;
+        console.log("Hospital ID", hospitalID);
+        connection.invoke("SendNotification", hospitalID).catch(function (err) {
+            console.log(err);
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+    });
+</script>

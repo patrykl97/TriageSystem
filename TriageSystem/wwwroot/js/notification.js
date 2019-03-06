@@ -1,27 +1,27 @@
-﻿"use strict";
+﻿var script = document.createElement('script');
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+script.src = '//code.jquery.com/jquery-1.11.0.min.js';
+document.getElementsByTagName('head')[0].appendChild(script); 
+
+"use strict";
+
+var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
 
 //Disable send button until connection is established
-document.getElementById("sendButton").disabled = true;
+//document.getElementById("sendButton").disabled = true;
+connection.start();
 
-connection.on("ReceiveNotification", function (hospitalID) {
+
+connection.on("ReceiveNotification", function (hospitalId) {
     $$.ajax({
         url: '@Url.Action("Index", "Home")',
     });
 
 });
 
-connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-    });
-
-
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    //var hospitalID = document.getElementById("hospitalID").value;
-    connection.invoke("SendNotification").catch(function (err) {
+    var hospitalID = document.getElementById("hospitalID").value;
+    connection.invoke("SendNotification", hospitalID).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

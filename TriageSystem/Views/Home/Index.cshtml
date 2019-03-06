@@ -28,101 +28,44 @@
 
 <h2>Index</h2>
 
-<p>
-    <a asp-action="RegisterPatient">Register Patient</a>
-</p>
-<h2 id="hospitalID">@Html.DisplayFor(model => model.Staff.HospitalID)</h2><h2>@Html.DisplayFor(model => model.Staff.Hospital.Name)</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.Full_name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().PPS)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Condition)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Time_checked_in)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Staff.Hospital.PatientCheckInList)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PPS)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Condition)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Time_checked_in)
-                </td>
-                <td>
-                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
+<form asp-controller="Home">
+    <div id="lists">
+        
+    </div>
+</form>
 
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<br />
-<p>
-    <a asp-action="TriageAssessment">Perform Triage</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.Full_name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().PPS)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_checked_in)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Priority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PPS)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Condition)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Time_checked_in)
-                </td>
-                <td class="@item.Priority">
-                    @Html.DisplayFor(modelItem => item.Priority)
-                </td>
-                <td>
-                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
 
-                </td>
-            </tr>
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $.ajax({
+        url: "Home/ListView",
+        type: "Get",
+        success: function (response) {
+            $("#lists").html(response);
         }
-    </tbody>
-</table>
+    });
+    //var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
+    var connection = new signalR.HubConnectionBuilder().withUrl('@Url.Content("~/notificationHub")').build();
+
+    //Disable send button until connection is established
+    //document.getElementById("sendButton").disabled = true;
+    connection.logging = true;
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+    console.log("connected");
+
+    connection.on("ReceiveNotification", function (hospitalID) {
+        console.log("received--------------------");
+        $.ajax({
+            url: "Home/ListView",
+            type: "Get",
+            success: function (response) {
+                $("#lists").html(response);
+                console.log("success");
+            }
+        });
+    });
+
+</script>

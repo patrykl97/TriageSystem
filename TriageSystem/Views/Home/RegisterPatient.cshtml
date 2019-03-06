@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/jquery-customselect.js"></script>
 <link href="~/js/jquery-customselect.css" rel="stylesheet" />
 
@@ -16,7 +16,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="RegisterPatient">
+        <form asp-action="RegisterPatient" id="form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
             <div class="form-group">
@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Condition" class="control-label"></label>
-                <input asp-for="Condition" class="form-control" />
+                <input asp-for="Condition" class="form-control" id="Condition"/>
                 <span asp-validation-for="Condition" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -43,4 +43,62 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/notification.js"></script>
+<script>
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
+    connection.logging = true;
+    //Disable send button until connection is established
+    //document.getElementById("sendButton").disabled = true;
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+
+
+    document.getElementById("sendButton").addEventListener("click", function (event) {
+
+        var hospitalID = document.getElementById("hospitalID").value;
+        var patient = {};
+
+        patient.PPS = document.getElementById("PPS").value;
+        patient.Condition = document.getElementById("Condition").value;
+        patient.HospitalID = parseInt(hospitalID);
+        console.log(patient);
+        console.log(typeof (patient.HospitalID));
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            url: "/Home/RegisterPatient",
+            data: JSON.stringify(patient),
+            success: function (response) {
+
+
+
+            }
+            //error: function (response) {
+            //    console.log("wrong");
+            //}
+        });
+
+        connection.invoke("SendNotification", hospitalID).catch(function (err) {
+            console.log(err);
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+        
+
+
+
+        setTimeout(redirect, 100)
+        function redirect() {
+            window.location.href = '@Url.Action("Index", "Home")';
+        }
+
+
+        
+
+    });
+
+    
+
+</script>
