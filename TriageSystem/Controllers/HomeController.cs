@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -25,17 +26,19 @@ namespace TriageSystem.Controllers
             _context = context;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(bool refresh = false)
         {
-
-
+            ViewData["Refresh"] = refresh;
             return View();
         }
 
-        [HttpGet]
-        public IActionResult ListView()
+        [HttpPost]
+        public IActionResult ListView(bool refresh)
         {
-            System.Threading.Thread.Sleep(100); // sleep for 100ms
+            if (refresh)
+            {
+                System.Threading.Thread.Sleep(100); // sleep for 100ms
+            }
             var user = _userManager.GetUserAsync(User).Result;
             user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
             var orderedList = user.Staff.Hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
@@ -86,9 +89,30 @@ namespace TriageSystem.Controllers
         public IActionResult TriageAssessment()
         {
             var user = _userManager.GetUserAsync(User).Result;
-            var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-            var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Condition = patientCheckedIn.Condition };
-            return View(patientData);
+            if(user.Staff.Hospital.PatientCheckInList.Count == 0)
+            {
+                TempData["Error"] = "No patients awaiting triage assessment!";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
+                var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Condition = patientCheckedIn.Condition };
+                string name, path;
+                string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+                List<string> flowchartNames = new List<string>();
+                for (int i = 0; i < filePaths.Length; ++i)
+                {
+                    path = filePaths[i];
+                    name = Path.GetFileName(path);
+                    name = name.Replace("_", " ");
+                    name = name.Replace(".json", "");
+                    flowchartNames.Add(name);
+                }
+                ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
+                return View(patientData);
+            }
+
         }
 
 
@@ -151,6 +175,11 @@ namespace TriageSystem.Controllers
         //{
         //    return View(model);
         //}
+
+        public PartialViewResult ShowError(String sErrorMessage)
+        {
+            return PartialView("_Error");
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

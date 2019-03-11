@@ -15,6 +15,7 @@ using TriageSystem.Models;
 using TriageSystem.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TriageSystem.Hubs;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace TriageSystem
 {
@@ -45,6 +46,8 @@ namespace TriageSystem
 
             services.AddSignalR();
 
+            
+
 
             services.AddDbContext<OnConfiguring>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(
@@ -53,6 +56,9 @@ namespace TriageSystem
                 .AddEntityFrameworkStores<OnConfiguring>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            //services.AddSession();
 
             services.AddCors(options => options.AddPolicy("CorsPolicy",
             builder =>
@@ -80,6 +86,7 @@ namespace TriageSystem
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            //app.UseSession();
             app.UseCors("CorsPolicy");
             app.UseSignalR(routes =>
             {

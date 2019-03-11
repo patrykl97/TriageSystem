@@ -1,0 +1,39 @@
+{
+  "flowchart": {
+    "priorities": [
+      {
+        "red": [
+          [ "Airway compromise" ],
+          [ "Inadequate breathing" ],
+          [ "Shock" ]
+        ],
+        "orange": [
+          [ "Vomiting blood" ],
+          [ "Passing fresh or altered blood PR" ],
+          [ "PV blood loss and 20 weeks pregnant or more" ],
+          [ "Very hot" ],
+          [ "Pain radiating to the back" ],
+          [ "Severe pain" ]
+        ],
+        "yellow": [
+          [ "History of acutely vomiting blood" ],
+          [ "Black or redcurrant stools" ],
+          [ "Persistent vomiting" ],
+          [ "Possibly pregnant" ],
+          [ "Hot" ],
+          [ "Shoulder tip pain" ],
+          [ "Moderate pain" ]
+        ],
+        "green": [
+          [ "Vomiting" ],
+          [ "Recent mild pain" ],
+          [ "Recent problem" ]
+        ]
+      }
+    ],
+    "seeAlso": [ "Diarrhoea and vomiting", "Gl bleeding", "Pregnancy" ],
+    "notes": "This is a presentation defined flow diagram. Abdominal pain is a common cause of presentation of surgical emergencies. A number of general discriminators are used including Life threat and Pain. Specific discriminators are included in the ORANGE and YELLOW categories to ensure that the more severe pathologies are appropriately triaged. In particular, discriminators are included to ensure that patients with moderate and severe GI bleeding and those with signs of retroperitoneal or diaphragmatic irritation are given sufficiently high categorisation."
+  }
+}
+
+

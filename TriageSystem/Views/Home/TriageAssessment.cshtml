@@ -4,7 +4,7 @@
     ViewData["Title"] = "TriageAssessment";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/css/chosen.min.css" rel="stylesheet" />
 <h2>TriageAssessment</h2>
 
 <h4>PatientWaitingList</h4>
@@ -32,11 +32,7 @@
                 <span asp-validation-for="Condition" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Priority" class="control-label"></label>
-                <select asp-for="Priority" asp-items="Html.GetEnumSelectList<Priority>()">
-                    <option selected="selected" value="">Please select</option>
-                </select>
-                <span asp-validation-for="Priority" class="text-danger"></span>
+                @Html.DropDownListFor(model => model.Flowcharts, ViewBag.FlowchartNames as IEnumerable<SelectListItem>);
             </div>
             <div class="form-group">
                 @*<a asp-action="Edit" asp-route-id="@Model.PPS" class="btn btn-default">Edit</a>*@
@@ -54,6 +50,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chosen.jquery.min.js"></script>
 <script>
 
     var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
@@ -87,9 +84,6 @@
 
 
             }
-            //error: function (response) {
-            //    console.log("wrong");
-            //}
         });
 
         connection.invoke("SendNotification", hospitalID).catch(function (err) {
@@ -102,5 +96,6 @@
         function redirect() {
             window.location.href = '@Url.Action("Index", "Home")';
         }
-    });
+    });   
 </script>
+

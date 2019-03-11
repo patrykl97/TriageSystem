@@ -38,18 +38,19 @@
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
+
+    var refresh = @ViewData["Refresh"].ToString().ToLower();
+   
     $.ajax({
         url: "Home/ListView",
-        type: "Get",
+        type: "POST",
+        data: { "refresh": refresh },
         success: function (response) {
             $("#lists").html(response);
         }
     });
-    //var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
     var connection = new signalR.HubConnectionBuilder().withUrl('@Url.Content("~/notificationHub")').build();
 
-    //Disable send button until connection is established
-    //document.getElementById("sendButton").disabled = true;
     connection.logging = true;
     connection.start().catch(function (err) {
         return console.error(err.toString());
@@ -57,15 +58,17 @@
     console.log("connected");
 
     connection.on("ReceiveNotification", function (hospitalID) {
-        console.log("received--------------------");
-        $.ajax({
-            url: "Home/ListView",
-            type: "Get",
-            success: function (response) {
-                $("#lists").html(response);
-                console.log("success");
-            }
-        });
+        window.location.href = '@Url.Action("Index", "Home", new { refresh = true})';
     });
+
+   
+        @{ 
+            if (TempData["Error"] != null)
+            {
+                Html.RenderPartial("_Error", TempData["Error"]);
+            }
+        }
+
+
 
 </script>

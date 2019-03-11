@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,6 +15,8 @@ namespace TriageSystem.Models
         public DateTime Time_checked_in { get; set; }
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
+        [NotMapped]
+        public List<string> Flowcharts { get; set; }
 
 
         public virtual Patient Patient { get; set; }

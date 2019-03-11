@@ -15,7 +15,7 @@ namespace TriageSystem.Models
             CreateHospital(context);
             CreateStaff(context);
             CreatePatient(context);
-            CreateLists(context);
+            //CreateLists(context);
         }
 
         private static void CreateHospital(OnConfiguring context)
