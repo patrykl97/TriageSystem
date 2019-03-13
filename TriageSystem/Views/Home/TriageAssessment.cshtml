@@ -32,7 +32,8 @@
                 <span asp-validation-for="Condition" class="text-danger"></span>
             </div>
             <div class="form-group">
-                @Html.DropDownListFor(model => model.Flowcharts, ViewBag.FlowchartNames as IEnumerable<SelectListItem>);
+                @*<label asp-for="Flowcharts" class="control-label"></label>*@
+                @Html.DropDownListFor(model => model.Condition, ViewBag.FlowchartNames as IEnumerable<SelectListItem>, "Select at least one flowchart...", new { id = "Flowcharts" });
             </div>
             <div class="form-group">
                 @*<a asp-action="Edit" asp-route-id="@Model.PPS" class="btn btn-default">Edit</a>*@
@@ -48,10 +49,13 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chosen.jquery.min.js"></script>
 <script>
+    $(function () {
+        $("#dropdown").chosen();
+    });
+
 
     var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
     connection.logging = true;
@@ -66,11 +70,26 @@
 
         var hospitalID = document.getElementById("hospitalID").value;
         var patient = {};
-
+        console.log("working here----------------------------------------");
         patient.PPS = document.getElementById("PPS").value;
         patient.Condition = document.getElementById("Condition").value;
+        var flowcharts = [];
+        flowcharts.push(document.getElementById("Flowcharts"));
+        var indexes;
+        var options = document.getElementById('Flowcharts').options;
+
+        for (var i = 0; i < options.length; i++) {
+            for (var j = 0; j < flowcharts.length; j++)
+                if (options[i].value === flowcharts[j]) {
+                    options[i].selected = true;
+                    indexes.push[i];
+                    console.log(i);
+                    break;
+            }
+        }
+        //patient.Flowcharts = document.getElementById("Flowcharts").
         patient.HospitalID = parseInt(hospitalID);
-        patient.Priority = document.getElementById("Priority").value;
+        //patient.Priority = document.getElementById("Priority").value;
         console.log(patient);
         console.log(typeof (patient.HospitalID));
         $.ajax({
@@ -80,9 +99,18 @@
             url: "/Home/TriageAssessment",
             data: JSON.stringify(patient),
             success: function (response) {
-
-
-
+                console.log(response);
+                if (response != "Success") {
+                    alert(response);
+                } else {
+                    setTimeout(redirect, 100);
+                    function redirect() {
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }
+                }
+            },
+            error: function (response) {
+                alert(response);
             }
         });
 
@@ -98,4 +126,5 @@
         }
     });   
 </script>
+    }
 

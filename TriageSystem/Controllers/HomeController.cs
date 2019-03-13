@@ -51,7 +51,8 @@ namespace TriageSystem.Controllers
             var user = _userManager.GetUserAsync(User).Result;
             var patientData = new PatientCheckIn { HospitalID = user.Staff.HospitalID};
             var patientList = _context.Patients.Select(p => p.PPS).ToList();
-            var selectList = new SelectList(patientList);
+            var selectList = patientList.Select(p => new SelectListItem { Text = p, Value = p });
+            //selectList.Add(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
             ViewBag.PPS = selectList;
             return View(patientData);
         }
@@ -71,19 +72,13 @@ namespace TriageSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    //if (!PatientWaitingListExists(staff.StaffID))
-                    //{
-                    //    return NotFound();
-                    //}
-                    //else
-                    //{
                     throw;
-                    //}
                 }
-                return Json("Fail");
+                return Json("Success");
             }
-            return Json("Success");
-        
+            return Json(getErrors());
+
+
         }
 
         public IActionResult TriageAssessment()
@@ -133,18 +128,24 @@ namespace TriageSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    //if (!PatientWaitingListExists(staff.StaffID))
-                    //{
-                    //    return NotFound();
-                    //}
-                    //else
-                    //{
                         throw;
-                    //}
                 }
-                return RedirectToAction(nameof(Index));
+                return Json("Success");
             }
-            return View(patientData);
+            return Json(getErrors());
+        }
+
+        private string getErrors()
+        {
+            string errors = "";
+            foreach (var value in ModelState.Values)
+            {
+                foreach (var error in value.Errors)
+                {
+                    errors += error.ErrorMessage;
+                }
+            }
+            return errors;
         }
 
         private static DateTime GetNow()
@@ -176,10 +177,10 @@ namespace TriageSystem.Controllers
         //    return View(model);
         //}
 
-        public PartialViewResult ShowError(String sErrorMessage)
-        {
-            return PartialView("_Error");
-        }
+        //public PartialViewResult ShowError(String sErrorMessage)
+        //{
+        //    return PartialView("_Error");
+        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

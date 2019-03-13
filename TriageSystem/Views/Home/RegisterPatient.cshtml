@@ -6,9 +6,22 @@
 }
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/jquery-customselect.js"></script>
-<link href="~/js/jquery-customselect.css" rel="stylesheet" />
+<link href="~/css/chosen.min.css" rel="stylesheet" />
 
+<style>
+    .row {
+        width: 100%;
+        
+    }
+    .col-md-4 {
+        display: inline-block;
+        width: 30%;
+    }
+    .haha {
+        margin-left: 60%;
+    }
+
+</style>
 
 <h2>RegisterPatient</h2>
 
@@ -21,17 +34,21 @@
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
             <div class="form-group">
                 <label asp-for="PPS" class="control-label"></label>
-                <select asp-for="PPS" class="custom-select" asp-items="ViewBag.PPS" id="PPS"></select>
+                @Html.DropDownListFor(model => model.PPS, ViewBag.PPS as IEnumerable<SelectListItem>, "Select a PPS number...", new { id = "PPS" })
+                <span asp-validation-for="PPS" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Condition" class="control-label"></label>
-                <input asp-for="Condition" class="form-control" id="Condition"/>
+                <input asp-for="Condition" class="form-control" id="Condition" />
                 <span asp-validation-for="Condition" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input id="sendButton" type="submit" value="Create" class="btn btn-default" />
             </div>
         </form>
+    </div>
+    <div class="haha">
+        <span id="myspan"></span>
     </div>
 </div>
 
@@ -41,9 +58,44 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chosen.jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#PPS").chosen({
+                width: "100%",
+                allow_single_deselect: false
+            })
+        });
+
+
+
+        //document.getElementById("PPS").addEventListener("change", function (event) {
+        //    var pps = document.getElementById("PPS").value;
+        //    document.getElementById("myspan").textContent = pps;
+        //});
+
+
+        //document.getElementById("PPS").addEventListener("click", function (event) {
+        //    changeSpan();
+        //});
+
+        //document.getElementById("PPS").addEventListener("keydown", function (event) {
+        //    changeSpan();
+        //});
+
+        $("#PPS").on('change', function () {
+            changeSpan();
+        });
+
+        function changeSpan() {
+            var pps = document.getElementById("PPS").value;
+            document.getElementById("myspan").textContent = pps;
+            console.log("Triggered-----------");
+        }
+
+
 
     var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
     connection.logging = true;
@@ -71,13 +123,19 @@
             url: "/Home/RegisterPatient",
             data: JSON.stringify(patient),
             success: function (response) {
-
-
-
+                console.log(response);
+                if (response != "Success") {
+                    alert(response);
+                } else {
+                    setTimeout(redirect, 100);
+                    function redirect() {
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }
+                }
+            },
+            error: function (response) {
+                alert(response);
             }
-            //error: function (response) {
-            //    console.log("wrong");
-            //}
         });
 
         connection.invoke("SendNotification", hospitalID).catch(function (err) {
@@ -86,9 +144,6 @@
         });
         event.preventDefault();
 
-        setTimeout(redirect, 100)
-        function redirect() {
-            window.location.href = '@Url.Action("Index", "Home")';
-        }
     });
-</script>
+    </script>
+}
