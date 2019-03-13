@@ -81,7 +81,7 @@ namespace TriageSystem.Controllers
 
         }
 
-        public IActionResult TriageAssessment()
+        public IActionResult SelectFlowcharts()
         {
             var user = _userManager.GetUserAsync(User).Result;
             if(user.Staff.Hospital.PatientCheckInList.Count == 0)
@@ -93,46 +93,84 @@ namespace TriageSystem.Controllers
             {
                 var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
                 var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Condition = patientCheckedIn.Condition };
-                string name, path;
-                string[] filePaths = Directory.GetFiles(@"./Flowcharts");
-                List<string> flowchartNames = new List<string>();
-                for (int i = 0; i < filePaths.Length; ++i)
+                List<string> flowchartNames = GetFlowchartNames();
+                //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
+
+                var list = new List<SelectListItem>();
+                int index = 0;
+                foreach (var item in flowchartNames)
                 {
-                    path = filePaths[i];
-                    name = Path.GetFileName(path);
-                    name = name.Replace("_", " ");
-                    name = name.Replace(".json", "");
-                    flowchartNames.Add(name);
+                    list.Add(new SelectListItem { Text = item, Value = index.ToString() });
+                    index++;
                 }
-                ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
+                //ViewBag.FlowchartNames = list.AsEnumerable();
+                patientData.Flowcharts = list;
+
                 return View(patientData);
             }
 
         }
 
+        private List<string> GetFlowchartNames()
+        {
+            string name, path;
+            string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+            List<string> flowchartNames = new List<string>();
+            for (int i = 0; i < filePaths.Length; ++i)
+            {
+                path = filePaths[i];
+                name = Path.GetFileName(path);
+                name = name.Replace("_", " ");
+                name = name.Replace(".json", "");
+                flowchartNames.Add(name);
+            }
+            flowchartNames.Add("Flowchart2");
+            flowchartNames.Add("Flowchart3");
+            return flowchartNames;
+        }
+
+        public IActionResult TriageAssessment(string id, int[] flowchart)
+        {
+            id = id.Replace("_", " ");
+            var user = _userManager.GetUserAsync(User).Result;
+            var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PPS == id);
+            List<string> flowchartNames = GetFlowchartNames();
+            var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = patientData.Condition, HospitalID = patientData.HospitalID, Flowchart = flowchartNames[flowchart[0]]};
+            return View(patient);
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> TriageAssessment([FromBody] PatientWaitingList patientData)
+        //{
+
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            patientData.Time_checked_in = GetNow();
+        //            //patientData.HospitalID = HospitalID;
+        //            _context.PatientWaitingList.Add(patientData);
+        //            _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            throw;
+        //        }
+        //        return Json("Success");
+        //    }
+        //    return Json(getErrors());
+        //}
 
         [HttpPost]
-        public async Task<IActionResult> TriageAssessment([FromBody] PatientWaitingList patientData)
+        public JsonResult TriageAssessmentGenerateUrl([FromBody] string [] array)
         {
-
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    patientData.Time_checked_in = GetNow();
-                    //patientData.HospitalID = HospitalID;
-                    _context.PatientWaitingList.Add(patientData);
-                    _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                        throw;
-                }
-                return Json("Success");
-            }
-            return Json(getErrors());
+            string id = array[0].Replace(" ", "_");
+            int[] flowchart = array.Skip(1).Select(int.Parse).ToArray();
+            
+            string url = Url.Action("TriageAssessment", "Home", new { id, flowchart });
+            return Json(url);
         }
 
         private string getErrors()

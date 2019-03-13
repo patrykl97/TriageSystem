@@ -4,127 +4,28 @@
     ViewData["Title"] = "TriageAssessment";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="~/css/chosen.min.css" rel="stylesheet" />
+
 <h2>TriageAssessment</h2>
 
-<h4>PatientWaitingList</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="TriageAssessment">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" id="hospitalID" asp-for="HospitalID" />
-            <div class="form-group">
-                <label asp-for="PPS" class="control-label"></label>
-                <input asp-for="PPS" class="form-control" readonly="readonly" />
-            </div>
-            <div>
-                <label asp-for="Patient.Full_name" class="control-label">Full name</label>
-                <p>@Html.DisplayFor(model => model.Patient.Full_name)</p>
-            </div>
-            <div>
-                <label asp-for="Patient.Date_of_birth" class="control-label">Date of birth</label>
-                <p>@Html.DisplayFor(model => model.Patient.Date_of_birth)</p>
-            </div>
-            <div class="form-group">
-                <label asp-for="Condition" class="control-label"></label>
-                <input asp-for="Condition" class="form-control" />
-                <span asp-validation-for="Condition" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*<label asp-for="Flowcharts" class="control-label"></label>*@
-                @Html.DropDownListFor(model => model.Condition, ViewBag.FlowchartNames as IEnumerable<SelectListItem>, "Select at least one flowchart...", new { id = "Flowcharts" });
-            </div>
-            <div class="form-group">
-                @*<a asp-action="Edit" asp-route-id="@Model.PPS" class="btn btn-default">Edit</a>*@
-                <input id="sendButton" type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
-    </div>
-</div>
-
 <div>
+    <h4>PatientWaitingList</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Flowchart)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Condition)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Condition)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Condition)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chosen.jquery.min.js"></script>
-<script>
-    $(function () {
-        $("#dropdown").chosen();
-    });
-
-
-    var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
-    connection.logging = true;
-    //Disable send button until connection is established
-    //document.getElementById("sendButton").disabled = true;
-    connection.start().catch(function (err) {
-        return console.error(err.toString());
-    });
-
-
-    document.getElementById("sendButton").addEventListener("click", function (event) {
-
-        var hospitalID = document.getElementById("hospitalID").value;
-        var patient = {};
-        console.log("working here----------------------------------------");
-        patient.PPS = document.getElementById("PPS").value;
-        patient.Condition = document.getElementById("Condition").value;
-        var flowcharts = [];
-        flowcharts.push(document.getElementById("Flowcharts"));
-        var indexes;
-        var options = document.getElementById('Flowcharts').options;
-
-        for (var i = 0; i < options.length; i++) {
-            for (var j = 0; j < flowcharts.length; j++)
-                if (options[i].value === flowcharts[j]) {
-                    options[i].selected = true;
-                    indexes.push[i];
-                    console.log(i);
-                    break;
-            }
-        }
-        //patient.Flowcharts = document.getElementById("Flowcharts").
-        patient.HospitalID = parseInt(hospitalID);
-        //patient.Priority = document.getElementById("Priority").value;
-        console.log(patient);
-        console.log(typeof (patient.HospitalID));
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            url: "/Home/TriageAssessment",
-            data: JSON.stringify(patient),
-            success: function (response) {
-                console.log(response);
-                if (response != "Success") {
-                    alert(response);
-                } else {
-                    setTimeout(redirect, 100);
-                    function redirect() {
-                        window.location.href = '@Url.Action("Index", "Home")';
-                    }
-                }
-            },
-            error: function (response) {
-                alert(response);
-            }
-        });
-
-        connection.invoke("SendNotification", hospitalID).catch(function (err) {
-            console.log(err);
-            return console.error(err.toString());
-        });
-        event.preventDefault();
-
-        setTimeout(redirect, 100)
-        function redirect() {
-            window.location.href = '@Url.Action("Index", "Home")';
-        }
-    });   
-</script>
-    }
-

@@ -7,10 +7,10 @@ namespace TriageSystem.Models
 {
     public enum Priority
     {
-        Red,
-        Orange,
-        Yellow,
+        Blue,
         Green,
-        Blue
+        Yellow,
+        Orange,
+        Red
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,12 +13,15 @@ namespace TriageSystem.Models
         public string PPS { get; set; }
         public string Condition { get; set; }
         public Priority Priority { get; set; }
-        public DateTime Time_checked_in { get; set; }
+        public DateTime? Time_checked_in { get; set; }
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
 
         [NotMapped]
-        public string Flowcharts { get; set; }
+        public Flowchart Flowchart { get; set; }
+
+        [NotMapped]
+        public IEnumerable<SelectListItem> Flowcharts { get; set; }
 
 
         public virtual Patient Patient { get; set; }
