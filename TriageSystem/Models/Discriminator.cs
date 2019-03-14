@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace TriageSystem.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public Priority Priority { get; set; }
+        public Priority Priority{ get; set; }
+        public string PriorityString{ get; set; }
+
     }
 }

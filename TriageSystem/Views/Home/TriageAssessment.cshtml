@@ -12,20 +12,146 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Flowchart)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Condition)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Condition)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Condition)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Flowchart.Discriminators.First().Name)
+        </dt>
+        <dd>
+            <snap id="name"></snap>
+            @*@Html.DisplayFor(d.Name);*@
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Flowchart.Discriminators.First().Description)
+        </dt>
+        <dd>
+            <span id="description"></span>
+            @*@Html.DisplayFor(d.Name);*@
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Flowchart.Discriminators.First().Priority)
+        </dt>
+        <dd>
+            <span id="priority"></span>
+            @*@Html.DisplayFor(d.Name);*@
+        </dd>
+
     </dl>
+    <dl class="dl-horizontal">
+        <dt>
+            <input type="button" value="Yes" id="yes" class="btn btn-default" />
+        </dt>
+        <dd>
+            <input type="button" value="No" id="no" class="btn btn-default" />
+        </dd>
+    </dl>
+
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@*<script src="~/lib/jquery/dist/browser/jquery.js"></script>*@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+
+<script>
+    var size = 0;
+    var counter = 0;
+    var json = @Html.Raw(Json.Serialize(@Model.Flowchart.Discriminators));
+    var currentPriority = "";
+    var hospitalID = '@Model.HospitalID';
+
+    $(document).ready(function () {
+        Object.keys(json).forEach(function (key) {
+            size++;
+        });
+            setValues();
+    });
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
+    connection.logging = true;
+
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+
+
+    document.getElementById("yes").addEventListener("click", function (event) {
+        postData();
+
+    });
+
+    document.getElementById("no").addEventListener("click", function (event) {
+        if (counter >= size - 1) {
+            currentPriority = "Blue";
+            postData();
+        } else {
+            counter++;
+            setValues();
+        }
+    });
+
+    function setValues() {
+        var discriminator = json[counter];
+        for (var item in discriminator) {
+            switch (item) {
+                case "name":
+                    document.getElementById("name").textContent = discriminator[item];
+                    break;
+                case "description":
+                    if (discriminator[item] != null) {
+                        document.getElementById("description").textContent = discriminator[item];
+                    }
+                    break;
+                case "priorityString":
+                    currentPriority = discriminator[item];
+                    document.getElementById("priority").textContent = currentPriority;
+                    break;
+            }
+        }
+    }
+
+    function postData() {
+        var patient = {};
+        patient.PPS = '@Model.PPS.Replace(" ", "_")';
+        patient.Condition = '@Model.Condition';
+        patient.PriorityString = currentPriority;
+        var array = [];
+        array.push(patient);
+        array.push(currentPriority);
+        console.log(array);
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            url: "/Home/GivePriority",
+            data: JSON.stringify(patient),
+            success: function (response) {
+                console.log(response);
+                if (response != "Error") {
+                    connection.invoke("SendNotification", hospitalID).catch(function (err) {
+                        console.log(err);
+                        return console.error(err.toString());
+                    });
+                    event.preventDefault();
+                    setTimeout(redirect, 100);
+                    function redirect() {
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }
+                } else {
+                    alert(response);
+                }
+            },
+            error: function (response) {
+                alert(response + " error");
+            }
+        });
+    }
+
+</script>

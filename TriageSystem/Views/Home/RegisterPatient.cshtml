@@ -11,16 +11,16 @@
 <style>
     .row {
         width: 100%;
-        
     }
+
     .col-md-4 {
         display: inline-block;
         width: 30%;
     }
+
     .haha {
         margin-left: 60%;
     }
-
 </style>
 
 <h2>RegisterPatient</h2>
@@ -69,22 +69,6 @@
             })
         });
 
-
-
-        //document.getElementById("PPS").addEventListener("change", function (event) {
-        //    var pps = document.getElementById("PPS").value;
-        //    document.getElementById("myspan").textContent = pps;
-        //});
-
-
-        //document.getElementById("PPS").addEventListener("click", function (event) {
-        //    changeSpan();
-        //});
-
-        //document.getElementById("PPS").addEventListener("keydown", function (event) {
-        //    changeSpan();
-        //});
-
         $("#PPS").on('change', function () {
             changeSpan();
         });
@@ -99,8 +83,7 @@
 
     var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
     connection.logging = true;
-    //Disable send button until connection is established
-    //document.getElementById("sendButton").disabled = true;
+
     connection.start().catch(function (err) {
         return console.error(err.toString());
     });

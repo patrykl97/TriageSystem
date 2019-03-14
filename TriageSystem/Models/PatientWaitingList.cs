@@ -8,11 +8,29 @@ namespace TriageSystem.Models
 {
     public class PatientWaitingList
     {
+       
+        private string _PriorityString;
+        private Priority _Priority;
+
         public int Id { get; set; }
         [ForeignKey("Patient")]
         public string PPS { get; set; }
         public string Condition { get; set; }
-        public Priority Priority { get; set; }
+        public Priority Priority{ get => _Priority; set => _Priority = value; }
+        [NotMapped]
+        public string PriorityString
+        {
+            get
+            {
+                return _PriorityString;
+            }
+            set
+            {
+                _PriorityString = value;
+                Enum.TryParse(value, out _Priority);
+            }
+
+        }
         public DateTime? Time_checked_in { get; set; }
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
@@ -26,6 +44,7 @@ namespace TriageSystem.Models
 
         public virtual Patient Patient { get; set; }
         public virtual Hospital Hospital { get; set; }
-
+        
+     
     }
 }

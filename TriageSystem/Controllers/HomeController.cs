@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Models;
+using TriageSystem.ViewModels;
 
 namespace TriageSystem.Controllers
 {
@@ -129,47 +131,49 @@ namespace TriageSystem.Controllers
             return flowchartNames;
         }
 
-        public IActionResult TriageAssessment(string id, int[] flowchart)
+        public IActionResult TriageAssessment(string pps, int[] flowchart)
         {
-            id = id.Replace("_", " ");
+            pps = pps.Replace("_", " ");
             var user = _userManager.GetUserAsync(User).Result;
-            var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PPS == id);
-            List<string> flowchartNames = GetFlowchartNames();
-            var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = patientData.Condition, HospitalID = patientData.HospitalID, Flowchart = flowchartNames[flowchart[0]]};
+            var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PPS == pps);
+            var flowcharts = CreateFlowcharts();
+            var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = patientData.Condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
             return View(patient);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> TriageAssessment([FromBody] PatientWaitingList patientData)
-        //{
+        [HttpPost]
+        public async Task<IActionResult> GivePriority([FromBody] PatientWaitingList patientData) 
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    patientData.PPS = patientData.PPS.Replace("_", " ");
+                    var user = _userManager.GetUserAsync(User).Result;
+                    var patient = _context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First();
+                    patientData.HospitalID = patient.HospitalID;
+                    patientData.Time_checked_in = GetNow();
+                    _context.PatientWaitingList.Add(patientData);
+                    _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return Json("Success");
+            }
+            return Json(getErrors());
+        }
 
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            patientData.Time_checked_in = GetNow();
-        //            //patientData.HospitalID = HospitalID;
-        //            _context.PatientWaitingList.Add(patientData);
-        //            _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            throw;
-        //        }
-        //        return Json("Success");
-        //    }
-        //    return Json(getErrors());
-        //}
 
         [HttpPost]
         public JsonResult TriageAssessmentGenerateUrl([FromBody] string [] array)
         {
-            string id = array[0].Replace(" ", "_");
+            string pps = array[0].Replace(" ", "_");
             int[] flowchart = array.Skip(1).Select(int.Parse).ToArray();
             
-            string url = Url.Action("TriageAssessment", "Home", new { id, flowchart });
+            string url = Url.Action("TriageAssessment", "Home", new { pps, flowchart });
             return Json(url);
         }
 
@@ -210,15 +214,37 @@ namespace TriageSystem.Controllers
             return View();
         }
 
-        //public IActionResult Register(RegisterModel model)
-        //{
-        //    return View(model);
-        //}
 
         //public PartialViewResult ShowError(String sErrorMessage)
         //{
         //    return PartialView("_Error");
         //}
+
+        private List<Flowchart> CreateFlowcharts()
+        {
+            List<Flowchart> flowcharts = new List<Flowchart>(); //GetFlowchartNames();
+            var d = new List<Discriminator>();
+            d.Add(new Discriminator { Name = "Airway compromise", Description = "", PriorityString = Priority.Red.ToString(), Priority = Priority.Red });
+            d.Add(new Discriminator { Name = "Inadequate breathing", Description = "", PriorityString = Priority.Red.ToString(), Priority = Priority.Red });
+            d.Add(new Discriminator { Name = "Shock", Description = "", PriorityString = Priority.Red.ToString(), Priority = Priority.Red });
+            d.Add(new Discriminator { Name = "Vomiting blood", Description = "Vomited blood may be fresh (bright or dark red) or coffee ground in appearance", PriorityString = Priority.Orange.ToString(), Priority = Priority.Orange });
+            d.Add(new Discriminator { Name = "Persistent vomiting", Description = "Vomiting that is continuous or that occurs without any respite between episodes", PriorityString = Priority.Yellow.ToString(), Priority = Priority.Yellow });
+            d.Add(new Discriminator { Name = "Vomiting", Description = "Any emesis fulfils this criterion", PriorityString = Priority.Green.ToString(), Priority = Priority.Green });
+            var list = new List<string>();
+            list.Add("Diarrhoea and vomitin");         
+            list.Add("Gl bleeding");
+            list.Add("Pregnancy");
+            var notes = "This is a presentation defined flow diagram. Abdominal pain is a common cause of presentation of surgical emergencies. " +
+                "A number of general discriminators are used including Life threat and Pain. Specific discriminators are included in the ORANGE and YELLOW categories to ensure that the more severe pathologies are appropriately triaged. " +
+                "In particular, discriminators are included to ensure that patients with moderate and severe GI bleeding and those with signs of retroperitoneal or diaphragmatic irritation are given sufficiently high categorisation.";
+            var flowchart = new Flowchart { Discriminators = d, SeeAlso = list, Notes = notes};
+            //var x = new JavaScriptSerializer().Serialize();
+            string[] x = new string[4];
+            string jsonObject = JsonConvert.SerializeObject(x);
+            //flowchart.Json = jsonObject;
+            flowcharts.Add(flowchart);
+            return flowcharts;
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
