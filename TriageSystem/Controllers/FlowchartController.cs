@@ -69,12 +69,21 @@ namespace TriageSystem.Controllers
                     }
                     discriminators.Add(new Discriminator { Name = d, Priority = c, PriorityString = c.ToString()});
                 }
+                counter++;
             }
+
+            //foreach (var d in discriminators)
+            //{
+            //    d.InitilizeArray();
+            //}
 
             AddDescriptionViewModel model = new AddDescriptionViewModel()
             {
                 Discriminators = discriminators
             };
+
+
+
 
             return View(model);
         }

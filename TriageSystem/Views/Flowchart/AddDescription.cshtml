@@ -3,7 +3,6 @@
     ViewData["Title"] = "AddDesciption";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int i = 0;
-    int j = 0;
 }
 
 <h2>AddDesciption</h2>
@@ -11,15 +10,15 @@
 
     <form asp-action="AddDescription">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @*@foreach (var item in Model.Discriminators)
+        @foreach (var d in Model.Discriminators)
         {
-            foreach (var x in item)
-            {
-                <input asp-for="item.Description" />
-            }
-
+        <div>
+            @Html.DisplayFor(model => model.Discriminators[i].Name);
+            <input asp-for="Discriminators[i].Description" />
+            @Html.DisplayFor(model => model.Discriminators[i].PriorityString);
+        </div>
             i++;
-        }*@
+        }
     </form>
 </div>
 

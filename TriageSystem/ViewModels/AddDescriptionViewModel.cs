@@ -7,7 +7,7 @@ using TriageSystem.Models;
 
 namespace TriageSystem.ViewModels
 {
-    public class AddDescriptionViewModel : IEnumerable<Discriminator>
+    public class AddDescriptionViewModel
     {
         public List<string> DiscriminatorsString { get; set; }
 
@@ -17,17 +17,5 @@ namespace TriageSystem.ViewModels
 
         public List<Discriminator> Discriminators { get; set; }
 
-        public IEnumerator<Discriminator> GetEnumerator()
-        {
-            foreach (Discriminator discriminator in Discriminators)
-            {
-                yield return discriminator;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable<Discriminator>)Discriminators).GetEnumerator();
-        }
     }
 }
