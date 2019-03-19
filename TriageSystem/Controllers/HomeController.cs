@@ -184,7 +184,7 @@ namespace TriageSystem.Controllers
             {
                 foreach (var error in value.Errors)
                 {
-                    errors += error.ErrorMessage;
+                    errors += error.ErrorMessage + " ";
                 }
             }
             return errors;

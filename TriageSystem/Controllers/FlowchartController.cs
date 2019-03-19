@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -36,60 +37,94 @@ namespace TriageSystem.Controllers
         [HttpPost]
         public IActionResult AddDescription(CreateFlowchartViewModel flowchart)
         {
-            List<List<String>> list = new List<List<string>>();
-            list.Add(flowchart.Red.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
-            list.Add(flowchart.Orange.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
-            list.Add(flowchart.Yellow.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
-            list.Add(flowchart.Green.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
-
-            List<Discriminator> discriminators = new List<Discriminator>();
-
-            int counter = 0;
-            foreach(var colour in list)
+            if (ModelState.IsValid)
             {
-                foreach(var d in colour)
+                List<List<String>> list = new List<List<string>>();
+                list.Add(flowchart.Red.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                list.Add(flowchart.Orange.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                list.Add(flowchart.Yellow.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                list.Add(flowchart.Green.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList());
+
+                List<Discriminator> discriminators = new List<Discriminator>();
+
+                int counter = 0;
+                foreach (var colour in list)
                 {
-                    Priority c;
-                    switch(counter)
+                    foreach (var d in colour)
                     {
-                        case 0:
-                            c = Priority.Red;
-                            break;
-                        case 1:
-                            c = Priority.Orange;
-                            break;
-                        case 2:
-                            c = Priority.Yellow;
-                            break;
-                        case 3:
-                            c = Priority.Green;
-                            break;
-                        default:
-                            c = Priority.Blue;
-                            break;
+                        Priority c;
+                        switch (counter)
+                        {
+                            case 0:
+                                c = Priority.Red;
+                                break;
+                            case 1:
+                                c = Priority.Orange;
+                                break;
+                            case 2:
+                                c = Priority.Yellow;
+                                break;
+                            case 3:
+                                c = Priority.Green;
+                                break;
+                            default:
+                                c = Priority.Blue;
+                                break;
+                        }
+                        discriminators.Add(new Discriminator { Name = d, Priority = c, PriorityString = c.ToString() });
                     }
-                    discriminators.Add(new Discriminator { Name = d, Priority = c, PriorityString = c.ToString()});
+                    counter++;
                 }
-                counter++;
+
+                AddDescriptionViewModel model = new AddDescriptionViewModel()
+                {
+                    Name = flowchart.Name,
+                    Discriminators = discriminators
+                };
+                model.SeeAlso = flowchart.SeeAlso.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                model.Notes = flowchart.Notes;
+
+
+                return View(model);
             }
+            TempData["Error"] = getErrors();
+            return RedirectToAction("Index", "Home");
 
-            AddDescriptionViewModel model = new AddDescriptionViewModel()
-            {
-                Discriminators = discriminators
-            };
-
-            return View(model);
         }
         
         [HttpPost]
         public void AddFlowchart(AddDescriptionViewModel model)
         {
-            string x = JsonConvert.SerializeObject(model);
-            var s = x.Replace("\\\"", "\"");
-            var y = 0;
-            System.Diagnostics.Debug.WriteLine(s);
-
-
+            var flowchart = ViewModelToFlowchart(model);
+            string x = JsonConvert.SerializeObject(flowchart);
+            string docPath = @"./Flowcharts";
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, flowchart.Name + ".json"))) 
+            {
+                outputFile.WriteLine(x);
+            }
+            var m = JsonConvert.DeserializeObject<Flowchart>(x);
+            var safafads = 0;       
+     
         }
+
+        private Flowchart ViewModelToFlowchart(AddDescriptionViewModel model)
+        {
+            var flowchart = new Flowchart { Name = model.Name, Discriminators = model.Discriminators, SeeAlso = model.SeeAlso, Notes = model.Notes };
+            return flowchart;
+        }
+
+        private string getErrors()
+        {
+            string errors = "";
+            foreach (var value in ModelState.Values)
+            {
+                foreach (var error in value.Errors)
+                {
+                    errors += error.ErrorMessage + " ";
+                }
+            }
+            return errors;
+        }
+
     }
 }

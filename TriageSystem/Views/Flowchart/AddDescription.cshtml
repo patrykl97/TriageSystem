@@ -10,15 +10,18 @@
 
     <form asp-action="AddFlowchart">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" id="SeeAlso" asp-for="SeeAlso" />
+        <input type="hidden" id="Name" asp-for="Name" />
+        <input type="hidden" id="Notes" asp-for="Notes" />
         @foreach (var d in Model.Discriminators)
         {
-        <div>
-            @Html.DisplayFor(model => model.Discriminators[i].Name);
-            <input type="hidden" id="Name" asp-for="Discriminators[i].Name" />
-            <input asp-for="Discriminators[i].Description" />
-            @Html.DisplayFor(model => model.Discriminators[i].PriorityString);
-            <input type="hidden" id="Name" asp-for="Discriminators[i].Priority" />
-        </div>
+            <div>
+                @Html.DisplayFor(model => model.Discriminators[i].Name);
+                <input type="hidden" id="Name" asp-for="Discriminators[i].Name" />
+                <input asp-for="Discriminators[i].Description" />
+                @Html.DisplayFor(model => model.Discriminators[i].PriorityString);
+                <input type="hidden" id="Name" asp-for="Discriminators[i].Priority" />
+            </div>
             i++;
         }
         <div class="form-group">
