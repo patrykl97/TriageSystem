@@ -9,9 +9,9 @@ namespace TriageSystem.ViewModels
 {
     public class AddDescriptionViewModel
     {
-        public List<string> DiscriminatorsString { get; set; }
+        //public List<string> DiscriminatorsString { get; set; }
 
-        public List<string> Descriptions { get; set; } 
+        //public List<string> Descriptions { get; set; } 
         public List<string> SeeAlso { get; set; }
         public string Notes { get; set; }
 

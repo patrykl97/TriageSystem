@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
@@ -72,20 +73,23 @@ namespace TriageSystem.Controllers
                 counter++;
             }
 
-            //foreach (var d in discriminators)
-            //{
-            //    d.InitilizeArray();
-            //}
-
             AddDescriptionViewModel model = new AddDescriptionViewModel()
             {
                 Discriminators = discriminators
             };
 
-
-
-
             return View(model);
+        }
+        
+        [HttpPost]
+        public void AddFlowchart(AddDescriptionViewModel model)
+        {
+            string x = JsonConvert.SerializeObject(model);
+            var s = x.Replace("\\\"", "\"");
+            var y = 0;
+            System.Diagnostics.Debug.WriteLine(s);
+
+
         }
     }
 }
