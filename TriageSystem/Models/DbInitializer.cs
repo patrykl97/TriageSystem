@@ -79,15 +79,15 @@ namespace TriageSystem.Models
             }
 
             DateTime myDate = DateTime.ParseExact("2019-02-20 19:14:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            var checkIn = new PatientCheckIn { PPS = "390849 F", HospitalID = 1, Condition = "Broken leg", Time_checked_in = myDate };
+            var checkIn = new PatientCheckIn { PPS = "390849 F", HospitalID = 1,  Time_checked_in = myDate };
             context.PatientCheckIns.Add(checkIn);
 
             myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            checkIn = new PatientCheckIn { PPS = "310149 F", HospitalID = 1, Condition = "Headache", Time_checked_in = myDate };
+            checkIn = new PatientCheckIn { PPS = "310149 F", HospitalID = 1, Time_checked_in = myDate };
             context.PatientCheckIns.Add(checkIn);
 
             myDate = DateTime.ParseExact("2019-02-20 19:19:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            checkIn = new PatientCheckIn { PPS = "344849 F", HospitalID = 1, Condition = "Vomiting", Time_checked_in = myDate };
+            checkIn = new PatientCheckIn { PPS = "344849 F", HospitalID = 1, Time_checked_in = myDate };
             context.PatientCheckIns.Add(checkIn);
 
             myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);

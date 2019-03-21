@@ -95,7 +95,7 @@ namespace TriageSystem.Controllers
             else
             {
                 var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Condition = patientCheckedIn.Condition };
+                var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
                 List<Flowchart> flowcharts = GetFlowcharts();
                 //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
@@ -188,13 +188,13 @@ namespace TriageSystem.Controllers
             return flowcharts;
         }
 
-        public IActionResult TriageAssessment(string pps, int[] flowchart)
+        public IActionResult TriageAssessment(string pps, string condition, int[] flowchart)
         {
             pps = pps.Replace("_", " ");
             var user = _userManager.GetUserAsync(User).Result;
             var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PPS == pps);
             var flowcharts = GetSelectedFlowcharts(flowchart.ToList());
-            var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = patientData.Condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
+            var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
             return View(patient);
         }
 

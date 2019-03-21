@@ -37,11 +37,11 @@
                 @Html.DropDownListFor(model => model.PPS, ViewBag.PPS as IEnumerable<SelectListItem>, "Select a PPS number...", new { id = "PPS" })
                 <span asp-validation-for="PPS" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="Condition" class="control-label"></label>
                 <input asp-for="Condition" class="form-control" id="Condition" />
                 <span asp-validation-for="Condition" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <input id="sendButton" type="submit" value="Create" class="btn btn-default" />
             </div>
@@ -95,7 +95,6 @@
         var patient = {};
 
         patient.PPS = document.getElementById("PPS").value;
-        patient.Condition = document.getElementById("Condition").value;
         patient.HospitalID = parseInt(hospitalID);
         console.log(patient);
         console.log(typeof (patient.HospitalID));
