@@ -52,7 +52,7 @@ namespace TriageSystem.Controllers
         public IActionResult RegisterPatient()
         {
             var user = _userManager.GetUserAsync(User).Result;
-            var patientData = new PatientCheckIn { HospitalID = user.Staff.HospitalID};
+            var patientData = new PatientCheckInViewModel { HospitalID = user.Staff.HospitalID};
             var patientList = _context.Patients.Select(p => p.PPS).ToList();
             var selectList = patientList.Select(p => new SelectListItem { Text = p, Value = p });
             //selectList.Add(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
