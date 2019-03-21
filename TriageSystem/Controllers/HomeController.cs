@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -95,14 +96,14 @@ namespace TriageSystem.Controllers
             {
                 var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
                 var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Condition = patientCheckedIn.Condition };
-                List<string> flowchartNames = GetFlowchartNames();
+                List<Flowchart> flowcharts = GetFlowcharts();
                 //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
                 var list = new List<SelectListItem>();
                 int index = 0;
-                foreach (var item in flowchartNames)
+                foreach (var item in flowcharts)
                 {
-                    list.Add(new SelectListItem { Text = item, Value = index.ToString() });
+                    list.Add(new SelectListItem { Text = item.Name, Value = index.ToString() });
                     index++;
                 }
                 //ViewBag.FlowchartNames = list.AsEnumerable();
@@ -113,22 +114,78 @@ namespace TriageSystem.Controllers
 
         }
 
-        private List<string> GetFlowchartNames()
+        //private List<string> GetFlowchartNames()
+        //{
+        //    string name, path;
+        //    string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+        //    List<string> flowchartNames = new List<string>();
+        //    for (int i = 0; i < filePaths.Length; ++i)
+        //    {
+        //        path = filePaths[i];
+        //        name = Path.GetFileName(path);
+        //        name = name.Replace("_", " ");
+        //        name = name.Replace(".json", "");
+        //        flowchartNames.Add(name);
+        //    }
+        //    return flowchartNames;
+        //}
+
+        private List<Flowchart> GetFlowcharts()
         {
             string name, path;
             string[] filePaths = Directory.GetFiles(@"./Flowcharts");
-            List<string> flowchartNames = new List<string>();
+            List<Flowchart> flowcharts = new List<Flowchart>();
             for (int i = 0; i < filePaths.Length; ++i)
             {
                 path = filePaths[i];
                 name = Path.GetFileName(path);
                 name = name.Replace("_", " ");
                 name = name.Replace(".json", "");
-                flowchartNames.Add(name);
+                
+                string text;
+                var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                {
+                    text = streamReader.ReadToEnd();
+                }
+                var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
+                flowchart.Name = name;
+                var d = new Discriminator { Priority = Priority.Green };
+                flowcharts.Add(flowchart);
             }
-            flowchartNames.Add("Flowchart2");
-            flowchartNames.Add("Flowchart3");
-            return flowchartNames;
+            return flowcharts;
+        }
+
+        private List<Flowchart> GetSelectedFlowcharts(List<int> indexes)
+        {
+            string name, path;
+            string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+            List<Flowchart> flowcharts = new List<Flowchart>();
+            for (int i = 0; i < filePaths.Length; ++i)
+            {
+                for(int index = 0; index < indexes.Count; index++)
+                {
+                    if(i == indexes[index])
+                    {
+                        path = filePaths[i];
+                        name = Path.GetFileName(path);
+                        name = name.Replace("_", " ");
+                        name = name.Replace(".json", "");
+
+                        string text;
+                        var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                        using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                        {
+                            text = streamReader.ReadToEnd();
+                        }
+                        var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
+                        flowchart.Name = name;
+                        flowcharts.Add(flowchart);
+                        indexes.Remove(index);
+                    }
+                }
+            }
+            return flowcharts;
         }
 
         public IActionResult TriageAssessment(string pps, int[] flowchart)
@@ -136,7 +193,7 @@ namespace TriageSystem.Controllers
             pps = pps.Replace("_", " ");
             var user = _userManager.GetUserAsync(User).Result;
             var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PPS == pps);
-            var flowcharts = CreateFlowcharts();
+            var flowcharts = GetSelectedFlowcharts(flowchart.ToList());
             var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = patientData.Condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
             return View(patient);
         }

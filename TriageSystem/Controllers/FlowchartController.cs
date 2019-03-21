@@ -81,7 +81,8 @@ namespace TriageSystem.Controllers
                     Name = flowchart.Name,
                     Discriminators = discriminators
                 };
-                model.SeeAlso = flowchart.SeeAlso.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                var x = flowchart.SeeAlso.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                model.SeeAlso = x;
                 model.Notes = flowchart.Notes;
 
 
@@ -98,7 +99,9 @@ namespace TriageSystem.Controllers
             var flowchart = ViewModelToFlowchart(model);
             string x = JsonConvert.SerializeObject(flowchart);
             string docPath = @"./Flowcharts";
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, flowchart.Name + ".json"))) 
+            string fileName = flowchart.Name.Replace(" ", "_");
+            fileName = fileName + ".json";
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, fileName))) 
             {
                 outputFile.WriteLine(x);
             }

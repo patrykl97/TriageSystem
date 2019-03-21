@@ -107,6 +107,8 @@
                 case "description":
                     if (discriminator[item] != null) {
                         document.getElementById("description").textContent = discriminator[item];
+                    } else {
+                        document.getElementById("description").textContent = "";
                     }
                     break;
                 case "priorityString":
@@ -139,7 +141,7 @@
                         console.log(err);
                         return console.error(err.toString());
                     });
-                    event.preventDefault();
+                    //event.preventDefault(); // read about this function and the importance of it
                     setTimeout(redirect, 100);
                     function redirect() {
                         window.location.href = '@Url.Action("Index", "Home")';

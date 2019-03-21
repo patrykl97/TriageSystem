@@ -67,7 +67,7 @@
     //});
 
 
-    document.getElementById("sendButton").addEventListener("click", function (event) {
+    @*document.getElementById("sendButton").addEventListener("click", function (event) {
 
         var hospitalID = document.getElementById("hospitalID").value;
         var patient = {};
@@ -82,7 +82,7 @@
         //patient.Priority = document.getElementById("Priority").value;
         console.log(patient);
         console.log(typeof (patient.HospitalID));
-        var url = '@Url.Action("TriageAssessment2", "Home", new { id = "ID"})'.replace("ID", parseInt(id));;
+        @*var url = '@Url.Action("TriageAssessment2", "Home", new { id = "ID"})'.replace("ID", parseInt(id));;
 
 
         var array = [];
@@ -91,16 +91,16 @@
             array.push(flowcharts[i]);
         }
         console.log(array);
-         $.ajax({
+        $.ajax({
             type: "POST",
             dataType: "json",
             contentType: "application/json; charset=utf-8",
-            url: "/Home/TriageAssessmentGenerateUrl",
+            url: '@Url.Action("TriageAssessmentGenerateUrl", "Home")',
             data: JSON.stringify(array),
             success: function (response) {
                 console.log(response);
                 if (response != "Error") {
-                    window.location.href = response;
+                    //window.location.href = response;
                 } else {
                     alert(response);
                 }
@@ -108,46 +108,7 @@
             error: function (response) {
                 alert(response + " error");
             }
-        });
-
-
-
-        @*var url = @Url.Action("Details", "Artists",new { NestId = "+Id+"});*@
-        //console.log(url);
-        //window.location.href = url; 
-        @*$.ajax({
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            url: "/Home/TriageAssessment",
-            data: JSON.stringify(patient),
-            success: function (response) {
-                console.log(response);
-                if (response != "Success") {
-                    alert(response);
-                } else {
-                    setTimeout(redirect, 100);
-                    function redirect() {
-                        window.location.href = '@Url.Action("Index", "Home")';
-                    }
-                }
-            },
-            error: function (response) {
-                alert(response);
-            }
         });*@
-
-        //connection.invoke("SendNotification", hospitalID).catch(function (err) {
-        //    console.log(err);
-        //    return console.error(err.toString());
-        //});
-        //event.preventDefault();
-
-        @*setTimeout(redirect, 100)
-        function redirect() {
-            window.location.href = '@Url.Action("Index", "Home")';
-        }*@
-    });   
 </script>
     
     }
