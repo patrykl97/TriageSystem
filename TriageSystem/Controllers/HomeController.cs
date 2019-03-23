@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TriageSystem.Areas.Identity.Data;
+using TriageSystem.Hubs;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
 
@@ -22,12 +24,16 @@ namespace TriageSystem.Controllers
     {
         UserManager<TriageSystemUser> _userManager;
         private readonly OnConfiguring _context;
+        private IHubContext<NotificationHub> HubContext { get; set; }
 
-        public HomeController(UserManager<TriageSystemUser> userManager, OnConfiguring context)
+        public HomeController(UserManager<TriageSystemUser> userManager, OnConfiguring context, IHubContext<NotificationHub> hubContext)
         {
             _userManager = userManager;
             _context = context;
+            HubContext = hubContext;
         }
+
+
 
         public ActionResult Index(bool refresh = false)
         {
@@ -70,23 +76,35 @@ namespace TriageSystem.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> RegisterPatient([FromBody] PatientCheckIn patientData)
+        public async Task<IActionResult> RegisterPatient( PatientCheckInViewModel patientData)
         {
             if (ModelState.IsValid)
             {
+                
                 try
                 {
                     patientData.Time_checked_in = GetNow();
-                    _context.PatientCheckIns.Add(patientData);
-                    await _context.SaveChangesAsync();
+                    if(patientData.PPS != "" || patientData.PPS != null)
+                    {
+                        if (patientData.PPS.Contains(", "))
+                        {
+                            var array = patientData.PPS.Split(", ");
+                            patientData.PPS = array[0];
+                        }
+                        _context.Patients.Where(p => p.PPS == patientData.PPS);
+                    }
+                    
+                    //_context.PatientCheckIns.Add(patientData);
+                    //await _context.SaveChangesAsync();
+                    await this.HubContext.Clients.All.SendAsync("SendNotification", patientData.HospitalID.ToString());
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
-                return Json("Success");
+                return null; // Json("Success");
             }
-            return Json(getErrors());
+            return null; // Json(getErrors());
 
 
         }

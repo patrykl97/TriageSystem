@@ -20,7 +20,6 @@ namespace TriageSystem.ViewModels
         public string Date_of_birth { get; set; }
         [Required]
         public string Nationality { get; set; }
-        [Required]
         public string Address { get; set; }
 
         public string Infections { get; set; }

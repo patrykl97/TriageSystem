@@ -7,6 +7,7 @@ namespace TriageSystem.Models
     public class Patient
     {
         [Key] 
+        public int Id { get; set; }
         public string PPS { get; set; }
         public string Full_name { get; set; }
         public string Gender { get; set; }

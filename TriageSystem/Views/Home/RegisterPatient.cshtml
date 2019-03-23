@@ -32,8 +32,9 @@
 <h4>PatientCheckIn</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="RegisterPatient" id="form">
+    <form asp-action="RegisterPatient" id="form">
+
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
             <div class="form-group">
@@ -61,38 +62,38 @@
             <div class="form-group">
                 <input id="sendButton" type="submit" value="Create" class="btn btn-default" />
             </div>
-        </form>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="Full_name" class="control-label"></label>
-            <input id="Name" asp-for="Full_name" />
-            <span asp-validation-for="Full_name" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="Gender" class="control-label"></label>
-            <input id="Gender" asp-for="Gender" />
-            <span asp-validation-for="Gender" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Date_of_birth" class="control-label"></label>
-            <input id="" asp-for="Date_of_birth" />
-            <span asp-validation-for="Date_of_birth" class="text-danger"></span>
-        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Full_name" class="control-label"></label>
+                <input id="Name" asp-for="Full_name" />
+                <span asp-validation-for="Full_name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <input id="Gender" asp-for="Gender" />
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date_of_birth" class="control-label"></label>
+                <input id="DOB" asp-for="Date_of_birth" />
+                <span asp-validation-for="Date_of_birth" class="text-danger"></span>
+            </div>
 
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="Nationality" class="control-label"></label>
-            <input id="Nationality" asp-for="Nationality" />
-            <span asp-validation-for="Nationality" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="Address" class="control-label"></label>
-            <input id="Address" asp-for="Address" />
-            <span asp-validation-for="Address" class="text-danger"></span>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Nationality" class="control-label"></label>
+                <input id="Nationality" asp-for="Nationality" />
+                <span asp-validation-for="Nationality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input id="Address" asp-for="Address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 <div>
     <a asp-action="Index">Back to List</a>
@@ -107,7 +108,7 @@
 
         @*<script src="~/js/chosen.jquery.min.js"></script>*@
         <script>
-        //$(function () {
+            //$(function () {
             //$("#PPS").chosen({
             //    //create_option_text: 'Create category',
             //    width: "100%",
@@ -118,85 +119,63 @@
 
             //$("#PPS").select2();
 
-        //});
+            //});
 
-        $(document).ready(function () {
-            $('.PPS').select2(
-                {
-                    tags: true
-                });
-        });
+            $(document).ready(function () {
+                $('.PPS').select2(
+                    {
+                        tags: true
+                    });
+            });
 
 
-        $(".PPS").on('change', function () {
-            //changeSpan();
-            var p = document.getElementById("PPS").value.toString();
-            var array = p.split(", ");
-            var patient = {};
-            patient.PPS = array[0];
-            patient.Full_name = array[1];
-            patient.Gender = array[2];
-            patient.Date_of_birth = array[3];
-            patient.Nationality = array[4];
-            patient.Address = array[5];
-            document.getElementById("Name").value = patient.Full_name;
-        });
+            $(".PPS").on('change', function () {
+                //changeSpan();
+                var p = document.getElementById("PPS").value.toString();
+                var array = p.split(", ");
+                var patient = {};
+                patient.PPS = array[0];
+                patient.Full_name = array[1];
+                patient.Gender = array[2];
+                patient.Date_of_birth = array[3];
+                patient.Nationality = array[4];
+                patient.Address = array[5];
+                if (($("[id*='PPS'] :selected").text() == document.getElementById("PPS").value.toString()) || ($("[id*='PPS'] :selected").text() == "Please Select...")) {
+                    document.getElementById("Name").value = "";
+                    document.getElementById("Gender").value = "";
+                    document.getElementById("DOB").value = "";
+                    document.getElementById("Nationality").value = "";
+                    document.getElementById("Address").value = "";
+                }
+                else {
+                    $("[id*='PPS'] :selected") = patient.PPS;
+                    //document.getElementById("PPS").value = patient.PPS;
+                    document.getElementById("Name").value = patient.Full_name;
+                    document.getElementById("Gender").value = patient.Gender
+                    document.getElementById("DOB").value = patient.Date_of_birth;
+                    document.getElementById("Nationality").value = patient.Nationality;
+                    document.getElementById("Address").value = patient.Address;
+                }
 
-        function changeSpan() {
-            var pps = document.getElementById("PPS").value;
-            document.getElementById("myspan").textContent = pps;
-            console.log("Triggered-----------");
+            });
+
+            function changeSpan() {
+                var pps = document.getElementById("PPS").value;
+                document.getElementById("myspan").textContent = pps;
+                console.log("Triggered-----------");
+            }
+
+
+
+            var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
+            connection.logging = true;
+
+            connection.start().catch(function (err) {
+                return console.error(err.toString());
+            });
+
+        </script>
         }
 
-
-
-    var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
-    connection.logging = true;
-
-    connection.start().catch(function (err) {
-        return console.error(err.toString());
-    });
-
-
-    document.getElementById("sendButton").addEventListener("click", function (event) {
-
-        var hospitalID = document.getElementById("hospitalID").value;
-        var patient = {};
-
-        patient.PPS = document.getElementById("PPS").value;
-        patient.HospitalID = parseInt(hospitalID);
-        patient.Arrival = document.getElementById("Arrival").value;
-        patient.Infections = document.getElementById("Infections").value;
-        console.log(patient);
-        console.log(typeof (patient.HospitalID));
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            url: "/Home/RegisterPatient",
-            data: JSON.stringify(patient),
-            success: function (response) {
-                console.log(response);
-                if (response != "Success") {
-                    alert(response);
-                } else {
-                    setTimeout(redirect, 100);
-                    function redirect() {
-                        window.location.href = '@Url.Action("Index", "Home")';
-                    }
-                }
-            },
-            error: function (response) {
-                alert(response);
-            }
-        });
-
-        connection.invoke("SendNotification", hospitalID).catch(function (err) {
-            console.log(err);
-            return console.error(err.toString());
-        });
-        event.preventDefault();
-
-    });
-        </script>
-    }
+        
+    
