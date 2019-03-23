@@ -5,8 +5,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="~/css/select2.min.css" rel="stylesheet" />
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<link href="~/css/chosen.min.css" rel="stylesheet" />
+<script src="~/js/select2.min.js"></script>
+
+@*<link href="~/css/chosen.min.css" rel="stylesheet" />*@
+
 
 <style>
     .row {
@@ -34,14 +38,15 @@
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
             <div class="form-group">
                 <label asp-for="PPS" class="control-label"></label>
-                @Html.DropDownListFor(model => model.PPS, ViewBag.PPS as IEnumerable<SelectListItem>, "Select a PPS number...", new { id = "PPS" })
+                @*@Html.DropDownListFor(model => model.PPS, ViewBag.PPS as IEnumerable<SelectListItem>, "Select a PPS number...", new { id = "PPS" })*@
+                <select class="PPS" asp-for="PPS" asp-items="ViewBag.PPS" style="width: 80%"></select>
                 <span asp-validation-for="PPS" class="text-danger"></span>
             </div>
             @*<div class="form-group">
-            <label asp-for="Condition" class="control-label"></label>
-            <input asp-for="Condition" class="form-control" id="Condition" />
-            <span asp-validation-for="Condition" class="text-danger"></span>
-        </div>*@
+                    <label asp-for="Condition" class="control-label"></label>
+                    <input asp-for="Condition" class="form-control" id="Condition" />
+                    <span asp-validation-for="Condition" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
                 <label asp-for="Arrival" class="control-label"></label>
                 <select asp-for="Arrival" asp-items="Model.Arrivals" id="Arrival"></select>
@@ -50,7 +55,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Infections" class="control-label"></label>
-                <input asp-for="Infections" class="form-control" id="Infections"/>
+                <input asp-for="Infections" class="form-control" id="Infections" />
                 <span asp-validation-for="Infections" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -58,30 +63,83 @@
             </div>
         </form>
     </div>
-    <div class="haha">
-        <span id="myspan"></span>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="Full_name" class="control-label"></label>
+            <input id="Name" asp-for="Full_name" />
+            <span asp-validation-for="Full_name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Gender" class="control-label"></label>
+            <input id="Gender" asp-for="Gender" />
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Date_of_birth" class="control-label"></label>
+            <input id="" asp-for="Date_of_birth" />
+            <span asp-validation-for="Date_of_birth" class="text-danger"></span>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="Nationality" class="control-label"></label>
+            <input id="Nationality" asp-for="Nationality" />
+            <span asp-validation-for="Nationality" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address" class="control-label"></label>
+            <input id="Address" asp-for="Address" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chosen.jquery.min.js"></script>
-    <script>
-        $(function () {
-            $("#PPS").chosen({
-                width: "100%",
-                allow_single_deselect: false
-            })
+    @section Scripts {
+        @* @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+
+        <script src="~/js/select2.min.js"></script>
+        <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+
+        @*<script src="~/js/chosen.jquery.min.js"></script>*@
+        <script>
+        //$(function () {
+            //$("#PPS").chosen({
+            //    //create_option_text: 'Create category',
+            //    width: "100%",
+            //    allow_single_deselect: false,
+            //    //persistent_create_option: true,
+            //    //skip_no_results: true
+            //})
+
+            //$("#PPS").select2();
+
+        //});
+
+        $(document).ready(function () {
+            $('.PPS').select2(
+                {
+                    tags: true
+                });
         });
 
-        $("#PPS").on('change', function () {
-            changeSpan();
+
+        $(".PPS").on('change', function () {
+            //changeSpan();
+            var p = document.getElementById("PPS").value.toString();
+            var array = p.split(", ");
+            var patient = {};
+            patient.PPS = array[0];
+            patient.Full_name = array[1];
+            patient.Gender = array[2];
+            patient.Date_of_birth = array[3];
+            patient.Nationality = array[4];
+            patient.Address = array[5];
+            document.getElementById("Name").value = patient.Full_name;
         });
 
         function changeSpan() {
@@ -140,5 +198,5 @@
         event.preventDefault();
 
     });
-    </script>
-}
+        </script>
+    }

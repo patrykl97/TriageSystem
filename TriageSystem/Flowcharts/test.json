@@ -1,0 +1,1 @@
+{"SeeAlso":["test"],"Notes":"none","Discriminators":[{"Name":"high temp","Description":"over 39","Priority":0,"PriorityString":"Red"},{"Name":"med temp","Description":"over 37","Priority":1,"PriorityString":"Orange"},{"Name":"headache","Description":null,"Priority":2,"PriorityString":"Yellow"},{"Name":"vomiting","Description":null,"Priority":3,"PriorityString":"Green"}]}

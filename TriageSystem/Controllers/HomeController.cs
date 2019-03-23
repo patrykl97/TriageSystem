@@ -53,10 +53,17 @@ namespace TriageSystem.Controllers
         {
             var user = _userManager.GetUserAsync(User).Result;
             var patientData = new PatientCheckInViewModel { HospitalID = user.Staff.HospitalID};
-            var patientList = _context.Patients.Select(p => p.PPS).ToList();
-            var selectList = patientList.Select(p => new SelectListItem { Text = p, Value = p });
-            //selectList.Add(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
-            ViewBag.PPS = selectList;
+            var patientList = _context.Patients.ToList();
+            //var selectList = patientList.Select(p => new SelectListItem { Text = p, Value = p });
+            var list = new List<SelectListItem>();
+            var x = patientList.First().toString();
+            
+            foreach(var p in patientList)
+            {
+                list.Add(new SelectListItem { Text = p.PPS, Value = p.toString()});
+            }
+            list.Insert(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
+            ViewBag.PPS = list; //selectList;
             return View(patientData);
         }
 

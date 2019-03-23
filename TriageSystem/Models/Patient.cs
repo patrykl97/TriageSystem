@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TriageSystem.Models
 {
@@ -13,6 +14,11 @@ namespace TriageSystem.Models
         public string Nationality { get; set; }
         public string Address { get; set; }
         
+        
+        public string toString()
+        {
+            return PPS + ", " + Full_name + ", " + Gender + ", " + Date_of_birth + ", " + Nationality + ", " + Address;
+        }
         
     }
 }
