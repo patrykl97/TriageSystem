@@ -121,12 +121,14 @@
 
     function postData() {
         var patient = {};
-        patient.PPS = '@Model.PPS.Replace(" ", "_")';
+        patient.PatientId = '@Model.PatientId';
+        patient.PPS = '@Model.PPS';
         patient.Condition = '@Model.Condition';
         patient.PriorityString = currentPriority;
-        var array = [];
-        array.push(patient);
-        array.push(currentPriority);
+        patient.HospitalID = '@Model.HospitalID';
+        //var array = [];
+        //array.push(patient);
+        //array.push(currentPriority);
         console.log(patient);
         $.ajax({
             type: "POST",

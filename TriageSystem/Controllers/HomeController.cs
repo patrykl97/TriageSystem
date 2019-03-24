@@ -143,7 +143,7 @@ namespace TriageSystem.Controllers
             else
             {
                 var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientData = new PatientWaitingList { PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
+                var patientData = new PatientWaitingList {PatientId = patientCheckedIn.PatientId, PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
                 List<Flowchart> flowcharts = GetFlowcharts();
                 //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
@@ -155,8 +155,8 @@ namespace TriageSystem.Controllers
                     index++;
                 }
                 //ViewBag.FlowchartNames = list.AsEnumerable();
-                patientData.Flowcharts = list;
-
+                //patientData.Flowcharts = list;
+                ViewBag.Flowcharts = list;
                 return View(patientData);
             }
 
@@ -204,47 +204,35 @@ namespace TriageSystem.Controllers
             return flowcharts;
         }
 
-        private List<Flowchart> GetSelectedFlowcharts(List<int> indexes)
+        private Flowchart GetSelectedFlowchart(int index)
         {
             string name, path;
             string[] filePaths = Directory.GetFiles(@"./Flowcharts");
-            List<Flowchart> flowcharts = new List<Flowchart>();
-            for (int i = 0; i < filePaths.Length; ++i)
-            {
-                for(int index = 0; index < indexes.Count; index++)
-                {
-                    if(i == indexes[index])
-                    {
-                        path = filePaths[i];
-                        name = Path.GetFileName(path);
-                        name = name.Replace("_", " ");
-                        name = name.Replace(".json", "");
+            path = filePaths[index];
+            name = Path.GetFileName(path);
+            name = name.Replace("_", " ");
+            name = name.Replace(".json", "");
 
-                        string text;
-                        var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                        using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
-                        {
-                            text = streamReader.ReadToEnd();
-                        }
-                        var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
-                        flowchart.Name = name;
-                        flowcharts.Add(flowchart);
-                        indexes.Remove(index);
-                    }
-                }
+            string text;
+            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                text = streamReader.ReadToEnd();
             }
-            return flowcharts;
+            var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
+            flowchart.Name = name;
+            return flowchart;
         }
 
 
         // TODO: refactor to use PatientId rather than pps
-        public IActionResult TriageAssessment(string pps, string condition, int[] flowchart)
+        public IActionResult TriageAssessment(PatientWaitingList patient)
         {
-            pps = pps.Replace("_", " ");
             var user = _userManager.GetUserAsync(User).Result;
-            var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PPS == pps);
-            var flowcharts = GetSelectedFlowcharts(flowchart.ToList());
-            var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
+            //var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PatientId == patientId);
+            var flowchart = GetSelectedFlowchart(patient.FlowchartId);
+            patient.Flowchart = flowchart;
+            //var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
             return View(patient);
         }
 
@@ -255,14 +243,14 @@ namespace TriageSystem.Controllers
             {
                 try
                 {
-                    patientData.PPS = patientData.PPS.Replace("_", " ");
-                    var user = _userManager.GetUserAsync(User).Result;
-                    var patient = _context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First();
-                    patientData.HospitalID = patient.HospitalID;
+                    //patientData.PPS = patientData.PPS.Replace("_", " ");
+                    //var user = _userManager.GetUserAsync(User).Result;
+                    //var patient = _context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First();
+                    //patientData.HospitalID = patient.HospitalID;
                     patientData.Time_checked_in = GetNow();
-                    patientData.PatientId = patient.PatientId;
+                    //patientData.PatientId = patient.PatientId;
                     _context.PatientWaitingList.Add(patientData);
-                    _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
+                    _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PatientId == patientData.PatientId).First());
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -275,15 +263,15 @@ namespace TriageSystem.Controllers
         }
 
 
-        [HttpPost]
-        public JsonResult TriageAssessmentGenerateUrl([FromBody] string [] array)
-        {
-            string pps = array[0].Replace(" ", "_");
-            int[] flowchart = array.Skip(1).Select(int.Parse).ToArray();
+        //[HttpPost]
+        //public JsonResult TriageAssessmentGenerateUrl([FromBody] string [] array)
+        //{
+        //    //string pps = array[0].Replace(" ", "_");
+        //    int[] flowchart = array.Skip(1).Select(int.Parse).ToArray();
             
-            string url = Url.Action("TriageAssessment", "Home", new { pps, flowchart });
-            return Json(url);
-        }
+        //    string url = Url.Action("TriageAssessment", "Home", new { pps, flowchart });
+        //    return Json(url);
+        //}
 
         private string getErrors()
         {

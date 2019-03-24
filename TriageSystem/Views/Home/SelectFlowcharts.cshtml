@@ -4,7 +4,7 @@
     ViewData["Title"] = "TriageAssessment";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="~/css/chosen.min.css" rel="stylesheet" />
+<link href="~/css/select2.min.css" rel="stylesheet" />
 <h2>TriageAssessment</h2>
 
 <h4>PatientWaitingList</h4>
@@ -13,16 +13,17 @@
     <div class="col-md-4">
         <form asp-action="TriageAssessment">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" id="patientId" asp-for="PatientId" />
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
             <div class="form-group">
                 <label asp-for="PPS" class="control-label"></label>
                 <input asp-for="PPS" class="form-control" readonly="readonly" />
             </div>
-            <div>
+            <div class="form-group">
                 <label asp-for="Patient.Full_name" class="control-label">Full name</label>
                 <p>@Html.DisplayFor(model => model.Patient.Full_name)</p>
             </div>
-            <div>
+            <div class="form-group">
                 <label asp-for="Patient.Date_of_birth" class="control-label">Date of birth</label>
                 <p>@Html.DisplayFor(model => model.Patient.Date_of_birth)</p>
             </div>
@@ -34,7 +35,8 @@
             <div class="form-group">
                 <label asp-for="Flowchart" class="control-label"></label>
                 @*@Html.DropDownListFor(model => model.FlowchartSelected, ViewBag.FlowchartNames as IEnumerable<SelectListItem>, "Select at least one flowchart...", new { id = "FlowchartsDropdown" });*@
-                @Html.DropDownListFor(model => model.Flowchart, new SelectList(Model.Flowcharts, "Value", "Text"), "Select at least one flowchart...", new { id = "FlowchartsDropdown" });
+                @*@Html.DropDownListFor(model => model.Flowchart, new SelectList(Model.Flowcharts, "Value", "Text"), "Select at least one flowchart...", new { id = "FlowchartsDropdown" });*@
+                <select class="flowcharts" asp-for="FlowchartId" asp-items="ViewBag.Flowcharts" ></select>
             </div>
             <div class="form-group">
                 @*<a asp-action="Edit" asp-route-id="@Model.PPS" class="btn btn-default">Edit</a>*@
@@ -49,13 +51,15 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chosen.jquery.min.js"></script>
-<script>
-    $(function () {
-        $("#FlowchartsDropdown").chosen();
-    });
+    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+    <script src="~/js/select2.min.js"></script>
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('.flowcharts').select2();
+        });
+
 
 
     //var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
@@ -109,6 +113,6 @@
                 alert(response + " error");
             }
         });*@
-</script>
-    
-    }
+    </script>
+
+}

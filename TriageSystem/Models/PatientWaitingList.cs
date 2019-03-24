@@ -37,6 +37,10 @@ namespace TriageSystem.Models
         public int HospitalID { get; set; }
 
         [NotMapped]
+        public int FlowchartId { get; set; }
+
+
+        [NotMapped]
         public Flowchart Flowchart { get; set; }
 
         [NotMapped]
