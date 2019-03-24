@@ -37,17 +37,15 @@
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
+            <input type="hidden" id="PPS" asp-for="PPS" />
+            <input type="hidden" id="List" />
+            @*<input type="hidden" id="ListValue" />*@
             <div class="form-group">
-                <label asp-for="PPS" class="control-label"></label>
+                <label class="control-label">PPS</label>
                 @*@Html.DropDownListFor(model => model.PPS, ViewBag.PPS as IEnumerable<SelectListItem>, "Select a PPS number...", new { id = "PPS" })*@
-                <select class="PPS" asp-for="PPS" asp-items="ViewBag.PPS" style="width: 80%"></select>
+                <select class="dropdown" id="dropdown" asp-items="ViewBag.PPS" style="width: 80%"></select>
                 <span asp-validation-for="PPS" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                    <label asp-for="Condition" class="control-label"></label>
-                    <input asp-for="Condition" class="form-control" id="Condition" />
-                    <span asp-validation-for="Condition" class="text-danger"></span>
-                </div>*@
             <div class="form-group">
                 <label asp-for="Arrival" class="control-label"></label>
                 <select asp-for="Arrival" asp-items="Model.Arrivals" id="Arrival"></select>
@@ -108,71 +106,67 @@
 
         @*<script src="~/js/chosen.jquery.min.js"></script>*@
         <script>
-            //$(function () {
-            //$("#PPS").chosen({
-            //    //create_option_text: 'Create category',
-            //    width: "100%",
-            //    allow_single_deselect: false,
-            //    //persistent_create_option: true,
-            //    //skip_no_results: true
-            //})
-
-            //$("#PPS").select2();
-
-            //});
 
             $(document).ready(function () {
-                $('.PPS').select2(
+                $('.dropdown').select2(
                     {
                         tags: true
                     });
             });
 
 
-            $(".PPS").on('change', function () {
+            $(".dropdown").on('change', function () {
                 //changeSpan();
-                var p = document.getElementById("PPS").value.toString();
-                var array = p.split(", ");
-                var patient = {};
-                patient.PPS = array[0];
-                patient.Full_name = array[1];
-                patient.Gender = array[2];
-                patient.Date_of_birth = array[3];
-                patient.Nationality = array[4];
-                patient.Address = array[5];
-                if (($("[id*='PPS'] :selected").text() == document.getElementById("PPS").value.toString()) || ($("[id*='PPS'] :selected").text() == "Please Select...")) {
-                    document.getElementById("Name").value = "";
-                    document.getElementById("Gender").value = "";
-                    document.getElementById("DOB").value = "";
-                    document.getElementById("Nationality").value = "";
-                    document.getElementById("Address").value = "";
-                }
-                else {
-                    $("[id*='PPS'] :selected") = patient.PPS;
-                    //document.getElementById("PPS").value = patient.PPS;
+                var p = document.getElementById("dropdown").value.toString();
+                var selected = $("[id*='dropdown'] :selected").text();
+                if (selected == "Please Select...") {
+                    document.getElementById("PPS").value = "";
+                    setNullValues();
+                } else if (selected == p) {
+                    document.getElementById("PPS").value = selected;
+                    setNullValues();
+                } else {
+                    console.log("set values");
+                    var array = p.split(", ");
+                    var patient = {};
+                    patient.PPS = array[0];
+                    patient.Full_name = array[1];
+                    patient.Gender = array[2];
+                    patient.Date_of_birth = array[3];
+                    patient.Nationality = array[4];
+                    patient.Address = array[5];
+                    //$("[id*='PPS'] :selected") = patient.PPS;
+                    document.getElementById("PPS").value = patient.PPS;
                     document.getElementById("Name").value = patient.Full_name;
                     document.getElementById("Gender").value = patient.Gender
                     document.getElementById("DOB").value = patient.Date_of_birth;
                     document.getElementById("Nationality").value = patient.Nationality;
                     document.getElementById("Address").value = patient.Address;
                 }
-
+                var dropdown = document.getElementById("dropdown");
+                var array = [];
+                for (var i = 0; i < dropdown.options.length; i++) {
+                    var a = [];
+                    a.push(dropdown.options[i].text);
+                    a.push(dropdown.options[i].value);
+                    array.push(a);
+                    //console.log(dropdown.options[i].text);
+                }
+                
+                document.getElementById("List").value = array;
+                //document.getElementById("List").value = '@ViewBag.PPS';
+                //console.log(x);
             });
 
-            function changeSpan() {
-                var pps = document.getElementById("PPS").value;
-                document.getElementById("myspan").textContent = pps;
-                console.log("Triggered-----------");
+            function setNullValues() {
+                document.getElementById("Name").value = "";
+                document.getElementById("Gender").value = "";
+                document.getElementById("DOB").value = "";
+                document.getElementById("Nationality").value = "";
+                document.getElementById("Address").value = "";
             }
 
-
-
-            var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44375/notificationHub").build();
-            connection.logging = true;
-
-            connection.start().catch(function (err) {
-                return console.error(err.toString());
-            });
+           
 
         </script>
         }

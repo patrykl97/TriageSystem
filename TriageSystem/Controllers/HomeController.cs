@@ -58,55 +58,78 @@ namespace TriageSystem.Controllers
         public IActionResult RegisterPatient()
         {
             var user = _userManager.GetUserAsync(User).Result;
-            var patientData = new PatientCheckInViewModel { HospitalID = user.Staff.HospitalID};
-            var patientList = _context.Patients.ToList();
-            //var selectList = patientList.Select(p => new SelectListItem { Text = p, Value = p });
-            var list = new List<SelectListItem>();
-            var x = patientList.First().toString();
-            
-            foreach(var p in patientList)
-            {
-                list.Add(new SelectListItem { Text = p.PPS, Value = p.toString()});
-            }
-            list.Insert(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
+            var patientData = new PatientCheckInViewModel { HospitalID = user.Staff.HospitalID };
+
+            List<SelectListItem> list = GetPPSList();
             ViewBag.PPS = list; //selectList;
             return View(patientData);
         }
 
+        private List<SelectListItem> GetPPSList()
+        {
+            var patientList = _context.Patients.ToList();
+            var list = new List<SelectListItem>();
 
+            foreach (var p in patientList)
+            {
+                list.Add(new SelectListItem { Text = p.PPS, Value = p.toString() });
+            }
+            list.Insert(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
+            return list;
+        }
 
+        // TODO: prevent adding patients that are already in the patientList
         [HttpPost]
         public async Task<IActionResult> RegisterPatient( PatientCheckInViewModel patientData)
         {
             if (ModelState.IsValid)
             {
-                
+                Patient patient = null;
                 try
                 {
                     patientData.Time_checked_in = GetNow();
-                    if(patientData.PPS != "" || patientData.PPS != null)
+                    if (patientData.PPS != "" && patientData.PPS != null)
                     {
-                        if (patientData.PPS.Contains(", "))
+                        var patients = _context.Patients.Where(p => p.PPS == patientData.PPS);
+                        if(patients.Count() > 0)
                         {
-                            var array = patientData.PPS.Split(", ");
-                            patientData.PPS = array[0];
+                            patient = patients.First();
                         }
-                        _context.Patients.Where(p => p.PPS == patientData.PPS);
+
                     }
-                    
-                    //_context.PatientCheckIns.Add(patientData);
-                    //await _context.SaveChangesAsync();
-                    await this.HubContext.Clients.All.SendAsync("SendNotification", patientData.HospitalID.ToString());
+                    else
+                    {
+                        var patients = _context.Patients.Where(p => p.Full_name == patientData.Full_name);
+                        patients = patients.Where(p => p.Gender == patientData.Gender);
+                        if (patientData.Date_of_birth != null)
+                        {
+                            patients = patients.Where(p => p.Date_of_birth == patientData.Date_of_birth);
+                        }
+                        if (patients.Count() > 0)
+                        {
+                            patient = patients.First();
+                        }
+                    }
+                    if (patient == null)
+                    {
+                        patient = new Patient { PPS = patientData.PPS, Full_name = patientData.Full_name, Gender = patientData.Gender, Date_of_birth = patientData.Date_of_birth, Nationality = patientData.Nationality, Address = patientData.Address };
+                        _context.Patients.Add(patient);
+                        await _context.SaveChangesAsync();
+                    }
+                    var patientCheckIn = new PatientCheckIn { PatientId = patient.Id, PPS = patient.PPS, HospitalID = patientData.HospitalID, Arrival = patientData.Arrival, Infections = patientData.Infections, Time_checked_in = patientData.Time_checked_in };
+                    _context.PatientCheckIns.Add(patientCheckIn);
+                    await _context.SaveChangesAsync();
+                    await HubContext.Clients.All.SendAsync("SendNotification", patientData.HospitalID.ToString());
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
-                return null; // Json("Success");
+                return RedirectToAction(nameof(Index)); 
             }
-            return null; // Json(getErrors());
-
-
+            List<SelectListItem> list = GetPPSList();
+            ViewBag.PPS = list; //selectList;
+            return View(patientData); 
         }
 
         public IActionResult SelectFlowcharts()
@@ -213,6 +236,8 @@ namespace TriageSystem.Controllers
             return flowcharts;
         }
 
+
+        // TODO: refactor to use PatientId rather than pps
         public IActionResult TriageAssessment(string pps, string condition, int[] flowchart)
         {
             pps = pps.Replace("_", " ");
@@ -235,6 +260,7 @@ namespace TriageSystem.Controllers
                     var patient = _context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First();
                     patientData.HospitalID = patient.HospitalID;
                     patientData.Time_checked_in = GetNow();
+                    patientData.PatientId = patient.PatientId;
                     _context.PatientWaitingList.Add(patientData);
                     _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First());
                     await _context.SaveChangesAsync();

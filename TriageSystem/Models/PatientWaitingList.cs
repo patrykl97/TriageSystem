@@ -14,6 +14,7 @@ namespace TriageSystem.Models
 
         public int Id { get; set; }
         [ForeignKey("Patient")]
+        public int PatientId { get; set; }
         public string PPS { get; set; }
         public string Condition { get; set; }
         public Priority Priority{ get => _Priority; set => _Priority = value; }

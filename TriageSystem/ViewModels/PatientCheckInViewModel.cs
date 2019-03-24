@@ -9,7 +9,7 @@ namespace TriageSystem.ViewModels
 {
     public class PatientCheckInViewModel
     {
-        public int Id { get; set; }
+        public int PatientId { get; set; }
         //[Required]
         public string PPS { get; set; }
         [Required]
