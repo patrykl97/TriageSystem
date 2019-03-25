@@ -28,7 +28,7 @@
 <h4>PatientCheckIn</h4>
 <hr />
 <div class="row">
-    <form asp-action="RegisterPatient" id="form">
+    <form asp-action="Register" id="form">
 
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -123,34 +123,34 @@
                     document.getElementById("PPS").value = selected;
                     setNullValues();
                 } else {
-                    console.log("set values");
+                    //console.log("set values");
                     var array = p.split(", ");
-                    var patient = {};
-                    patient.PPS = array[0];
-                    patient.Full_name = array[1];
-                    patient.Gender = array[2];
-                    patient.Date_of_birth = array[3];
-                    patient.Nationality = array[4];
-                    patient.Address = array[5];
-                    //$("[id*='PPS'] :selected") = patient.PPS;
-                    document.getElementById("PPS").value = patient.PPS;
-                    document.getElementById("Name").value = patient.Full_name;
-                    document.getElementById("Gender").value = patient.Gender
-                    document.getElementById("DOB").value = patient.Date_of_birth;
-                    document.getElementById("Nationality").value = patient.Nationality;
-                    document.getElementById("Address").value = patient.Address;
+                    //var patient = {};
+                    //patient.PPS = array[0];
+                    //patient.Full_name = array[1];
+                    //patient.Gender = array[2];
+                    //patient.Date_of_birth = array[3];
+                    //patient.Nationality = array[4];
+                    //patient.Address = array[5];
+                    //$("[id*='PPS'] :selected") = patient.PPS;    
+                    document.getElementById("PPS").value = array[0];
+                    document.getElementById("Name").value = array[1];
+                    document.getElementById("Gender").value = array[2];
+                    document.getElementById("DOB").value = array[3];
+                    document.getElementById("Nationality").value = array[4];
+                    document.getElementById("Address").value = array[5];
                 }
-                var dropdown = document.getElementById("dropdown");
-                var array = [];
-                for (var i = 0; i < dropdown.options.length; i++) {
-                    var a = [];
-                    a.push(dropdown.options[i].text);
-                    a.push(dropdown.options[i].value);
-                    array.push(a);
-                    //console.log(dropdown.options[i].text);
-                }
+                //var dropdown = document.getElementById("dropdown");
+                //var array = [];
+                //for (var i = 0; i < dropdown.options.length; i++) {
+                //    var a = [];
+                //    a.push(dropdown.options[i].text);
+                //    a.push(dropdown.options[i].value);
+                //    array.push(a);
+                //    //console.log(dropdown.options[i].text);
+                //}
 
-                document.getElementById("List").value = array;
+                //document.getElementById("List").value = array;
                 //document.getElementById("List").value = '@ViewBag.PPS';
                 //console.log(x);
             });

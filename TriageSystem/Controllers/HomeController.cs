@@ -55,112 +55,37 @@ namespace TriageSystem.Controllers
             return PartialView(user);
         }
 
-        public IActionResult RegisterPatient()
-        {
-            var user = _userManager.GetUserAsync(User).Result;
-            var patientData = new PatientCheckInViewModel { HospitalID = user.Staff.HospitalID };
 
-            List<SelectListItem> list = GetPPSList();
-            ViewBag.PPS = list; //selectList;
-            return View(patientData);
-        }
 
-        private List<SelectListItem> GetPPSList()
-        {
-            var patientList = _context.Patients.ToList();
-            var list = new List<SelectListItem>();
+        //public IActionResult SelectFlowcharts()
+        //{
+        //    var user = _userManager.GetUserAsync(User).Result;
+        //    if(user.Staff.Hospital.PatientCheckInList.Count == 0)
+        //    {
+        //        TempData["Error"] = "No patients awaiting triage assessment!";
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    else
+        //    {
+        //        var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
+        //        var patientData = new PatientWaitingList {PatientId = patientCheckedIn.PatientId, PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
+        //        List<Flowchart> flowcharts = GetFlowcharts();
+        //        //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
-            foreach (var p in patientList)
-            {
-                list.Add(new SelectListItem { Text = p.PPS, Value = p.toString() });
-            }
-            list.Insert(0, new SelectListItem { Text = "Please Select...", Value = string.Empty });
-            return list;
-        }
+        //        var list = new List<SelectListItem>();
+        //        int index = 0;
+        //        foreach (var item in flowcharts)
+        //        {
+        //            list.Add(new SelectListItem { Text = item.Name, Value = index.ToString() });
+        //            index++;
+        //        }
+        //        //ViewBag.FlowchartNames = list.AsEnumerable();
+        //        //patientData.Flowcharts = list;
+        //        ViewBag.Flowcharts = list;
+        //        return View(patientData);
+        //    }
 
-        // TODO: prevent adding patients that are already in the patientList
-        [HttpPost]
-        public async Task<IActionResult> RegisterPatient( PatientCheckInViewModel patientData)
-        {
-            if (ModelState.IsValid)
-            {
-                Patient patient = null;
-                try
-                {
-                    patientData.Time_checked_in = GetNow();
-                    if (patientData.PPS != "" && patientData.PPS != null)
-                    {
-                        var patients = _context.Patients.Where(p => p.PPS == patientData.PPS);
-                        if(patients.Count() > 0)
-                        {
-                            patient = patients.First();
-                        }
-
-                    }
-                    else
-                    {
-                        var patients = _context.Patients.Where(p => p.Full_name == patientData.Full_name);
-                        patients = patients.Where(p => p.Gender == patientData.Gender);
-                        if (patientData.Date_of_birth != null)
-                        {
-                            patients = patients.Where(p => p.Date_of_birth == patientData.Date_of_birth);
-                        }
-                        if (patients.Count() > 0)
-                        {
-                            patient = patients.First();
-                        }
-                    }
-                    if (patient == null)
-                    {
-                        patient = new Patient { PPS = patientData.PPS, Full_name = patientData.Full_name, Gender = patientData.Gender, Date_of_birth = patientData.Date_of_birth, Nationality = patientData.Nationality, Address = patientData.Address };
-                        _context.Patients.Add(patient);
-                        await _context.SaveChangesAsync();
-                    }
-                    var patientCheckIn = new PatientCheckIn { PatientId = patient.Id, PPS = patient.PPS, HospitalID = patientData.HospitalID, Arrival = patientData.Arrival, Infections = patientData.Infections, Time_checked_in = patientData.Time_checked_in };
-                    _context.PatientCheckIns.Add(patientCheckIn);
-                    await _context.SaveChangesAsync();
-                    await HubContext.Clients.All.SendAsync("SendNotification", patientData.HospitalID.ToString());
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index)); 
-            }
-            List<SelectListItem> list = GetPPSList();
-            ViewBag.PPS = list; //selectList;
-            return View(patientData); 
-        }
-
-        public IActionResult SelectFlowcharts()
-        {
-            var user = _userManager.GetUserAsync(User).Result;
-            if(user.Staff.Hospital.PatientCheckInList.Count == 0)
-            {
-                TempData["Error"] = "No patients awaiting triage assessment!";
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientData = new PatientWaitingList {PatientId = patientCheckedIn.PatientId, PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
-                List<Flowchart> flowcharts = GetFlowcharts();
-                //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
-
-                var list = new List<SelectListItem>();
-                int index = 0;
-                foreach (var item in flowcharts)
-                {
-                    list.Add(new SelectListItem { Text = item.Name, Value = index.ToString() });
-                    index++;
-                }
-                //ViewBag.FlowchartNames = list.AsEnumerable();
-                //patientData.Flowcharts = list;
-                ViewBag.Flowcharts = list;
-                return View(patientData);
-            }
-
-        }
+        //}
 
         //private List<string> GetFlowchartNames()
         //{
@@ -178,89 +103,84 @@ namespace TriageSystem.Controllers
         //    return flowchartNames;
         //}
 
-        private List<Flowchart> GetFlowcharts()
-        {
-            string name, path;
-            string[] filePaths = Directory.GetFiles(@"./Flowcharts");
-            List<Flowchart> flowcharts = new List<Flowchart>();
-            for (int i = 0; i < filePaths.Length; ++i)
-            {
-                path = filePaths[i];
-                name = Path.GetFileName(path);
-                name = name.Replace("_", " ");
-                name = name.Replace(".json", "");
+        //private List<Flowchart> GetFlowcharts()
+        //{
+        //    string name, path;
+        //    string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+        //    List<Flowchart> flowcharts = new List<Flowchart>();
+        //    for (int i = 0; i < filePaths.Length; ++i)
+        //    {
+        //        path = filePaths[i];
+        //        name = Path.GetFileName(path);
+        //        name = name.Replace("_", " ");
+        //        name = name.Replace(".json", "");
                 
-                string text;
-                var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
-                {
-                    text = streamReader.ReadToEnd();
-                }
-                var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
-                flowchart.Name = name;
-                var d = new Discriminator { Priority = Priority.Green };
-                flowcharts.Add(flowchart);
-            }
-            return flowcharts;
-        }
+        //        string text;
+        //        var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        //        using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+        //        {
+        //            text = streamReader.ReadToEnd();
+        //        }
+        //        var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
+        //        flowchart.Name = name;
+        //        var d = new Discriminator { Priority = Priority.Green };
+        //        flowcharts.Add(flowchart);
+        //    }
+        //    return flowcharts;
+        //}
 
-        private Flowchart GetSelectedFlowchart(int index)
-        {
-            string name, path;
-            string[] filePaths = Directory.GetFiles(@"./Flowcharts");
-            path = filePaths[index];
-            name = Path.GetFileName(path);
-            name = name.Replace("_", " ");
-            name = name.Replace(".json", "");
+        //private Flowchart GetSelectedFlowchart(int index)
+        //{
+        //    string name, path;
+        //    string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+        //    path = filePaths[index];
+        //    name = Path.GetFileName(path);
+        //    name = name.Replace("_", " ");
+        //    name = name.Replace(".json", "");
 
-            string text;
-            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
-            {
-                text = streamReader.ReadToEnd();
-            }
-            var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
-            flowchart.Name = name;
-            return flowchart;
-        }
+        //    string text;
+        //    var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        //    using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+        //    {
+        //        text = streamReader.ReadToEnd();
+        //    }
+        //    var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
+        //    flowchart.Name = name;
+        //    return flowchart;
+        //}
 
 
-        // TODO: refactor to use PatientId rather than pps
-        public IActionResult TriageAssessment(PatientWaitingList patient)
-        {
-            var user = _userManager.GetUserAsync(User).Result;
-            //var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PatientId == patientId);
-            var flowchart = GetSelectedFlowchart(patient.FlowchartId);
-            patient.Flowchart = flowchart;
-            //var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
-            return View(patient);
-        }
+        //// TODO: refactor to use PatientId rather than pps
+        //public IActionResult TriageAssessment(PatientWaitingList patient)
+        //{
+        //    var user = _userManager.GetUserAsync(User).Result;
+        //    //var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PatientId == patientId);
+        //    var flowchart = GetSelectedFlowchart(patient.FlowchartId);
+        //    patient.Flowchart = flowchart;
+        //    //var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
+        //    return View(patient);
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> GivePriority([FromBody] PatientWaitingList patientData) 
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    //patientData.PPS = patientData.PPS.Replace("_", " ");
-                    //var user = _userManager.GetUserAsync(User).Result;
-                    //var patient = _context.PatientCheckIns.Where(p => p.PPS == patientData.PPS).First();
-                    //patientData.HospitalID = patient.HospitalID;
-                    patientData.Time_checked_in = GetNow();
-                    //patientData.PatientId = patient.PatientId;
-                    _context.PatientWaitingList.Add(patientData);
-                    _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PatientId == patientData.PatientId).First());
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return Json("Success");
-            }
-            return Json(getErrors());
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> GivePriority([FromBody] PatientWaitingList patientData) 
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            patientData.Time_checked_in = GetNow();
+        //            _context.PatientWaitingList.Add(patientData);
+        //            _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PatientId == patientData.PatientId).First());
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            throw;
+        //        }
+        //        return Json("Success");
+        //    }
+        //    return Json(getErrors());
+        //}
 
 
         //[HttpPost]

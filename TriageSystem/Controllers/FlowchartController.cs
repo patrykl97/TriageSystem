@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using TriageSystem.ViewModels;
 
 namespace TriageSystem.Controllers
 {
+    [Authorize] // User needs to be singed in to display this view
     public class FlowchartController : Controller
     {
         UserManager<TriageSystemUser> _userManager;

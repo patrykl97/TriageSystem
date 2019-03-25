@@ -1,7 +1,7 @@
 ﻿@using TriageSystem.Areas.Identity.Data
 @model TriageSystemUser
 <p>
-    <a asp-action="RegisterPatient">Register Patient</a>
+    <a asp-controller="Patient" asp-action="Register">Register Patient</a>
 </p>
 <h2 id="hospitalID">@Html.DisplayFor(model => model.Staff.HospitalID)</h2>
 <h2>@Html.DisplayFor(model => model.Staff.Hospital.Name)</h2>
@@ -55,7 +55,7 @@
 </table>
 <br />
 <p>
-    <a asp-action="SelectFlowcharts">Perform Triage</a>
+    <a asp-controller="Triage" asp-action="SelectFlowcharts">Perform Triage</a>
 </p>
 <table class="table">
     <thead>
