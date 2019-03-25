@@ -51,7 +51,10 @@ namespace TriageSystem.Controllers
             var user = _userManager.GetUserAsync(User).Result;
             user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
             var orderedList = user.Staff.Hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
+            orderedList = setDuration(orderedList);
             user.Staff.Hospital.PatientWaitingList = orderedList;
+
+
             return PartialView(user);
         }
 
@@ -98,6 +101,33 @@ namespace TriageSystem.Controllers
         //{
         //    return PartialView("_Error");
         //}
+
+        private List<PatientWaitingList> setDuration(List<PatientWaitingList> orderedList)
+        {
+            foreach (var item in orderedList)
+            {
+                switch (item.Priority)
+                {
+                    case Priority.Red:
+                        item.Duration = 0;
+                        break;
+                    case Priority.Orange:
+                        item.Duration = 10;
+                        break;
+                    case Priority.Yellow:
+                        item.Duration = 60;
+                        break;
+                    case Priority.Green:
+                        item.Duration = 120;
+                        break;
+                    case Priority.Blue:
+                        item.Duration = 240;
+                        break;
+                }
+            }
+            return orderedList;
+
+        }
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

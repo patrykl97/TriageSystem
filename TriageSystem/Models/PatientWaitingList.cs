@@ -17,7 +17,17 @@ namespace TriageSystem.Models
         public int PatientId { get; set; }
         public string PPS { get; set; }
         public string Condition { get; set; }
-        public Priority Priority{ get => _Priority; set => _Priority = value; }
+        public Priority Priority
+        {
+            get
+            {
+                return _Priority;
+            }
+            set
+            {
+                _Priority = value;
+            }
+        }
         [NotMapped]
         public string PriorityString
         {
@@ -37,6 +47,12 @@ namespace TriageSystem.Models
         public int HospitalID { get; set; }
 
         [NotMapped]
+        public int MinutesLeft { get; set; }
+
+        [NotMapped]
+        public int Duration { get; set; }
+
+        [NotMapped]
         public int FlowchartId { get; set; }
 
 
@@ -49,7 +65,8 @@ namespace TriageSystem.Models
 
         public virtual Patient Patient { get; set; }
         public virtual Hospital Hospital { get; set; }
-        
+
+
      
     }
 }
