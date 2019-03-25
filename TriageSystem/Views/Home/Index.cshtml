@@ -39,6 +39,10 @@
 <script src="https://cdn.rawgit.com/robbmj/simple-js-countdown-timer/master/countdowntimer.js"></script>
 <script>
 
+    // ***************************************
+    // TODO: Close signalR connection when redirecting and refreshing
+    // ***************************************
+
     var refresh = @ViewData["Refresh"].ToString().ToLower();
    
     $.ajax({

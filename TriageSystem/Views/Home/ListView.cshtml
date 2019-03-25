@@ -5,6 +5,8 @@
 </p>
 <h2 id="hospitalID">@Html.DisplayFor(model => model.Staff.HospitalID)</h2>
 <h2>@Html.DisplayFor(model => model.Staff.Hospital.Name)</h2>
+
+@{ var id = 0;}
 <table class="table">
     <thead>
         <tr>
@@ -97,13 +99,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Time_checked_in)
             </td>
-            <td id="duration">
+            <td class="duration" id="@id">
                 @Html.DisplayFor(modelItem => item.Duration)
             </td>
-            @{
-                var x = item.Priority;
-            }
-            <td class="@x" id="@item.PatientId">
+            <td class="@item.Priority" id="@item.PatientId">
                 @Html.DisplayFor(modelItem => item.Priority)
             </td>
             <td>
@@ -111,31 +110,68 @@
 
             </td>
         </tr>
+            id++;
         }
     </tbody>
 </table>
 
 <script>
     $(document).ready(function () {
-        var display = document.getElementById("duration");
-        var t = parseInt(display.textContent);
-        console.log(t);
-        timer = new CountDownTimer(20),
-        timeObj = CountDownTimer.parse(20);
+        var elements = document.getElementsByClassName("duration");
+        //var i = 0;
+        //var counter;
+        //timer = [];
+        //console.log(elements.length);
+        //for (i = 0; i < elements.length; i++) {
+        //    timer.push(new CountDownTimer(time));
+        //    timeObj = CountDownTimer.parse(time);
+        //    format(timeObj.minutes, timeObj.seconds);
+        //    timer[i].onTick(format);
+        //}
+        //var t = display[i].textContent;
 
-        format(timeObj.minutes, timeObj.seconds);
 
-        timer.onTick(format);
+        //var count = 30;
+        var c = 0;
+        var counter = setInterval(timer, 1000) //1000 will  run it every 1 second
+        function timer() {
+            for (var i = 0; i < elements.length; i++) {
+                console.log(elements.length + "--------------length");
+                console.log(i);
+                var display = document.getElementById(i);
+                count = display.textContent;
+                if (count > 0) {
+                //    console.log("----------sagdsadgsadgd-----------");
+                //    clearInterval(counter);
+                //    //counter ended, do something here
+                //    return;
+                //} else {
+                    console.log(i);
+                    count = count - 1;
+                    display.textContent = count;
+                }
 
 
-        function format(minutes, seconds) {
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            display.textContent = seconds;
-            //console.log("i");
+            }
+            c++;
+     
+
+
+            //Do code for showing the number of seconds here
         }
+        
+        //function format(minutes, seconds) {
+        //    for (var i = 0; i < elements.length; i++) {
+        //        minutes = minutes < 10 ? "0" + minutes : minutes;
+        //        seconds = seconds < 10 ? "0" + seconds : seconds;
+        //        var display = document.getElementById(i);
+        //        display.textContent = seconds;
+        //    }
+        //}
 
-        timer.start();
+
+        //timer.start();
+
     });
 
 </script>

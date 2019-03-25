@@ -94,7 +94,9 @@ namespace TriageSystem.Controllers
                     var patientCheckIn = new PatientCheckIn { PatientId = patient.Id, PPS = patient.PPS, HospitalID = patientData.HospitalID, Arrival = patientData.Arrival, Infections = patientData.Infections, Time_checked_in = patientData.Time_checked_in };
                     _context.PatientCheckIns.Add(patientCheckIn);
                     await _context.SaveChangesAsync();
-                    await HubContext.Clients.All.SendAsync("SendNotification", patientData.HospitalID.ToString());
+                    //var connection = new HubConnectionBuilder().WithUrl("/NotificationHub").Build();
+                    await HubContext.Clients.All.SendAsync("ReceiveNotification", patientData.HospitalID);
+                    
                 }
                 catch (DbUpdateConcurrencyException)
                 {
