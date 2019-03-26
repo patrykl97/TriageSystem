@@ -43,7 +43,7 @@ namespace TriageSystem.Models
             }
 
         }
-        public DateTime? Time_checked_in { get; set; }
+        public DateTime Time_checked_in { get; set; }
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
 
@@ -57,12 +57,14 @@ namespace TriageSystem.Models
             set
             {
                 _Duration = value;
-                MsLeft = (int)TimeSpan.FromMinutes(_Duration).TotalMilliseconds;
+                Expiry_time = Time_checked_in.AddMinutes(_Duration);
             }
         }
 
+
         [NotMapped]
-        public int MsLeft { get; private set; }
+        public DateTime Expiry_time { get; set; }
+
 
         [NotMapped]
         public int FlowchartId { get; set; }
