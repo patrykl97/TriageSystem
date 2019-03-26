@@ -87,30 +87,31 @@
     <tbody>
         @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
         {
-            <tr class="t">
-                <td>
-                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PPS)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Condition)
-                </td>
-                <td id="time-@id">
-                    @Html.DisplayFor(modelItem => item.Time_checked_in)
-                </td>
-                <td class="duration" id="@id"></td>
-                <td class="@item.Priority">
-                    @Html.DisplayFor(modelItem => item.Priority)
-                </td>
-                <td>
-                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
+        <tr class="t">
+            <td>
+                @Html.DisplayFor(modelItem => item.Patient.Full_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PPS)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Condition)
+            </td>
+            <td id="time-@id">
+                @Html.DisplayFor(modelItem => item.Time_checked_in)
+            </td>
+            <td class="duration" id="@id"></td>
+            <td class="@item.Priority">
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
 
-                </td>
+            </td>
 
-                <td id="expiry-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.Expiry_time)</td>
-            </tr>
+            <td id="expiry-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.Expiry_time)</td>
+            <td id="patient-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.PatientId)</td>
+        </tr>
             id++;
         }
     </tbody>
@@ -141,7 +142,9 @@
         var elements = document.getElementsByClassName("t");
         var counter = setInterval(timer, 1000) //1000 will  run it every 1 second
         function timer() {
-            var array = [];
+            var ids = [];
+            var notifications = [];
+
             for (var i = 0; i < elements.length; i++) {
                 //var e = elements[i].children[7].textContent.trim(); // hidden element
                 var e = document.getElementById("expiry-" + i).textContent.trim(); // hidden element
@@ -162,42 +165,47 @@
                         display.textContent = "Expired";
                         var x = elements[i].children[5].textContent.trim();
                         if (x != "Red") {
-                            array.push(elements[i].children[0].textContent.trim() + " needs to be seen immediately or re-triaged!");
+                            ids.push(document.getElementById("patient-" + i).textContent.trim());
+                            notifications.push(elements[i].children[0].textContent.trim() + " needs to be seen immediately or re-triaged!");
                         }
                     }
                 }
             }
-            if (array.length > 0) {
-                showNotifications(array);
+            if (notifications.length > 0) {
+                showNotifications(ids, notifications);
                 }
         }
             
         
 
 
-        var alerts = setInterval(checkTimes, 25000)//(1000 * 60 * 5));
+        var alerts = setInterval(checkTimes, 10000)//(1000 * 60 * 5));
 
         function checkTimes() {
             console.log("checkTimes");
             var elements = document.getElementsByClassName("t");
             var previousIndex = -1;
-            var array = [];
-            var notification = {};
+            var ids = [];
+            var notifications = [];
             for (var i = 0; i < elements.length; i++) {
                 var display = document.getElementById(i);
                 if (display.textContent == "Expired") {
-                    array.push(elements[i].children[0].textContent.trim() + " needs to be seen immediately or re-triaged!");
+                    console.log("--------------------");
+                    ids.push(document.getElementById("patient-" + i).textContent.trim());
+                    notifications.push(elements[i].children[0].textContent.trim() + " needs to be seen immediately or re-triaged!");
                 }
             }
-            showNotifications(array);
+            console.log(notifications);
+            console.log(ids);
+            showNotifications(ids, notifications);
         }
 
     
 
 
-        function showNotifications(notifications) {
+        function showNotifications(ids, notifications) {
 
-            if (notifications.length > 1) {
+            if (notifications.length > 1 && ids.length > 1) {
                 var i = 0;
                 function displayNext() {
                     swal({
@@ -217,15 +225,26 @@
                         //e.preventDefault();
 
                         if (willDelete) {
-
-
+                            console.log("Yes");
+                            $.ajax({
+                                url: "Home/Post",
+                                type: "POST",
+                                data: { "id": ids[i] },
+                                success: function (response) {
+                                    if (response == "Success") {
+                                        window.location.href = '@Url.Action("Index", "Home", new { refresh = true})';
+                                    }
+                                },
+                                error: function (response) {
+                                    alert("not working");
+                                }
+                            });
                         } else {
-                            
-                        }
-                        if (i < notifications.length) {
-                            setTimeout(function () {
-                                displayNext();
-                            }, 500);
+                            if (i < notifications.length) {
+                                setTimeout(function () {
+                                    displayNext();
+                                }, 500);
+                            }
                         }
                     });
                     i++;
