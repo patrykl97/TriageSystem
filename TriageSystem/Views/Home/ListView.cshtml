@@ -190,13 +190,11 @@
             for (var i = 0; i < elements.length; i++) {
                 var display = document.getElementById(i);
                 if (display.textContent == "Expired") {
-                    console.log("--------------------");
                     ids.push(document.getElementById("patient-" + i).textContent.trim());
-                    notifications.push(elements[i].children[0].textContent.trim() + " needs to be seen immediately or re-triaged!");
+                    notifications.push(elements[i].children[0].textContent.trim() + " needs to be re-triaged or seen immediately!");
                 }
             }
             console.log(notifications);
-            console.log(ids);
             showNotifications(ids, notifications);
         }
 
@@ -205,34 +203,46 @@
 
         function showNotifications(ids, notifications) {
 
-            if (notifications.length > 1 && ids.length > 1) {
+            if (notifications.length > 0 && ids.length > 0) {
                 var i = 0;
                 function displayNext() {
                     swal({
-                        title: "Are you sure?",
+                        title: "Do you want to re-triage the patient?",
                         text: notifications[i],
                         icon: "warning",
                         dangerMode: true,
                         buttons: {
-                            cancel: "No",
                             yes: {
                                 text: "Yes",
                                 value: true
                             },
+                            cancel: "No",
+
                         },
                     }).then((willDelete) => {
                         console.log(willDelete);
                         //e.preventDefault();
 
                         if (willDelete) {
-                            console.log("Yes");
                             $.ajax({
                                 url: "Home/Post",
                                 type: "POST",
-                                data: { "id": ids[i] },
+                                data: { "id": ids[i - 1] },
                                 success: function (response) {
                                     if (response == "Success") {
-                                        window.location.href = '@Url.Action("Index", "Home", new { refresh = true})';
+
+                                        swal({
+                                            title: "Patient re-triage!",
+                                            text: "Patient added to the triage assessment list!",
+                                            icon: "success",
+                                            buttons: false,
+                                        });
+                                        setTimeout(function () {
+                                            window.location.href = '@Url.Action("Index", "Home", new { refresh = true})';
+                                        }, 2000);
+                                    }
+                                    else {
+                                        alert(response);
                                     }
                                 },
                                 error: function (response) {
