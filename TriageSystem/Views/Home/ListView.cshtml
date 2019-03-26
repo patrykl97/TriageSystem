@@ -75,7 +75,7 @@
                 @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_checked_in)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().MinutesLeft)
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Duration)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Priority)
@@ -86,30 +86,30 @@
     <tbody>
         @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Patient.Full_name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PPS)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Condition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time_checked_in)
-            </td>
-            <td class="duration" id="@id">
-                @Html.DisplayFor(modelItem => item.Duration)
-            </td>
-            <td class="@item.Priority" id="@item.PatientId">
-                @Html.DisplayFor(modelItem => item.Priority)
-            </td>
-            <td>
-                <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
+            <tr class="t">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PPS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Condition)
+                </td>
+                <td id="time-@id">
+                    @Html.DisplayFor(modelItem => item.Time_checked_in)
+                </td>
+                <td class="duration" id="@id">
+                    
+                </td>
+                <td class="@item.Priority">
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
 
-            </td>
-        </tr>
+                </td>
+            </tr>
             id++;
         }
     </tbody>
@@ -117,7 +117,7 @@
 
 <script>
     $(document).ready(function () {
-        var elements = document.getElementsByClassName("duration");
+        var elements = document.getElementsByClassName("t");
         //var i = 0;
         //var counter;
         //timer = [];
@@ -132,46 +132,64 @@
 
 
         //var count = 30;
-        var c = 0;
         var counter = setInterval(timer, 1000) //1000 will  run it every 1 second
         function timer() {
             for (var i = 0; i < elements.length; i++) {
-                console.log(elements.length + "--------------length");
-                console.log(i);
+                var priority = elements[i].children[5].textContent;
+                var d = elements[i].children[3].textContent;
+                var minutes = 0;
+                var triageDate = new Date(d);
+                if (priority.includes("Orange")) {
+                    minutes = 10;
+                }
+                if (priority.includes("Yellow")) {
+                    minutes = 60;
+                }
+                if (priority.includes("Green")) {
+                    minutes = 120;
+                }
+                if (priority.includes("Blue")) {
+                    minutes = 240;
+                }
+                var expiryDate = new Date(triageDate);
+                expiryDate = new Date(expiryDate.setMinutes(expiryDate.getMinutes() + minutes));
                 var display = document.getElementById(i);
-                count = display.textContent;
-                if (count > 0) {
-                //    console.log("----------sagdsadgsadgd-----------");
-                //    clearInterval(counter);
-                //    //counter ended, do something here
-                //    return;
-                //} else {
-                    console.log(i);
-                    count = count - 1;
-                    display.textContent = count;
+                var distance = expiryDate.getTime() - new Date().getTime();
+
+                if (distance > 0) {
+                    countdown = new Date().setTime(distance);
+                    var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var s = Math.floor((distance % (1000 * 60)) / 1000);
+                    display.textContent = parseTime(h, m, s);
+                }
+                else {
+                    display.textContent = "Expired";
                 }
 
 
             }
-            c++;
-     
-
-
-            //Do code for showing the number of seconds here
+                
         }
+
+        function parseTime(h, m, s) {
+            if (h < 10) {
+                h = "0" + h;
+            }
+            if (m < 10) {
+                m = "0" + m;
+            }
+            if (s < 10) {
+                s = "0" + s;
+            }
+            return h + ":" + m + ":" + s;
+        }
+
         
-        //function format(minutes, seconds) {
-        //    for (var i = 0; i < elements.length; i++) {
-        //        minutes = minutes < 10 ? "0" + minutes : minutes;
-        //        seconds = seconds < 10 ? "0" + seconds : seconds;
-        //        var display = document.getElementById(i);
-        //        display.textContent = seconds;
-        //    }
-        //}
 
 
-        //timer.start();
 
+        // ref: https://www.w3schools.com/howto/howto_js_countdown.asp
     });
 
 </script>

@@ -11,6 +11,7 @@ namespace TriageSystem.Models
        
         private string _PriorityString;
         private Priority _Priority;
+        private int _Duration;
 
         public int Id { get; set; }
         [ForeignKey("Patient")]
@@ -47,10 +48,21 @@ namespace TriageSystem.Models
         public int HospitalID { get; set; }
 
         [NotMapped]
-        public int MinutesLeft { get; set; }
+        public int Duration
+        {
+            get
+            {
+                return _Duration;
+            }
+            set
+            {
+                _Duration = value;
+                MsLeft = (int)TimeSpan.FromMinutes(_Duration).TotalMilliseconds;
+            }
+        }
 
         [NotMapped]
-        public int Duration { get; set; }
+        public int MsLeft { get; private set; }
 
         [NotMapped]
         public int FlowchartId { get; set; }
