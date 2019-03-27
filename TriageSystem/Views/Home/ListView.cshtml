@@ -108,6 +108,14 @@
                 <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
 
             </td>
+            <td>
+                <form asp-action="Post" id="form" method="post">
+                    @*Input id could be helpful, could use it for js to read PatientIds value*@
+                    <input type="hidden" name="id" value="@item.PatientId" />
+                    @*<input type="hidden" asp-for="@item.PatientId" />*@
+                    <input id="sendButton" type="submit" value="Re-triage" class="btn btn-default" />
+                </form>
+            </td>
 
             <td id="expiry-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.Expiry_time)</td>
             <td id="patient-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.PatientId)</td>
@@ -225,7 +233,7 @@
 
                         if (willDelete) {
                             $.ajax({
-                                url: "Home/Post",
+                                url: "Home/PostAjax",
                                 type: "POST",
                                 data: { "id": ids[i - 1] },
                                 success: function (response) {
