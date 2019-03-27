@@ -138,7 +138,7 @@ namespace TriageSystem.Controllers
             var patientData = _context.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
             var p = _context.Patients.Where(m => m.Id == id).FirstOrDefault();
 
-            var patientWaitingViewModel = new ViewModels.PatientWaitingViewModel
+            var patientWaitingViewModel = new PatientWaitingViewModel
             {
                 PatientId = id,
                 PPS = p.PPS,
@@ -150,8 +150,8 @@ namespace TriageSystem.Controllers
                 Condition = patientData.Condition,
                 Priority = patientData.Priority,
                 Expiry_time = patientData.Expiry_time,
-                //Infections = patientCheckedIn.Infections,
-                //Arrival = patientCheckedIn.Arrival,
+                Infections = patientData.Infections,
+                Arrival = patientData.Arrival,
                 Time_checked_in = patientData.Time_checked_in,
                 HospitalID = patientData.HospitalID
             };

@@ -43,7 +43,7 @@ namespace TriageSystem.Controllers
             else
             {
                 var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId,  Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
+                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId,  Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Arrival = patientCheckedIn.Arrival, Infections = patientCheckedIn.Infections};
                 List<Flowchart> flowcharts = GetFlowcharts();
                 //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 

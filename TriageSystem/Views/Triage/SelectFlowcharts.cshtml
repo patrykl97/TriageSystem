@@ -28,6 +28,16 @@
                 <p>@Html.DisplayFor(model => model.Patient.Date_of_birth)</p>
             </div>
             <div class="form-group">
+                <label asp-for="Arrival" class="control-label"></label>
+                <input asp-for="Arrival" class="form-control" readonly="readonly" />
+                <span asp-validation-for="Arrival" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Infections" class="control-label"></label>
+                <input asp-for="Infections" class="form-control" />
+                <span asp-validation-for="Infections" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Condition" class="control-label"></label>
                 <input asp-for="Condition" class="form-control" />
                 <span asp-validation-for="Condition" class="text-danger"></span>
@@ -36,7 +46,7 @@
                 <label asp-for="Flowchart" class="control-label"></label>
                 @*@Html.DropDownListFor(model => model.FlowchartSelected, ViewBag.FlowchartNames as IEnumerable<SelectListItem>, "Select at least one flowchart...", new { id = "FlowchartsDropdown" });*@
                 @*@Html.DropDownListFor(model => model.Flowchart, new SelectList(Model.Flowcharts, "Value", "Text"), "Select at least one flowchart...", new { id = "FlowchartsDropdown" });*@
-                <select class="flowcharts" asp-for="FlowchartId" asp-items="ViewBag.Flowcharts" ></select>
+                <select class="flowcharts" asp-for="FlowchartId" asp-items="ViewBag.Flowcharts"></select>
             </div>
             <div class="form-group">
                 @*<a asp-action="Edit" asp-route-id="@Model.PPS" class="btn btn-default">Edit</a>*@

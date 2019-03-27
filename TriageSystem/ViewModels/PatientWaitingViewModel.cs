@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using TriageSystem.Models;
@@ -20,6 +21,8 @@ namespace TriageSystem.ViewModels
         public string Date_of_birth { get; set; }
         public string Nationality { get; set; }
         public string Address { get; set; }
+        public string Infections { get; set; }
+        public string Arrival { get; set; }
         //[Required]
         public string Condition { get; set; }
         public Priority Priority
