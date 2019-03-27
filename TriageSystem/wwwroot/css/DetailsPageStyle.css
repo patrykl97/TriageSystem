@@ -1,0 +1,46 @@
+﻿.dl-horizontal {
+    width: 50%;
+    margin: 0;
+    overflow: hidden
+}
+
+dt {
+    display: block;
+    width: 40%;
+    background: #347BB7;
+    background: -webkit-linear-gradient(top right, #347BB7, #98E6E8);
+    background: -moz-linear-gradient(top right, #347BB7, #98E6E8);
+    background: linear-gradient(top right, #347BB7, #98E6E8);
+    border-radius: 20px;
+    padding: 3px;
+    margin: 5px;
+    color: white;
+}
+
+
+.module-border-wrap {
+    background: red;
+    background: -webkit-linear-gradient(left, red, #AC05EC, #84BDEF);
+    background: -moz-linear-gradient(left, red, #AC05EC, #84BDEF);
+    background: linear-gradient(to right,red, #AC05EC, #84BDEF);
+    padding: 3px;
+}
+
+
+.module {
+    background: #347BB7;
+    background: -webkit-linear-gradient(top left, #347BB7, #98E6E8);
+    background: -moz-linear-gradient(top left, #347BB7, #98E6E8);
+    background: linear-gradient(top left, #347BB7, #98E6E8);
+    padding: 20px;
+    margin: 0;
+    color: white;
+}
+
+.form-control {
+    background: #347BB7;
+    background: -webkit-linear-gradient(top left, #347BB7, #98E6E8);
+    background: -moz-linear-gradient(top left, #347BB7, #98E6E8);
+    background: linear-gradient(top left, #347BB7, #98E6E8);
+    color: white;
+}

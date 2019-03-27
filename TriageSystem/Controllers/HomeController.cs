@@ -67,7 +67,7 @@ namespace TriageSystem.Controllers
                     var patient = _context.PatientWaitingList.Where(p => p.PatientId == id).FirstOrDefault();
                     // TODO: after refactoring uncomment line below
                     //var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in };
-                    var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
+                    var patientData = new PatientCheckIn { PatientId = patient.PatientId, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
                     _context.PatientCheckIns.Add(patientData);
                     _context.PatientWaitingList.Remove(patient);
                     await _context.SaveChangesAsync();
@@ -95,7 +95,7 @@ namespace TriageSystem.Controllers
                     var patient = _context.PatientWaitingList.Where(p => p.PatientId == i).FirstOrDefault();
                     // TODO: after refactoring uncomment line below
                     //var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in };
-                    var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
+                    var patientData = new PatientCheckIn { PatientId = patient.PatientId,  HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
                     _context.PatientCheckIns.Add(patientData);
                     _context.PatientWaitingList.Remove(patient);
                     await _context.SaveChangesAsync();

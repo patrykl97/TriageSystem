@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.Full_name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().PPS)
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.PPS)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Infections)
@@ -38,7 +38,7 @@
                     @Html.DisplayFor(modelItem => item.Patient.Full_name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PPS)
+                    @Html.DisplayFor(modelItem => item.Patient.PPS)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Infections)
@@ -50,8 +50,10 @@
                     @Html.DisplayFor(modelItem => item.Time_checked_in)
                 </td>
                 <td>
-                    <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
-
+                    <form asp-controller="Patient" asp-action="CheckedIn" id="form" method="post">
+                        <input type="hidden" name="id" value="@item.PatientId" />
+                        <input id="sendButton" type="submit" value="View" class="btn btn-default" />
+                    </form>
                 </td>
             </tr>
         }
@@ -68,7 +70,7 @@
                 @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.Full_name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().PPS)
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.PPS)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition)
@@ -92,7 +94,7 @@
                 @Html.DisplayFor(modelItem => item.Patient.Full_name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PPS)
+                @Html.DisplayFor(modelItem => item.Patient.PPS)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Condition)
@@ -105,15 +107,11 @@
                 @Html.DisplayFor(modelItem => item.Priority)
             </td>
             <td>
-                <a asp-action="View" asp-route-id="@item.HospitalID">View</a> |
-
-            </td>
-            <td>
-                <form asp-action="Post" id="form" method="post">
+                <form asp-controller="Patient" asp-action="Actions" id="form" method="post">
                     @*Input id could be helpful, could use it for js to read PatientIds value*@
                     <input type="hidden" name="id" value="@item.PatientId" />
                     @*<input type="hidden" asp-for="@item.PatientId" />*@
-                    <input id="sendButton" type="submit" value="Re-triage" class="btn btn-default" />
+                    <input id="sendButton" type="submit" value="Action" class="btn btn-default" />
                 </form>
             </td>
 

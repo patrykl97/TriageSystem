@@ -71,46 +71,6 @@ namespace TriageSystem.Models
             context.SaveChanges();
         }
 
-        private static void CreateLists(OnConfiguring context)
-        {
-            if (context.PatientCheckIns.Any())
-            {
-                return;   // DB has been seeded
-            }
-
-            DateTime myDate = DateTime.ParseExact("2019-02-20 19:14:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            var checkIn = new PatientCheckIn { PPS = "390849 F", HospitalID = 1,  Time_checked_in = myDate };
-            context.PatientCheckIns.Add(checkIn);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            checkIn = new PatientCheckIn { PPS = "310149 F", HospitalID = 1, Time_checked_in = myDate };
-            context.PatientCheckIns.Add(checkIn);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:19:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            checkIn = new PatientCheckIn { PPS = "344849 F", HospitalID = 1, Time_checked_in = myDate };
-            context.PatientCheckIns.Add(checkIn);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            var waiting = new PatientWaitingList { PPS = "351049 R", HospitalID = 1, Condition = "Heart attack", Time_checked_in = myDate, Priority = Priority.Red };
-            context.PatientWaitingList.Add(waiting);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:17:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            waiting = new PatientWaitingList { PPS = "390049 S", HospitalID = 1, Condition = "Sprained ankle", Time_checked_in = myDate, Priority = Priority.Green };
-            context.PatientWaitingList.Add(waiting);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:19:30", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            waiting = new PatientWaitingList { PPS = "392249 S", HospitalID = 1, Condition = "Vomiting", Time_checked_in = myDate, Priority = Priority.Green };
-            context.PatientWaitingList.Add(waiting);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:17:31", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            waiting = new PatientWaitingList { PPS = "391149 S", HospitalID = 1, Condition = "Internal bleeding", Time_checked_in = myDate, Priority = Priority.Red};
-            context.PatientWaitingList.Add(waiting);
-
-            myDate = DateTime.ParseExact("2019-02-20 19:16:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
-            waiting = new PatientWaitingList { PPS = "393349 S", HospitalID = 1, Condition = "Respitory problems", Time_checked_in = myDate, Priority = Priority.Red };
-            context.PatientWaitingList.Add(waiting);
-
-            context.SaveChanges();
-        }
+       
     }
 }

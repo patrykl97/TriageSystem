@@ -1,0 +1,121 @@
+﻿@model TriageSystem.ViewModels.PatientWaitingViewModel
+
+@{
+    ViewData["Title"] = "Patient Actions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/DetailsPageStyle.css" rel="stylesheet" type="text/css" media="all">
+
+<div><h2 class="module">Patient Actions</h2></div>
+<div>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                Patient ID
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;"> 
+                @Html.DisplayFor(model => model.PatientId)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PPS)
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.PPS)
+            </dd>
+            <dt>
+                Full Name
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Full_name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Gender)
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Gender)
+            </dd>
+            <dt>
+                Date of Birth
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Date_of_birth)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Nationality)
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Nationality)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Address)
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Condition)
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Condition)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Priority)
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Priority)
+            </dd>
+            <dt>
+                Time checked in
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Time_checked_in)
+            </dd>
+            <dt>
+                Expiry Time
+            </dt>
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
+                @Html.DisplayFor(model => model.Expiry_time)
+            </dd>
+        </dl>
+    </div>
+    <br/>
+    <div>
+        <table>
+            <tbody>
+                <tr>
+                    <td><a asp-controller="Home" asp-action="Index">Back to List</a></td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <form asp-controller="Home" asp-action="Post" id="form" method="post">
+                            <input type="hidden" name="id" value="@Model.PatientId" />
+                            <input id="sendButton" type="submit" value="Re-triage" class="btn btn-default" style="color: white; background: red;" />
+                        </form>
+                    </td>
+                    <td>&nbsp;</td>
+
+                    <td>
+                        <form asp-controller="Patient" asp-action="Admit" id="form" method="post">
+                            <input type="hidden" name="id" value="@Model.PatientId" />
+                            <input id="sendButton" type="submit" value="DTA" class="btn btn-default" style="color: white; background: green;" />
+                        </form>
+                    </td>
+                    <td>&nbsp;</td> @*makes column with empty space to seperate buttons*@
+                    @{
+                    if (Model.Priority.ToString() == "Blue")
+                    {
+                        <td>
+                            <form asp-controller="Patient" asp-action="SendHome" id="form" method="post">
+                                <input type="hidden" name="id" value="@Model.PatientId" />
+                                <input id="sendButton" type="submit" value="Send home" class="btn btn-default" style="color: white; background: blue;" />
+                            </form>
+                        </td>
+                    }
+                    }
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

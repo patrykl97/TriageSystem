@@ -1,22 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
+using TriageSystem.Models;
 
-namespace TriageSystem.Models
+namespace TriageSystem.ViewModels
 {
-    public class PatientWaitingList
+    public class PatientWaitingViewModel
     {
-       
+
         private string _PriorityString;
         private Priority _Priority;
         private int _Duration;
 
-        public int Id { get; set; }
-        [ForeignKey("Patient")]
         public int PatientId { get; set; }
-        //public string PPS { get; set; }
+        public string PPS { get; set; }
+        public string Full_name { get; set; }
+        public string Gender { get; set; }
+        public string Date_of_birth { get; set; }
+        public string Nationality { get; set; }
+        public string Address { get; set; }
         //[Required]
         public string Condition { get; set; }
         public Priority Priority
@@ -30,7 +33,6 @@ namespace TriageSystem.Models
                 _Priority = value;
             }
         }
-        [NotMapped]
         public string PriorityString
         {
             get
@@ -45,10 +47,7 @@ namespace TriageSystem.Models
 
         }
         public DateTime Time_checked_in { get; set; }
-        [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
-
-        [NotMapped]
         public int Duration
         {
             get
@@ -61,27 +60,6 @@ namespace TriageSystem.Models
                 Expiry_time = Time_checked_in.AddMinutes(_Duration);
             }
         }
-
-
-        [NotMapped]
         public DateTime Expiry_time { get; set; }
-
-
-        [NotMapped]
-        public int FlowchartId { get; set; }
-
-
-        [NotMapped]
-        public Flowchart Flowchart { get; set; }
-
-        [NotMapped]
-        public IEnumerable<SelectListItem> Flowcharts { get; set; }
-
-
-        public virtual Patient Patient { get; set; }
-        public virtual Hospital Hospital { get; set; }
-
-
-     
     }
 }

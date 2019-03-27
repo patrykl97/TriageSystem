@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Hubs;
 using TriageSystem.Models;
+using TriageSystem.ViewModels;
 
 namespace TriageSystem.Controllers
 {
@@ -42,7 +43,7 @@ namespace TriageSystem.Controllers
             else
             {
                 var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId, PPS = patientCheckedIn.PPS, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
+                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId,  Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID };
                 List<Flowchart> flowcharts = GetFlowcharts();
                 //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
@@ -63,14 +64,16 @@ namespace TriageSystem.Controllers
 
 
         // TODO: refactor to use PatientId rather than pps
-        public IActionResult Assessment(PatientWaitingList patient)
+        public IActionResult Assessment(PatientWaitingList patientData)
         {
             var user = _userManager.GetUserAsync(User).Result;
             //var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PatientId == patientId);
-            var flowchart = GetSelectedFlowchart(patient.FlowchartId);
-            patient.Flowchart = flowchart;
+            var flowchart = GetSelectedFlowchart(patientData.FlowchartId);
+            var patient = _context.Patients.Where(p => p.Id == patientData.PatientId).FirstOrDefault();
+            patientData.Patient = patient;
+            patientData.Flowchart = flowchart;
             //var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
-            return View(patient);
+            return View(patientData);
         }
 
         [HttpPost]

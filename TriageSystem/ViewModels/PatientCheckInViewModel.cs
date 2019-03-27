@@ -27,7 +27,7 @@ namespace TriageSystem.ViewModels
         public string Arrival { get; set; }
         public DateTime Time_checked_in { get; set; }
         public int HospitalID { get; set; }
-        public virtual List<SelectListItem> Arrivals { get; } = new List<SelectListItem>
+        public List<SelectListItem> Arrivals { get; } = new List<SelectListItem>
         {
             new SelectListItem { Value = "Home", Text = "Home" },
             new SelectListItem { Value = "Ambulance", Text = "Ambulance" },

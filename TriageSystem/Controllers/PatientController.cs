@@ -19,7 +19,7 @@ namespace TriageSystem.Controllers
     public class PatientController : Controller
     {
         UserManager<TriageSystemUser> _userManager;
-        private readonly OnConfiguring _context;
+        private OnConfiguring _context;
         private IHubContext<NotificationHub> HubContext { get; set; }
 
         public PatientController(UserManager<TriageSystemUser> userManager, OnConfiguring context, IHubContext<NotificationHub> hubContext)
@@ -91,7 +91,7 @@ namespace TriageSystem.Controllers
                         _context.Patients.Add(patient);
                         await _context.SaveChangesAsync();
                     }
-                    var patientCheckIn = new PatientCheckIn { PatientId = patient.Id, PPS = patient.PPS, HospitalID = patientData.HospitalID, Arrival = patientData.Arrival, Infections = patientData.Infections, Time_checked_in = patientData.Time_checked_in };
+                    var patientCheckIn = new PatientCheckIn { PatientId = patient.Id, HospitalID = patientData.HospitalID, Arrival = patientData.Arrival, Infections = patientData.Infections, Time_checked_in = patientData.Time_checked_in };
                     _context.PatientCheckIns.Add(patientCheckIn);
                     await _context.SaveChangesAsync();
                     //var connection = new HubConnectionBuilder().WithUrl("/NotificationHub").Build();
@@ -108,6 +108,71 @@ namespace TriageSystem.Controllers
             ViewBag.PPS = list; //selectList;
             return View(patientData);
         }
+
+        [HttpPost]
+        public IActionResult CheckedIn(int id)
+        {
+            var patientCheckedIn = _context.PatientCheckIns.Where(m => m.PatientId == id).FirstOrDefault();
+            var p = _context.Patients.Where(m => m.Id == id).FirstOrDefault();
+            var patientViewModel = new PatientCheckInViewModel {
+                PatientId = id,
+                PPS = p.PPS,
+                Full_name = p.Full_name,
+                Gender = p.Gender,
+                Date_of_birth = p.Date_of_birth,
+                Nationality = p.Nationality,
+                Address = p.Address,
+                Infections = patientCheckedIn.Infections,
+                Arrival = patientCheckedIn.Arrival,
+                Time_checked_in = patientCheckedIn.Time_checked_in,
+                HospitalID = patientCheckedIn.HospitalID
+            };
+
+            return View(patientViewModel);
+        }
+
+
+        [HttpPost]
+        public IActionResult Actions(int id)
+        {
+            var patientData = _context.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
+            var p = _context.Patients.Where(m => m.Id == id).FirstOrDefault();
+
+            var patientWaitingViewModel = new ViewModels.PatientWaitingViewModel
+            {
+                PatientId = id,
+                PPS = p.PPS,
+                Full_name = p.Full_name,
+                Gender = p.Gender,
+                Date_of_birth = p.Date_of_birth,
+                Nationality = p.Nationality,
+                Address = p.Address,
+                Condition = patientData.Condition,
+                Priority = patientData.Priority,
+                Expiry_time = patientData.Expiry_time,
+                //Infections = patientCheckedIn.Infections,
+                //Arrival = patientCheckedIn.Arrival,
+                Time_checked_in = patientData.Time_checked_in,
+                HospitalID = patientData.HospitalID
+            };
+
+
+            return View(patientWaitingViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Admit(int id)
+        {
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        [HttpPost]
+        public IActionResult SendHome(int id)
+        {
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+
+        }
+
 
 
         private static DateTime GetNow()

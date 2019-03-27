@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Collections.Generic;
 using TriageSystem.Areas.Identity.Data;
+using TriageSystem.ViewModels;
 
 namespace TriageSystem.Models
 {
@@ -51,6 +52,10 @@ namespace TriageSystem.Models
             //modelBuilder.Entity<PatientCheckIn>().ToTable("PatientCheckIns");
             //modelBuilder.Entity<PatientWaitingList>().ToTable("PatientWaitingList");
         }
+        
+        
+
+        
 
     }
 }

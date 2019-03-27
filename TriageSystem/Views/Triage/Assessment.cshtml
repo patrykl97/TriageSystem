@@ -12,6 +12,18 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.PatientId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PatientId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Patient.PPS)
+        </dt>
+        <dd id="PPS">
+            @Html.DisplayFor(model => model.Patient.PPS)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Condition)
         </dt>
         <dd>
@@ -122,7 +134,6 @@
     function postData() {
         var patient = {};
         patient.PatientId = '@Model.PatientId';
-        patient.PPS = '@Model.PPS';
         patient.Condition = '@Model.Condition';
         patient.PriorityString = currentPriority;
         patient.HospitalID = '@Model.HospitalID';
