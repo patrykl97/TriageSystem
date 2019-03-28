@@ -78,6 +78,10 @@ namespace TriageSystem.Controllers
             return View(patientData);
         }
 
+
+        //****************************************
+        // TODO: call signalR, make sure it's called everywhere else where required
+        //******************************************************
         [HttpPost]
         public async Task<IActionResult> GivePriority([FromBody] PatientWaitingList patientData)
         {

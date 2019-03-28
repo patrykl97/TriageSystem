@@ -80,7 +80,7 @@ namespace TriageSystem.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff.FindAsync(id);
+            var staff = _context.Staff.Where(s => s.StaffID == id).FirstOrDefault();
             if (staff == null)
             {
                 return NotFound();
@@ -88,12 +88,10 @@ namespace TriageSystem.Controllers
             return View(staff);
         }
 
-        // POST: Staff/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StaffID,Hospital_id,Full_name,Email,Gender,Date_of_birth,Position,Department")] Staff staff)
+        public async Task<IActionResult> Edit(int id, Staff staff)
         {
             if (id != staff.StaffID)
             {
@@ -131,14 +129,16 @@ namespace TriageSystem.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff
-                .FirstOrDefaultAsync(m => m.StaffID == id);
+            var staff = _context.Staff.Where(m => m.StaffID == id).FirstOrDefault();
             if (staff == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            _context.Staff.Remove(staff);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Staff/Delete/5
