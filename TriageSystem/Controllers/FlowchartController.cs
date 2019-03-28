@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,13 +28,20 @@ namespace TriageSystem.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(GetFlowcharts());
         }
 
         public IActionResult Create()
         {
             CreateFlowchartViewModel flowchart = new CreateFlowchartViewModel();
             return View(flowchart);
+        }
+
+        public IActionResult Delete(string name)
+        {
+            string fileLocation = @".\Flowcharts\" + name + ".json";
+            System.IO.File.Delete(fileLocation);
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -119,6 +127,32 @@ namespace TriageSystem.Controllers
         {
             var flowchart = new Flowchart { Name = model.Name, Discriminators = model.Discriminators, SeeAlso = model.SeeAlso, Notes = model.Notes };
             return flowchart;
+        }
+
+        private List<Flowchart> GetFlowcharts()
+        {
+            string name, path;
+            string[] filePaths = Directory.GetFiles(@"./Flowcharts");
+            List<Flowchart> flowcharts = new List<Flowchart>();
+            for (int i = 0; i < filePaths.Length; ++i)
+            {
+                path = filePaths[i];
+                name = Path.GetFileName(path);
+                name = name.Replace("_", " ");
+                name = name.Replace(".json", "");
+
+                string text;
+                var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                {
+                    text = streamReader.ReadToEnd();
+                }
+                var flowchart = JsonConvert.DeserializeObject<Flowchart>(text);
+                flowchart.Name = name;
+                var d = new Discriminator { Priority = Priority.Green };
+                flowcharts.Add(flowchart);
+            }
+            return flowcharts;
         }
 
         private string getErrors()
