@@ -43,7 +43,7 @@ namespace TriageSystem.Models
         [Required]
         public DateTime Time_triaged { get; set; }
 
-        public DateTime Time_admitted { get; set; }
+        public DateTime? Time_admitted { get; set; }
         public DateTime? Time_released { get; set; }
 
         [ForeignKey("Hospital")]
