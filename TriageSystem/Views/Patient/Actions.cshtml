@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="~/css/site.css" rel="stylesheet" type="text/css" media="all">
 <link href="~/css/DetailsPageStyle.css" rel="stylesheet" type="text/css" media="all">
 
 <div><h2 class="module">Patient Actions</h2></div>
@@ -15,7 +16,7 @@
             <dt>
                 Patient ID
             </dt>
-            <dd class="form-control" style="float: left; width: 60%; margin: 1px;"> 
+            <dd class="form-control" style="float: left; width: 60%; margin: 1px;">
                 @Html.DisplayFor(model => model.PatientId)
             </dd>
             <dt>
@@ -80,7 +81,7 @@
             </dd>
         </dl>
     </div>
-    <br/>
+    <br />
     <div>
         <table>
             <tbody>
@@ -103,15 +104,15 @@
                     </td>
                     <td>&nbsp;</td> @*makes column with empty space to seperate buttons*@
                     @{
-                    if (Model.Priority.ToString() == "Blue")
-                    {
-                        <td>
-                            <form asp-controller="Patient" asp-action="SendHome" id="form" method="post">
-                                <input type="hidden" name="id" value="@Model.PatientId" />
-                                <input id="sendButton" type="submit" value="Send home" class="btn btn-default" style="color: white; background: blue;" />
-                            </form>
-                        </td>
-                    }
+                        if (Model.Priority.ToString() == "Blue")
+                        {
+                            <td>
+                                <form asp-controller="Patient" asp-action="SendHome" id="form" method="post">
+                                    <input type="hidden" name="id" value="@Model.PatientId" />
+                                    <input id="sendButton" type="submit" value="Send home" class="btn btn-default" style="color: white; background: blue;" />
+                                </form>
+                            </td>
+                        }
                     }
 
                 </tr>
