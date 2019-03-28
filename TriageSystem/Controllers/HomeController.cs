@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TriageSystem.Areas.Identity.Data;
-using TriageSystem.Hubs;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
 
@@ -24,13 +23,12 @@ namespace TriageSystem.Controllers
     {
         UserManager<TriageSystemUser> _userManager;
         private readonly TriageSystemContext _context;
-        private IHubContext<NotificationHub> HubContext { get; set; }
+        //private IHubContext<NotificationHub> HubContext { get; set; }
 
-        public HomeController(UserManager<TriageSystemUser> userManager, TriageSystemContext context, IHubContext<NotificationHub> hubContext)
+        public HomeController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
         {
             _userManager = userManager;
             _context = context;
-            HubContext = hubContext;
         }
 
 

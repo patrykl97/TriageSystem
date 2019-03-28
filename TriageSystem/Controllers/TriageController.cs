@@ -23,13 +23,12 @@ namespace TriageSystem.Controllers
     {
         UserManager<TriageSystemUser> _userManager;
         private readonly TriageSystemContext _context;
-        private IHubContext<NotificationHub> HubContext { get; set; }
+        //private IHubContext<NotificationHub> HubContext { get; set; }
         
-        public TriageController(UserManager<TriageSystemUser> userManager, TriageSystemContext context, IHubContext<NotificationHub> hubContext)
+        public TriageController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
         {
             _userManager = userManager;
             _context = context;
-            HubContext = hubContext;
         }
 
         public IActionResult SelectFlowcharts()

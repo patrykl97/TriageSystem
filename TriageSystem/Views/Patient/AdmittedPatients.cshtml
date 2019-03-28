@@ -1,0 +1,104 @@
+﻿@model IEnumerable<TriageSystem.Models.PatientAdmitted>
+
+@{
+    ViewData["Title"] = "AdmittedPatients";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>AdmittedPatients</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PatientId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Infections)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Arrival)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Condition)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinalCondition)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time_checked_in)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time_triaged)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time_admitted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time_released)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HospitalID)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PatientId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Infections)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Arrival)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Condition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinalCondition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time_checked_in)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time_triaged)
+            </td>
+            <td>
+                
+                @{
+                    if (item.Time_admitted.ToString() != "0001 - 01 - 01 00:00:00")
+                    {
+                        @Html.DisplayFor(modelItem => item.Time_admitted)
+                    }
+
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time_released)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HospitalID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -16,13 +16,13 @@ namespace TriageSystem.Controllers
     [Authorize] // User needs to be singed in to display this view
     public class FlowchartController : Controller
     {
-        UserManager<TriageSystemUser> _userManager;
-        private readonly TriageSystemContext _context;
+        //UserManager<TriageSystemUser> _userManager;
+        //private readonly TriageSystemContext _context;
 
-        public FlowchartController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
+        public FlowchartController()
         {
-            _userManager = userManager;
-            _context = context;
+            //_userManager = userManager;
+            //_context = context;
         }
 
         public IActionResult Index()

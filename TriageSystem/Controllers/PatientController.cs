@@ -112,8 +112,9 @@ namespace TriageSystem.Controllers
         [HttpPost]
         public IActionResult CheckedIn(int id)
         {
-            var patientCheckedIn = _context.PatientCheckIns.Where(m => m.PatientId == id).FirstOrDefault();
-            var p = _context.Patients.Where(m => m.Id == id).FirstOrDefault();
+            var user = _userManager.GetUserAsync(User).Result;
+            var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.Where(m => m.PatientId == id).FirstOrDefault();  //_context.PatientCheckIns.Where(m => m.PatientId == id).FirstOrDefault();
+            var p = patientCheckedIn.Patient;
             var patientViewModel = new PatientCheckInViewModel {
                 PatientId = id,
                 PPS = p.PPS,
@@ -135,8 +136,9 @@ namespace TriageSystem.Controllers
         [HttpPost]
         public IActionResult Actions(int id)
         {
-            var patientData = _context.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
-            var p = _context.Patients.Where(m => m.Id == id).FirstOrDefault();
+            var user = _userManager.GetUserAsync(User).Result;
+            var patientData = user.Staff.Hospital.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();  //_context.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
+            var p = patientData.Patient;
 
             var patientWaitingViewModel = new PatientWaitingViewModel
             {
@@ -162,7 +164,7 @@ namespace TriageSystem.Controllers
 
         // ***********************************************
         // TODO: refactor these 2 methods to reuse code
-        //       add function to send property arrival 
+        //       
         // ***********************************************
         [HttpPost]
         public async Task<IActionResult> PostAjax(int id)
@@ -171,10 +173,9 @@ namespace TriageSystem.Controllers
             {
                 try
                 {
-                    var patient = _context.PatientWaitingList.Where(p => p.PatientId == id).FirstOrDefault();
-                    // TODO: after refactoring uncomment line below
+                    var user = _userManager.GetUserAsync(User).Result;
+                    var patient = user.Staff.Hospital.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
                     var patientData = new PatientCheckIn { PatientId = patient.PatientId, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged };
-                    //var patientData = new PatientCheckIn { PatientId = patient.PatientId, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged, Arrival = "Home" };
                     _context.PatientCheckIns.Add(patientData);
                     _context.PatientWaitingList.Remove(patient);
                     await _context.SaveChangesAsync();
@@ -199,7 +200,8 @@ namespace TriageSystem.Controllers
             {
                 try
                 {
-                    var patient = _context.PatientWaitingList.Where(p => p.PatientId == i).FirstOrDefault();
+                    var user = _userManager.GetUserAsync(User).Result;
+                    var patient = user.Staff.Hospital.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
                     // TODO: after refactoring uncomment line below
                     //var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in };
                     //var patientData = new PatientCheckIn { PatientId = patient.PatientId, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
@@ -229,6 +231,15 @@ namespace TriageSystem.Controllers
             await AddToAdmitted(id, true);
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
+
+
+        public IActionResult AdmittedPatients()
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+            var list = _context.PatientAdmitted.Where(p => p.HospitalID == user.Staff.HospitalID);
+            return View(list);
+        }
+
 
         private async Task<IActionResult> AddToAdmitted(int id, bool sentHome = false)
         {
@@ -270,6 +281,8 @@ namespace TriageSystem.Controllers
             }
             return null;
         }
+
+   
 
 
 
