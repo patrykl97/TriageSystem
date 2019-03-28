@@ -78,14 +78,7 @@
                 @Html.DisplayFor(modelItem => item.Time_triaged)
             </td>
             <td>
-                
-                @{
-                    if (item.Time_admitted.ToString() != "0001 - 01 - 01 00:00:00")
-                    {
-                        @Html.DisplayFor(modelItem => item.Time_admitted)
-                    }
-
-                }
+                @Html.DisplayFor(modelItem => item.Time_admitted)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Time_released)

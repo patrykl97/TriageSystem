@@ -37,6 +37,7 @@ namespace TriageSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddDescription(CreateFlowchartViewModel flowchart)
         {
             if (ModelState.IsValid)
@@ -99,7 +100,8 @@ namespace TriageSystem.Controllers
         }
         
         [HttpPost]
-        public void AddFlowchart(AddDescriptionViewModel model)
+        [ValidateAntiForgeryToken]
+        public IActionResult AddFlowchart(AddDescriptionViewModel model)
         {
             var flowchart = ViewModelToFlowchart(model);
             string x = JsonConvert.SerializeObject(flowchart);
@@ -110,9 +112,7 @@ namespace TriageSystem.Controllers
             {
                 outputFile.WriteLine(x);
             }
-            var m = JsonConvert.DeserializeObject<Flowchart>(x);
-            var safafads = 0;       
-     
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         private Flowchart ViewModelToFlowchart(AddDescriptionViewModel model)

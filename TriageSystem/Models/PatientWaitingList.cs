@@ -81,6 +81,9 @@ namespace TriageSystem.Models
         [NotMapped]
         public IEnumerable<SelectListItem> Flowcharts { get; set; }
 
+        [NotMapped]
+        public IEnumerable<PatientAdmitted> PatientHistory { get; set; }
+
 
         public virtual Patient Patient { get; set; }
         public virtual Hospital Hospital { get; set; }

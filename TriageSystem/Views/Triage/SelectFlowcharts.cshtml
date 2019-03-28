@@ -24,8 +24,8 @@
 <h2 class="module">Triage Assessment</h2>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row" style="width: 60%">
+    <div class="col-md-4" style="width: 50%">
         <form asp-action="Assessment">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" id="patientId" asp-for="PatientId" />
@@ -70,7 +70,84 @@
             </div>
         </form>
     </div>
+    <div class="col-md-2" style="width: 50%">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Infections)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Arrival)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Condition)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PatientHistory.First().FinalCondition)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Priority)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Time_checked_in)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Time_triaged)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PatientHistory.First().Time_admitted)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PatientHistory.First().Time_released)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.HospitalID)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PatientHistory)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Infections)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Arrival)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Condition)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FinalCondition)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Priority)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Time_checked_in)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Time_triaged)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Time_admitted)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Time_released)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HospitalID)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
+
 
 <div>
     <a asp-action="Index">Back to List</a>

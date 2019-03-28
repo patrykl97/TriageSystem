@@ -55,6 +55,7 @@ namespace TriageSystem.Controllers
         // TODO: prevent adding patients that are already in the patientList
         // TODO: if PPS != null and all other properties exist in the db, update the PPS
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(PatientCheckInViewModel patientData)
         {
             if (ModelState.IsValid)
@@ -110,6 +111,7 @@ namespace TriageSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CheckedIn(int id)
         {
             var user = _userManager.GetUserAsync(User).Result;
@@ -134,6 +136,7 @@ namespace TriageSystem.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Actions(int id)
         {
             var user = _userManager.GetUserAsync(User).Result;
@@ -192,6 +195,7 @@ namespace TriageSystem.Controllers
 
         // TODO: add check for whether times has expired, perhaphs leave it, re-triage might be done before time expires
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Post(int id)
         {
             int i = id;
@@ -219,6 +223,7 @@ namespace TriageSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Admit(int id)
         {
             await AddToAdmitted(id);
@@ -226,6 +231,7 @@ namespace TriageSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendHome(int id)
         {
             await AddToAdmitted(id, true);

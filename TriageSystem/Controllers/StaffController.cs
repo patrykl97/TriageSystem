@@ -2,26 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Models;
 
 namespace TriageSystem.Controllers
 {
     public class StaffController : Controller
     {
+        UserManager<TriageSystemUser> _userManager;
         private readonly TriageSystemContext _context;
 
-        public StaffController(TriageSystemContext context)
+        public StaffController(TriageSystemContext context, UserManager<TriageSystemUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Staff
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Staff.ToListAsync());
+            var user = _userManager.GetUserAsync(User).Result;
+            var staffList = user.Staff.Hospital.StaffList;
+            return View(staffList);
         }
 
         // GET: Staff/Details/5
@@ -45,7 +51,9 @@ namespace TriageSystem.Controllers
         // GET: Staff/Create
         public IActionResult Create()
         {
-            return View();
+            var user = _userManager.GetUserAsync(User).Result;
+            var staff = new Staff { HospitalID = user.Staff.HospitalID };
+            return View(staff);
         }
 
         // POST: Staff/Create
@@ -53,7 +61,7 @@ namespace TriageSystem.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StaffID,Hospital_id,Full_name,Email,Gender,Date_of_birth,Position,Department")] Staff staff)
+        public async Task<IActionResult> Create(Staff staff)
         {
             if (ModelState.IsValid)
             {

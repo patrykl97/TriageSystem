@@ -57,6 +57,8 @@ namespace TriageSystem.Controllers
                 //ViewBag.FlowchartNames = list.AsEnumerable();
                 //patientData.Flowcharts = list;
                 ViewBag.Flowcharts = list;
+                var patientHistory = _context.PatientAdmitted.Where(p => p.PatientId == patientData.PatientId);
+                patientData.PatientHistory = patientHistory;
                 return View(patientData);
             }
 
