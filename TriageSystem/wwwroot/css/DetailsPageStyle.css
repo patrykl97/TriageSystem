@@ -11,7 +11,7 @@ dt {
     background: -webkit-linear-gradient(top right, #347BB7, #98E6E8);
     background: -moz-linear-gradient(top right, #347BB7, #98E6E8);
     background: linear-gradient(top right, #347BB7, #98E6E8);
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 3px;
     margin: 5px;
     color: white;
@@ -27,15 +27,7 @@ dt {
 }
 
 
-.module {
-    background: #347BB7;
-    background: -webkit-linear-gradient(top left, #347BB7, #98E6E8);
-    background: -moz-linear-gradient(top left, #347BB7, #98E6E8);
-    background: linear-gradient(top left, #347BB7, #98E6E8);
-    padding: 20px;
-    margin: 0;
-    color: white;
-}
+
 
 .form-control {
     background: #347BB7;

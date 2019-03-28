@@ -5,59 +5,137 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>TriageAssessment</h2>
+@*<link href="~/css/DetailsPageStyle.css" rel="stylesheet" type="text/css" media="all">*@
 
-<div>
-    <h4>PatientWaitingList</h4>
+<style>
+
+    .dl-horizontal {
+        width: 50%;
+        margin: 0 auto;
+    }
+
+dt.label {
+    display: block;
+    background: #347BB7;
+    background: -webkit-linear-gradient(top right, #347BB7, #98E6E8);
+    background: -moz-linear-gradient(top right, #347BB7, #98E6E8);
+    background: linear-gradient(top right, #347BB7, #98E6E8);
+    border-radius: 10px;
+    width: 30%;
+    padding: 3px;
+    margin: 5px;
+    color: white;
+}
+
+    .border {
+        position: relative;
+        background: red;
+        background: -webkit-linear-gradient(left, red, #AC05EC, #84BDEF);
+        background: -moz-linear-gradient(left, red, #AC05EC, #84BDEF);
+        background: linear-gradient(to right,red, #AC05EC, #84BDEF);
+        padding: 3px;
+    }
+
+    .Red {
+        background-color: red;
+    }
+
+    .Orange {
+        background-color: orange;
+    }
+
+    .Yellow {
+        background-color: yellow;
+    }
+
+    .Green {
+        background-color: green;
+    }
+
+    .Blue {
+        background-color: blue;
+    }
+
+</style>
+
+<h2 class="module">Triage Assessment</h2>
+
+<div style="width: 100%;">
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.PatientId)
+    <dl class="dl-horizontal" style="font-size: 25px;">
+        <dt class="label">
+            Patient ID
         </dt>
         <dd>
             @Html.DisplayFor(model => model.PatientId)
         </dd>
-        <dt>
+        <dt class="label">
             @Html.DisplayNameFor(model => model.Patient.PPS)
         </dt>
-        <dd id="PPS">
+        <dd>
             @Html.DisplayFor(model => model.Patient.PPS)
         </dd>
-        <dt>
+        <dt class="label">
+            Full Name
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Patient.Full_name)
+        </dd>
+        <dt class="label">
+            Date of Birth
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Patient.Date_of_birth)
+        </dd>
+        <dt class="label">
+            @Html.DisplayNameFor(model => model.Infections)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Infections)
+        </dd>
+        <dt class="label">
             @Html.DisplayNameFor(model => model.Condition)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Condition)
         </dd>
-        <dt>
+    </dl>
+    <hr />
+    <dl class="dl-horizontal" style="font-size: 25px;">
+        <dt class="label" style="text-align: center; width: 100%;">
+            Flowchart
+        </dt>
+        <dd></dd>
+        <dt class="label">
             @Html.DisplayNameFor(model => model.Flowchart.Discriminators.First().Name)
         </dt>
         <dd>
             <snap id="name"></snap>
             @*@Html.DisplayFor(d.Name);*@
         </dd>
-        <dt>
+        <dt class="label">
             @Html.DisplayNameFor(model => model.Flowchart.Discriminators.First().Description)
         </dt>
-        <dd>
-            <span id="description"></span>
+        <dd id="border">
+            <p id="description" style="background: white; margin: 0; padding: 5px;"></p>
             @*@Html.DisplayFor(d.Name);*@
         </dd>
-        <dt>
+        <dt class="label" style="margin-top: 10px;">
             @Html.DisplayNameFor(model => model.Flowchart.Discriminators.First().Priority)
         </dt>
-        <dd>
-            <span id="priority"></span>
+        <dd style="margin-top: 5px;">
+            <span id="priority" style="border-radius: 10px; padding: 4px;"></span>
             @*@Html.DisplayFor(d.Name);*@
         </dd>
 
     </dl>
+    <hr />
     <dl class="dl-horizontal">
-        <dt>
-            <input type="button" value="Yes" id="yes" class="btn btn-default" />
+        <dt style="padding: 2px; width:30%;">
+            <input type="button" value="Yes" id="yes" class="btn btn-default" style="width: 120px; margin: 0 auto;" />
         </dt>
-        <dd>
-            <input type="button" value="No" id="no" class="btn btn-default" />
+        <dd style="padding: 2px; width: 70%;">
+            <input type="button" value="No" id="no" class="btn btn-default" style="width: 120px; margin: 0 auto;" />
         </dd>
     </dl>
 
@@ -119,13 +197,19 @@
                 case "description":
                     if (discriminator[item] != null) {
                         document.getElementById("description").textContent = discriminator[item];
+                        var divElement = document.querySelector("#border");
+                        divElement.classList.add("border");
                     } else {
                         document.getElementById("description").textContent = "";
+                        var divElement = document.querySelector("#border");
+                        divElement.classList.remove("border");
                     }
                     break;
                 case "priorityString":
                     currentPriority = discriminator[item];
                     document.getElementById("priority").textContent = currentPriority;
+                    var divElement = document.querySelector("#priority");
+                    divElement.classList.add(currentPriority);
                     break;
             }
         }

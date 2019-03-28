@@ -7,6 +7,19 @@
 
 <style>
 
+    .control-label {
+        display: block;
+        background: #347BB7;
+        background: -webkit-linear-gradient(top left, #347BB7, #98E6E8);
+        background: -moz-linear-gradient(top left, #347BB7, #98E6E8);
+        background: linear-gradient(top left, #347BB7, #98E6E8);
+        border-radius: 5px;
+        padding: 3px;
+        /*margin: 5px;*/
+        color: white;
+        font-size: 20px;
+    }
+
 
     /*.col-md-6 {
         height: 200%;
@@ -20,54 +33,56 @@
 
 </style>
 
-<h3>Create</h3>
-
+<h3 class="module">Create Flowchart</h3>
+<hr />
 <div class="row">
     <form asp-action="AddDescription">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" id="Name" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="form-group">
-                <label asp-for="Red" class="control-label"></label>
-                <textarea asp-for="Red" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
-                <span asp-validation-for="Red" class="text-danger"></span>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" id="Name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Orange" class="control-label"></label>
-                <textarea asp-for="Orange" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
-                <span asp-validation-for="Orange" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Yellow" class="control-label"></label>
-                <textarea asp-for="Yellow" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
-                <span asp-validation-for="Yellow" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Red" class="control-label" style="color: red;"></label>
+                    <textarea asp-for="Red" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
+                    <span asp-validation-for="Red" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Orange" class="control-label" style="color: orange;"></label>
+                    <textarea asp-for="Orange" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
+                    <span asp-validation-for="Orange" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Yellow" class="control-label" style="color: yellow;"></label>
+                    <textarea asp-for="Yellow" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
+                    <span asp-validation-for="Yellow" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label asp-for="Green" class="control-label"></label>
-                <textarea asp-for="Green" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
-                <span asp-validation-for="Green" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SeeAlso" class="control-label">See also</label>
-                <textarea asp-for="SeeAlso" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please other flowcharts to be considered during a triage assessment, each on new line."></textarea>
-                <span asp-validation-for="SeeAlso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <textarea asp-for="Notes" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input any notes"></textarea>
-                <span asp-validation-for="Notes" class="text-danger"></span>
-            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Green" class="control-label" style="color: lime;"></label>
+                    <textarea asp-for="Green" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input the discriminators, each on new line."></textarea>
+                    <span asp-validation-for="Green" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SeeAlso" class="control-label">See also</label>
+                    <textarea asp-for="SeeAlso" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please other flowcharts to be considered during a triage assessment, each on new line."></textarea>
+                    <span asp-validation-for="SeeAlso" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Notes" class="control-label"></label>
+                    <textarea asp-for="Notes" rows="6" class="form-control" text-wrap:normal" type="text" placeholder="Please input any notes"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
 
-        </div>
-        <div class="b">
-            <input type="submit" value="Create" class="btn btn-default" />
-        </div>
+            </div>
+            <div class="b">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
     </form>
 </div>
 

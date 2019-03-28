@@ -8,7 +8,7 @@ namespace TriageSystem.Models
 {
     public class DbInitializer
     {
-        public static void Initialize(OnConfiguring context)
+        public static void Initialize(TriageSystemContext context)
         {
             context.Database.EnsureCreated();
 
@@ -18,7 +18,7 @@ namespace TriageSystem.Models
             //CreateLists(context);
         }
 
-        private static void CreateHospital(OnConfiguring context)
+        private static void CreateHospital(TriageSystemContext context)
         {
             if (context.Hospitals.Any())
             {
@@ -31,7 +31,7 @@ namespace TriageSystem.Models
             context.SaveChanges();
         }
 
-        private static void CreateStaff(OnConfiguring context)
+        private static void CreateStaff(TriageSystemContext context)
         {
             if (context.Staff.Any())
             {
@@ -45,7 +45,7 @@ namespace TriageSystem.Models
             context.Staff.Add(staff);
             context.SaveChanges();
         }
-        private static void CreatePatient(OnConfiguring context)
+        private static void CreatePatient(TriageSystemContext context)
         {
             if (context.Patients.Any())
             {

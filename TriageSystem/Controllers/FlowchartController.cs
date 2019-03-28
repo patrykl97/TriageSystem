@@ -17,9 +17,9 @@ namespace TriageSystem.Controllers
     public class FlowchartController : Controller
     {
         UserManager<TriageSystemUser> _userManager;
-        private readonly OnConfiguring _context;
+        private readonly TriageSystemContext _context;
 
-        public FlowchartController(UserManager<TriageSystemUser> userManager, OnConfiguring context)
+        public FlowchartController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
         {
             _userManager = userManager;
             _context = context;
@@ -83,11 +83,14 @@ namespace TriageSystem.Controllers
                     Name = flowchart.Name,
                     Discriminators = discriminators
                 };
-                var x = flowchart.SeeAlso.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                model.SeeAlso = x;
+
+                if(flowchart.SeeAlso != null)
+                {
+                    var x = flowchart.SeeAlso.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    model.SeeAlso = x;
+                }
+
                 model.Notes = flowchart.Notes;
-
-
                 return View(model);
             }
             TempData["Error"] = getErrors();

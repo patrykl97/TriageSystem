@@ -36,6 +36,15 @@ body {
     border-left: 1px solid #CCCCCC;
 }
 
+.module {
+    background: #347BB7;
+    background: -webkit-linear-gradient(top left, #347BB7, #98E6E8);
+    background: -moz-linear-gradient(top left, #347BB7, #98E6E8);
+    background: linear-gradient(top left, #347BB7, #98E6E8);
+    padding: 20px;
+    margin: 0;
+    color: white;
+}
 
 
 /* QR code generator */

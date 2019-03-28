@@ -9,7 +9,7 @@ using TriageSystem.Models;
 
 namespace TriageSystem.Migrations
 {
-    [DbContext(typeof(OnConfiguring))]
+    [DbContext(typeof(TriageSystemContext))]
     [Migration("20190327211337_newWaitingList")]
     partial class newWaitingList
     {

@@ -22,7 +22,7 @@ namespace TriageSystem.Areas.Identity.Pages.Account
         private readonly UserManager<TriageSystemUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly OnConfiguring _context;
+        private readonly TriageSystemContext _context;
 
 
         public RegisterModel(
@@ -30,7 +30,7 @@ namespace TriageSystem.Areas.Identity.Pages.Account
             SignInManager<TriageSystemUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            OnConfiguring context)
+            TriageSystemContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;

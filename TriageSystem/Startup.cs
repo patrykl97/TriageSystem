@@ -49,11 +49,11 @@ namespace TriageSystem
             
 
 
-            services.AddDbContext<OnConfiguring>(options =>
+            services.AddDbContext<TriageSystemContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("SqlConnection")));
             services.AddDefaultIdentity<TriageSystemUser>()
-                .AddEntityFrameworkStores<OnConfiguring>();
+                .AddEntityFrameworkStores<TriageSystemContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

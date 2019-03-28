@@ -9,7 +9,7 @@ using TriageSystem.Models;
 
 namespace TriageSystem.Migrations
 {
-    [DbContext(typeof(OnConfiguring))]
+    [DbContext(typeof(TriageSystemContext))]
     [Migration("20190221112030_InitCreate")]
     partial class InitCreate
     {

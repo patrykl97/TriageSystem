@@ -22,10 +22,10 @@ namespace TriageSystem.Controllers
     public class TriageController : Controller
     {
         UserManager<TriageSystemUser> _userManager;
-        private readonly OnConfiguring _context;
+        private readonly TriageSystemContext _context;
         private IHubContext<NotificationHub> HubContext { get; set; }
 
-        public TriageController(UserManager<TriageSystemUser> userManager, OnConfiguring context, IHubContext<NotificationHub> hubContext)
+        public TriageController(UserManager<TriageSystemUser> userManager, TriageSystemContext context, IHubContext<NotificationHub> hubContext)
         {
             _userManager = userManager;
             _context = context;

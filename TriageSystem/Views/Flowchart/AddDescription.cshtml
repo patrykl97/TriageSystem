@@ -5,6 +5,28 @@
     int i = 0;
 }
 
+<style type="text/css">
+    .Red {
+        background-color: red;
+    }
+
+    .Orange {
+        background-color: orange;
+    }
+
+    .Yellow {
+        background-color: yellow;
+    }
+
+    .Green {
+        background-color: green;
+    }
+
+    .Blue {
+        background-color: blue;
+    }
+</style>
+
 <h2>AddDesciption</h2>
 <div class="row">
 
@@ -13,14 +35,28 @@
         <input type="hidden" id="SeeAlso" asp-for="SeeAlso" />
         <input type="hidden" id="Name" asp-for="Name" />
         <input type="hidden" id="Notes" asp-for="Notes" />
+        <div>
+            <div style="float: left;">
+                Name
+            </div>
+            <div style="float: right; text-align: left;">
+                Description
+            </div>
+        </div>
+        <br />
         @foreach (var d in Model.Discriminators)
         {
             <div>
-                @Html.DisplayFor(model => model.Discriminators[i].Name);
-                <input type="hidden" id="Name" asp-for="Discriminators[i].Name" />
-                <input asp-for="Discriminators[i].Description" />
-                @Html.DisplayFor(model => model.Discriminators[i].PriorityString);
-                <input type="hidden" id="Name" asp-for="Discriminators[i].Priority" />
+                <div class="@Model.Discriminators[i].Priority" style="float: left; width: 10%; padding: 4px;">
+                    @Html.DisplayFor(model => model.Discriminators[i].Name)
+                    <input type="hidden" id="Name" asp-for="Discriminators[i].Name" />
+                </div>
+                <div style="float: right; width: 90%; padding: 1px;">
+                    <input asp-for="Discriminators[i].Description" style="width: 100%;" />
+                    @*@Html.DisplayFor(model => model.Discriminators[i].PriorityString);*@
+                    <input type="hidden" id="Name" asp-for="Discriminators[i].Priority" />
+                </div>
+
             </div>
             i++;
         }

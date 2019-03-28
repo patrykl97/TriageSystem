@@ -8,15 +8,15 @@ using TriageSystem.ViewModels;
 
 namespace TriageSystem.Models
 {
-    public class OnConfiguring : IdentityDbContext<TriageSystemUser>
+    public class TriageSystemContext : IdentityDbContext<TriageSystemUser>
     {
 
-        public OnConfiguring() : base()
+        public TriageSystemContext() : base()
         {
 
         }
 
-        public OnConfiguring(DbContextOptions<OnConfiguring> options) : base(options)
+        public TriageSystemContext(DbContextOptions<TriageSystemContext> options) : base(options)
         {
             
         }

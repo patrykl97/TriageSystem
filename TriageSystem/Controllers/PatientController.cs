@@ -19,10 +19,10 @@ namespace TriageSystem.Controllers
     public class PatientController : Controller
     {
         UserManager<TriageSystemUser> _userManager;
-        private OnConfiguring _context;
+        private TriageSystemContext _context;
         private IHubContext<NotificationHub> HubContext { get; set; }
 
-        public PatientController(UserManager<TriageSystemUser> userManager, OnConfiguring context, IHubContext<NotificationHub> hubContext)
+        public PatientController(UserManager<TriageSystemUser> userManager, TriageSystemContext context, IHubContext<NotificationHub> hubContext)
         {
             _userManager = userManager;
             _context = context;

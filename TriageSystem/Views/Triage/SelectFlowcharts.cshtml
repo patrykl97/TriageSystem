@@ -5,9 +5,24 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="~/css/select2.min.css" rel="stylesheet" />
-<h2>TriageAssessment</h2>
 
-<h4>PatientWaitingList</h4>
+<style>
+    .control-label {
+        display: block;
+        background: #347BB7;
+        background: -webkit-linear-gradient(top left, #347BB7, #98E6E8);
+        background: -moz-linear-gradient(top left, #347BB7, #98E6E8);
+        background: linear-gradient(top left, #347BB7, #98E6E8);
+        border-radius: 5px;
+        padding: 3px;
+        /*margin: 5px;*/
+        color: white;
+    }
+
+</style>
+
+<h2 class="module">Triage Assessment</h2>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -46,7 +61,7 @@
                 <label asp-for="Flowchart" class="control-label"></label>
                 @*@Html.DropDownListFor(model => model.FlowchartSelected, ViewBag.FlowchartNames as IEnumerable<SelectListItem>, "Select at least one flowchart...", new { id = "FlowchartsDropdown" });*@
                 @*@Html.DropDownListFor(model => model.Flowchart, new SelectList(Model.Flowcharts, "Value", "Text"), "Select at least one flowchart...", new { id = "FlowchartsDropdown" });*@
-                <select class="flowcharts" asp-for="FlowchartId" asp-items="ViewBag.Flowcharts"></select>
+                <select class="flowcharts" asp-for="FlowchartId" asp-items="ViewBag.Flowcharts" style="width: 100%;"></select>
             </div>
             <div class="form-group">
                 @*<a asp-action="Edit" asp-route-id="@Model.PPS" class="btn btn-default">Edit</a>*@
