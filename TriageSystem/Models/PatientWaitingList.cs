@@ -12,6 +12,7 @@ namespace TriageSystem.Models
         private string _PriorityString;
         private Priority _Priority;
         private int _Duration;
+        private Flowchart _Flowchart;
 
         public int Id { get; set; }
         [ForeignKey("Patient")]
@@ -19,26 +20,13 @@ namespace TriageSystem.Models
         public string Infections { get; set; }
         [Required]
         public string Arrival { get; set; }
-        //[Required]
+        [Required]
         public string Condition { get; set; }
-        public Priority Priority
-        {
-            get
-            {
-                return _Priority;
-            }
-            set
-            {
-                _Priority = value;
-            }
-        }
+        public Priority Priority { get => _Priority; set => _Priority = value;}
         [NotMapped]
         public string PriorityString
         {
-            get
-            {
-                return _PriorityString;
-            }
+            get => _PriorityString; 
             set
             {
                 _PriorityString = value;
@@ -46,21 +34,24 @@ namespace TriageSystem.Models
             }
 
         }
+
         public DateTime Time_checked_in { get; set; }
+        //[NotMapped]
+        //public DateTime Time_checked_in { get; set; }
+        public DateTime Time_triaged { get; set; }
+
+
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
 
         [NotMapped]
         public int Duration
         {
-            get
-            {
-                return _Duration;
-            }
+            get =>_Duration;
             set
             {
                 _Duration = value;
-                Expiry_time = Time_checked_in.AddMinutes(_Duration);
+                Expiry_time = Time_triaged.AddMinutes(_Duration);
             }
         }
 
@@ -73,8 +64,19 @@ namespace TriageSystem.Models
         public int FlowchartId { get; set; }
 
 
+        public string FlowchartName { get; private set; }
+
+
         [NotMapped]
-        public Flowchart Flowchart { get; set; }
+        public Flowchart Flowchart
+        {
+            get => _Flowchart;
+            set
+            {
+                _Flowchart = value;
+                FlowchartName = _Flowchart.Name;
+            }
+        }
 
         [NotMapped]
         public IEnumerable<SelectListItem> Flowcharts { get; set; }

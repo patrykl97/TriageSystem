@@ -1,144 +1,151 @@
 ﻿@using TriageSystem.Areas.Identity.Data
 @model TriageSystemUser
 
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <link href="~/css/DetailsPageStyle.css" rel="stylesheet" type="text/css" media="all">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<link href="~/css/DetailsPageStyle.css" rel="stylesheet" type="text/css" media="all">
+<link href="~/css/site.css" rel="stylesheet" type="text/css" media="all">
 
 
-    <h2 class="module">
-        @Html.DisplayFor(model => model.Staff.Hospital.Name), @Html.DisplayFor(model => model.Staff.Hospital.Location)
-    </h2>
-    <hr />
-    <p>
-        <a asp-controller="Patient" asp-action="Register">Register Patient</a>
-    </p>
+<h2 class="module">
+    @Html.DisplayFor(model => model.Staff.Hospital.Name), @Html.DisplayFor(model => model.Staff.Hospital.Location)
+</h2>
+<hr />
+<p>
+    <a asp-controller="Patient" asp-action="Register">Register Patient</a>
+</p>
 
 
 
-    @{ var id = 0;}
-    <table class="table">
-        <thead>
+@{ var id = 0;}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.Full_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.PPS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Infections)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Arrival)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Time_checked_in)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Staff.Hospital.PatientCheckInList)
+        {
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.Full_name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.PPS)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Infections)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Arrival)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Time_checked_in)
-                </th>
-                <th></th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Full_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.PPS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Infections)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Arrival)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time_checked_in)
+                </td>
+                <td>
+                    <form asp-controller="Patient" asp-action="CheckedIn" id="form" method="post">
+                        <input type="hidden" name="id" value="@item.PatientId" />
+                        <input id="sendButton" type="submit" value="View" class="btn btn-default" />
+                    </form>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Staff.Hospital.PatientCheckInList)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Patient.Full_name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Patient.PPS)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Infections)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Arrival)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Time_checked_in)
-                    </td>
-                    <td>
-                        <form asp-controller="Patient" asp-action="CheckedIn" id="form" method="post">
-                            <input type="hidden" name="id" value="@item.PatientId" />
-                            <input id="sendButton" type="submit" value="View" class="btn btn-default" />
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <br />
-    <p>
-        <a asp-controller="Triage" asp-action="SelectFlowcharts">Perform Triage</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.Full_name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.PPS)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_checked_in)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Duration)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Priority)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
-            {
-                <tr class="t">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Patient.Full_name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Patient.PPS)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Condition)
-                    </td>
-                    <td id="time-@id">
-                        @Html.DisplayFor(modelItem => item.Time_checked_in)
-                    </td>
-                    <td class="duration" id="@id"></td>
-                    <td class="@item.Priority">
-                        @Html.DisplayFor(modelItem => item.Priority)
-                    </td>
-                    <td>
-                        <form asp-controller="Patient" asp-action="Actions" id="form" method="post">
-                            @*Input id could be helpful, could use it for js to read PatientIds value*@
-                            <input type="hidden" name="id" value="@item.PatientId" />
-                            @*<input type="hidden" asp-for="@item.PatientId" />*@
-                            <input id="sendButton" type="submit" value="Action" class="btn btn-default" />
-                        </form>
-                    </td>
+        }
+    </tbody>
+</table>
+<br />
+<p>
+    <a asp-controller="Triage" asp-action="SelectFlowcharts">Perform Triage</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.Full_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.PPS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_checked_in)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_triaged)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Duration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Priority)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
+        {
+        <tr class="t">
+            <td>
+                @Html.DisplayFor(modelItem => item.Patient.Full_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Patient.PPS)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Condition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time_checked_in)
+            </td>
+            <td id="time-@id">
+                @Html.DisplayFor(modelItem => item.Time_triaged)
+            </td>
+            <td class="duration" id="@id"></td>
+            <td class="@item.Priority">
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                <form asp-controller="Patient" asp-action="Actions" id="form" method="post">
+                    @*Input id could be helpful, could use it for js to read PatientIds value*@
+                    <input type="hidden" name="id" value="@item.PatientId" />
+                    @*<input type="hidden" asp-for="@item.PatientId" />*@
+                    <input id="sendButton" type="submit" value="Action" class="btn btn-default" />
+                </form>
+            </td>
 
-                    <td id="expiry-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.Expiry_time)</td>
-                    <td id="patient-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.PatientId)</td>
-                </tr>
-                id++;
-            }
-        </tbody>
-    </table>
-    <div id="dialog" style="display: none" align="center">
-        Do you want to delete this record?
-    </div>
+            <td id="expiry-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.Expiry_time)</td>
+            <td id="patient-@id" style="visibility:hidden; display:none"> @Html.DisplayFor(modelItem => item.PatientId)</td>
+        </tr>
+            id++;
+        }
+    </tbody>
+</table>
+<div id="dialog" style="display: none" align="center">
+    Do you want to delete this record?
+</div>
 
-    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
-    @*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>*@
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>*@
-    @*<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>*@
-    <script>
+@*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
+@*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>*@
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+@*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>*@
+@*<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>*@
+<script>
     $(document).ready(function () {
         var seconds = 0;
         var secondsCounter = setInterval(countSeconds, 1000);
@@ -238,7 +245,7 @@
 
                         if (willDelete) {
                             $.ajax({
-                                url: "Home/PostAjax",
+                                url: "Patient/PostAjax",
                                 type: "POST",
                                 data: { "id": ids[i - 1] },
                                 success: function (response) {
@@ -298,4 +305,4 @@
         // ref: https://www.w3schools.com/howto/howto_js_countdown.asp
     });
 
-    </script>
+</script>

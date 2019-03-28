@@ -24,7 +24,7 @@ namespace TriageSystem.Controllers
         UserManager<TriageSystemUser> _userManager;
         private readonly TriageSystemContext _context;
         private IHubContext<NotificationHub> HubContext { get; set; }
-
+        
         public TriageController(UserManager<TriageSystemUser> userManager, TriageSystemContext context, IHubContext<NotificationHub> hubContext)
         {
             _userManager = userManager;
@@ -42,8 +42,9 @@ namespace TriageSystem.Controllers
             }
             else
             {
-                var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId,  Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Arrival = patientCheckedIn.Arrival, Infections = patientCheckedIn.Infections};
+                //var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
+                var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.Where(p => p.Time_checked_in == user.Staff.Hospital.PatientCheckInList.Min(t => t.Time_checked_in)).FirstOrDefault();
+                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId,  Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Arrival = patientCheckedIn.Arrival, Infections = patientCheckedIn.Infections, Time_checked_in = patientCheckedIn.Time_checked_in};
                 List<Flowchart> flowcharts = GetFlowcharts();
                 //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
@@ -83,7 +84,7 @@ namespace TriageSystem.Controllers
             {
                 try
                 {
-                    patientData.Time_checked_in = GetNow();
+                    patientData.Time_triaged = GetNow();
                     _context.PatientWaitingList.Add(patientData);
                     _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PatientId == patientData.PatientId).First());
                     await _context.SaveChangesAsync();

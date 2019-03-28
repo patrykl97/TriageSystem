@@ -89,7 +89,7 @@
                     <td><a asp-controller="Home" asp-action="Index">Back to List</a></td>
                     <td>&nbsp;</td>
                     <td>
-                        <form asp-controller="Home" asp-action="Post" id="form" method="post">
+                        <form asp-controller="Patient" asp-action="Post" id="form" method="post">
                             <input type="hidden" name="id" value="@Model.PatientId" />
                             <input id="sendButton" type="submit" value="Re-triage" class="btn btn-default" style="color: white; background: red;" />
                         </form>

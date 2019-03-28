@@ -224,10 +224,13 @@ dt.label {
         patient.Arrival = '@Model.Arrival';
         patient.Infections = '@Model.Infections';
         patient.FlowchartId = '@Model.FlowchartId';
+        patient.Time_checked_in = '@Model.Time_checked_in';
         //var array = [];
         //array.push(patient);
         //array.push(currentPriority);
         console.log(patient);
+        var x = JSON.stringify(patient);
+        console.log(x);
         $.ajax({
             type: "POST",
             dataType: "json",
@@ -236,7 +239,7 @@ dt.label {
             data: JSON.stringify(patient),
             success: function (response) {
                 console.log(response);
-                if (response != "Error") {
+                if (response == "Success") {
                     connection.invoke("SendNotification", hospitalID).catch(function (err) {
                         console.log(err);
                         return console.error(err.toString());

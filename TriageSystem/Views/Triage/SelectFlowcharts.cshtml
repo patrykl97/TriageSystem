@@ -30,6 +30,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" id="patientId" asp-for="PatientId" />
             <input type="hidden" id="hospitalID" asp-for="HospitalID" />
+            <input type="hidden" id="timeCheckedIn" asp-for="Time_checked_in" />
             <div class="form-group">
                 <label asp-for="Patient.PPS" class="control-label"></label>
                 <input asp-for="Patient.PPS" class="form-control" readonly="readonly" />
@@ -76,7 +77,7 @@
 </div>
 
 @section Scripts {
-    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+   @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/select2.min.js"></script>
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script>

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TriageSystem.Models;
 
 namespace TriageSystem.Migrations
 {
     [DbContext(typeof(TriageSystemContext))]
-    partial class OnConfiguringModelSnapshot : ModelSnapshot
+    [Migration("20190328025433_updatedModels")]
+    partial class updatedModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,42 +235,6 @@ namespace TriageSystem.Migrations
                     b.ToTable("Patients");
                 });
 
-            modelBuilder.Entity("TriageSystem.Models.PatientAdmitted", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Arrival");
-
-                    b.Property<string>("Condition")
-                        .IsRequired();
-
-                    b.Property<string>("FinalCondition");
-
-                    b.Property<string>("FlowchartName");
-
-                    b.Property<int>("HospitalID");
-
-                    b.Property<string>("Infections");
-
-                    b.Property<int>("PatientId");
-
-                    b.Property<int>("Priority");
-
-                    b.Property<DateTime>("Time_admitted");
-
-                    b.Property<DateTime>("Time_checked_in");
-
-                    b.Property<DateTime?>("Time_released");
-
-                    b.Property<DateTime>("Time_triaged");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PatientAdmitted");
-                });
-
             modelBuilder.Entity("TriageSystem.Models.PatientCheckIn", b =>
                 {
                     b.Property<int>("Id")
@@ -308,8 +274,6 @@ namespace TriageSystem.Migrations
 
                     b.Property<string>("Condition")
                         .IsRequired();
-
-                    b.Property<string>("FlowchartName");
 
                     b.Property<int>("HospitalID");
 

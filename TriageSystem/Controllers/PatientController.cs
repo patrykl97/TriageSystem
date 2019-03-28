@@ -160,18 +160,119 @@ namespace TriageSystem.Controllers
             return View(patientWaitingViewModel);
         }
 
+        // ***********************************************
+        // TODO: refactor these 2 methods to reuse code
+        //       add function to send property arrival 
+        // ***********************************************
         [HttpPost]
-        public IActionResult Admit(int id)
+        public async Task<IActionResult> PostAjax(int id)
         {
+            if (id > 0)
+            {
+                try
+                {
+                    var patient = _context.PatientWaitingList.Where(p => p.PatientId == id).FirstOrDefault();
+                    // TODO: after refactoring uncomment line below
+                    var patientData = new PatientCheckIn { PatientId = patient.PatientId, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged };
+                    //var patientData = new PatientCheckIn { PatientId = patient.PatientId, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged, Arrival = "Home" };
+                    _context.PatientCheckIns.Add(patientData);
+                    _context.PatientWaitingList.Remove(patient);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return Json("Success");
+            }
+            return Json("Error");
+        }
+
+
+        // TODO: add check for whether times has expired, perhaphs leave it, re-triage might be done before time expires
+        [HttpPost]
+        public async Task<IActionResult> Post(int id)
+        {
+            int i = id;
+            //Int32.TryParse(id, out i);
+            if (i > 0)
+            {
+                try
+                {
+                    var patient = _context.PatientWaitingList.Where(p => p.PatientId == i).FirstOrDefault();
+                    // TODO: after refactoring uncomment line below
+                    //var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in };
+                    //var patientData = new PatientCheckIn { PatientId = patient.PatientId, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
+                    var patientData = new PatientCheckIn { PatientId = patient.PatientId, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged };
+                    _context.PatientCheckIns.Add(patientData);
+                    _context.PatientWaitingList.Remove(patient);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         [HttpPost]
-        public IActionResult SendHome(int id)
+        public async Task<IActionResult> Admit(int id)
         {
+            await AddToAdmitted(id);
             return RedirectToAction(nameof(HomeController.Index), "Home");
-
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SendHome(int id)
+        {
+            await AddToAdmitted(id, true);
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        private async Task<IActionResult> AddToAdmitted(int id, bool sentHome = false)
+        {
+            if (id > 0)
+            {
+                try
+                {
+                    var patientData = _context.PatientWaitingList.Where(m => m.PatientId == id).FirstOrDefault();
+                    var patientAdmitted = new PatientAdmitted
+                    {
+                        PatientId = id,
+                        Condition = patientData.Condition,
+                        Priority = patientData.Priority,
+                        Infections = patientData.Infections,
+                        Arrival = patientData.Arrival,
+                        Time_checked_in = patientData.Time_checked_in,
+                        Time_triaged = patientData.Time_triaged,
+                        HospitalID = patientData.HospitalID,
+                        FlowchartName = patientData.FlowchartName
+                    };
+
+                    if(sentHome)
+                    {
+                        patientAdmitted.Time_released = GetNow();
+                        patientAdmitted.FinalCondition = "Sent home";
+                    } 
+                    else
+                    {
+                        patientAdmitted.Time_admitted = GetNow();
+                    }
+                    _context.PatientAdmitted.Add(patientAdmitted);
+                    _context.PatientWaitingList.Remove(patientData);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
+            return null;
+        }
+
+
+
 
 
 

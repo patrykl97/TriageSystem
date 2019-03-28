@@ -49,63 +49,14 @@ namespace TriageSystem.Controllers
                 System.Threading.Thread.Sleep(100); // sleep for 100ms
             }
             var user = _userManager.GetUserAsync(User).Result;
-            user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
+            var orderedCheckIns = user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
+            user.Staff.Hospital.PatientCheckInList = orderedCheckIns.ToList();
             var orderedList = user.Staff.Hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
             orderedList = setDuration(orderedList);
             user.Staff.Hospital.PatientWaitingList = orderedList;
 
 
             return PartialView(user);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> PostAjax(int id)
-        {
-            if (id > 0)
-            {
-                try {
-                    var patient = _context.PatientWaitingList.Where(p => p.PatientId == id).FirstOrDefault();
-                    // TODO: after refactoring uncomment line below
-                    //var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in };
-                    var patientData = new PatientCheckIn { PatientId = patient.PatientId, HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
-                    _context.PatientCheckIns.Add(patientData);
-                    _context.PatientWaitingList.Remove(patient);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return Json("Success");
-            }
-            return Json("Error");
-        }
-
-
-        // TODO: add check for whether times has expired, perhaphs leave it, re-triage might be done before time expires
-        [HttpPost]
-        public async Task<IActionResult> Post(int id)
-        {
-            int i = id;
-            //Int32.TryParse(id, out i);
-            if (i > 0)
-            {
-                try
-                {
-                    var patient = _context.PatientWaitingList.Where(p => p.PatientId == i).FirstOrDefault();
-                    // TODO: after refactoring uncomment line below
-                    //var patientData = new PatientCheckIn { PatientId = patient.PatientId, PPS = patient.PPS, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in };
-                    var patientData = new PatientCheckIn { PatientId = patient.PatientId,  HospitalID = patient.HospitalID, Time_checked_in = patient.Time_checked_in, Arrival = "Home" };
-                    _context.PatientCheckIns.Add(patientData);
-                    _context.PatientWaitingList.Remove(patient);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
         }
 
 

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TriageSystem.Models;
 
 namespace TriageSystem.Migrations
 {
     [DbContext(typeof(TriageSystemContext))]
-    partial class OnConfiguringModelSnapshot : ModelSnapshot
+    [Migration("20190328042444_updatedModels3")]
+    partial class updatedModels3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
