@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,23 +13,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
+using Microsoft.Extensions.Configuration;
+using System.Net.Http;
 
 namespace TriageSystem.Controllers
 {
     [Authorize] // User needs to be singed in to display this view
     public class HomeController : Controller
     {
-        UserManager<TriageSystemUser> _userManager;
-        private readonly TriageSystemContext _context;
+        //UserManager<TriageSystemUser> _userManager;
+        //private IConfiguration Configuration { get; set; }
         //private IHubContext<NotificationHub> HubContext { get; set; }
 
-        public HomeController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
+        public HomeController()
         {
-            _userManager = userManager;
-            _context = context;
+            //Configuration = configuration;
+            //_userManager = userManager;
+            //_context = context;
+
         }
 
 
@@ -46,15 +50,25 @@ namespace TriageSystem.Controllers
             {
                 System.Threading.Thread.Sleep(100); // sleep for 100ms
             }
-            var user = _userManager.GetUserAsync(User).Result;
-            var orderedCheckIns = user.Staff.Hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
-            user.Staff.Hospital.PatientCheckInList = orderedCheckIns.ToList();
-            var orderedList = user.Staff.Hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
-            orderedList = setDuration(orderedList);
-            user.Staff.Hospital.PatientWaitingList = orderedList;
+            var h = User.Claims.Where(u => u.Type == "HospitalID").FirstOrDefault().Value;
+            int hospitalID = 0;
+            Int32.TryParse(h, out hospitalID);
+            //var client = new HttpClient();
+            var response = GetById(hospitalID);
 
+            if (response.IsSuccessStatusCode)
+            {
+                var hospital = JsonConvert.DeserializeObject<Hospital>(response.Content.ReadAsStringAsync().Result);
 
-            return PartialView(user);
+                var orderedCheckIns = hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
+                hospital.PatientCheckInList = orderedCheckIns.ToList();
+                var orderedList = hospital.PatientWaitingList.OrderBy(p => (int)(p.Priority)).ThenBy(t => t.Time_checked_in).ToList(); // orders by priority, then by time checked in
+                orderedList = setDuration(orderedList);
+                hospital.PatientWaitingList = orderedList;
+                return PartialView(hospital);
+            }
+            return null;
+
         }
 
 
@@ -133,6 +147,13 @@ namespace TriageSystem.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private HttpResponseMessage GetById(int id)
+        {
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/Hospital/" + id).Result;
+            return response;
         }
     }
 }

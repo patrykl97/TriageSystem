@@ -12,10 +12,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TriageSystem.Models;
-using TriageSystem.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TriageSystem.Hubs;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
+using AutoMapper;
+using TriageSystem.Controllers;
 
 namespace TriageSystem
 {
@@ -38,27 +41,49 @@ namespace TriageSystem
             //    options.MinimumSameSitePolicy = SameSiteMode.None;
             //});
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     //options.Cookie.Expiration = TimeSpan.FromDays(1);
-                    options.LoginPath = "/Identity/Account/Login"; // redirect to login when authentication is needed
+                    options.LoginPath = "/Account/Login"; // redirect to login when authentication is needed
                 });
+
+
+            //services.AddAuthentication(sharedOptions =>
+            //{
+            //    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            //})
+            //.AddAzureAd(options =>
+            //{
+            //    Configuration.Bind("AzureAd", options);
+            //    AzureAdOptions.Settings = options;
+            //})
+            //.AddCookie();
+
+
 
             services.AddSignalR();
 
-            
+
 
 
             services.AddDbContext<TriageSystemContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(
                     Configuration.GetConnectionString("SqlConnection")));
-            services.AddDefaultIdentity<TriageSystemUser>()
-                .AddEntityFrameworkStores<TriageSystemContext>();
+            //services.AddDefaultIdentity<TriageSystemUser>()
+            //    .AddEntityFrameworkStores<TriageSystemContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            //services.AddHttpContextAccessor();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddAutoMapper();
+            
+
             //services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
-            //services.AddSession();
+            services.AddSession();
 
             services.AddCors(options => options.AddPolicy("CorsPolicy",
             builder =>
@@ -85,8 +110,8 @@ namespace TriageSystem
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
-            //app.UseSession();
+            //app.UseCookiePolicy();
+            app.UseSession();
             app.UseCors("CorsPolicy");
             app.UseSignalR(routes =>
             {
@@ -94,6 +119,7 @@ namespace TriageSystem
             });
 
             app.UseAuthentication();
+
 
             app.UseMvc(routes =>
             {

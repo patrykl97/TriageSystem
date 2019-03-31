@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
 
@@ -17,14 +16,6 @@ namespace TriageSystem.Controllers
     [Authorize] // User needs to be singed in to display this view
     public class FlowchartController : Controller
     {
-        //UserManager<TriageSystemUser> _userManager;
-        //private readonly TriageSystemContext _context;
-
-        public FlowchartController()
-        {
-            //_userManager = userManager;
-            //_context = context;
-        }
 
         public IActionResult Index()
         {

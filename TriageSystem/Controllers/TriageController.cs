@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using TriageSystem.Areas.Identity.Data;
 using TriageSystem.Hubs;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
@@ -21,61 +21,74 @@ namespace TriageSystem.Controllers
     [Authorize] // User needs to be singed in to display this view
     public class TriageController : Controller
     {
-        UserManager<TriageSystemUser> _userManager;
-        private readonly TriageSystemContext _context;
+
         //private IHubContext<NotificationHub> HubContext { get; set; }
         
-        public TriageController(UserManager<TriageSystemUser> userManager, TriageSystemContext context)
+        public TriageController()
         {
-            _userManager = userManager;
-            _context = context;
+     
         }
 
         public IActionResult SelectFlowcharts()
         {
-            var user = _userManager.GetUserAsync(User).Result;
-            if (user.Staff.Hospital.PatientCheckInList.Count == 0)
+            var hospitalID = getHospitalID();
+            var response = GetCheckIns(hospitalID);
+            if (response.IsSuccessStatusCode)
             {
-                TempData["Error"] = "No patients awaiting triage assessment!";
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-            else
-            {
-                //var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
-                var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.Where(p => p.Time_checked_in == user.Staff.Hospital.PatientCheckInList.Min(t => t.Time_checked_in)).FirstOrDefault();
-                var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId,  Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Arrival = patientCheckedIn.Arrival, Infections = patientCheckedIn.Infections, Time_checked_in = patientCheckedIn.Time_checked_in};
-                List<Flowchart> flowcharts = GetFlowcharts();
-                //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
-
-                var list = new List<SelectListItem>();
-                int index = 0;
-                foreach (var item in flowcharts)
+                var list = JsonConvert.DeserializeObject<IEnumerable<PatientCheckIn>>(response.Content.ReadAsStringAsync().Result);
+                if (list.Count() == 0)
                 {
-                    list.Add(new SelectListItem { Text = item.Name, Value = index.ToString() });
-                    index++;
+                    TempData["Error"] = "No patients awaiting triage assessment!";
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
                 }
-                //ViewBag.FlowchartNames = list.AsEnumerable();
-                //patientData.Flowcharts = list;
-                ViewBag.Flowcharts = list;
-                var patientHistory = _context.PatientAdmitted.Where(p => p.PatientId == patientData.PatientId);
-                patientData.PatientHistory = patientHistory;
-                return View(patientData);
-            }
+                else
+                {
+                    //var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
+                    var patientCheckedIn = list.Where(p => p.Time_checked_in == list.Min(t => t.Time_checked_in)).FirstOrDefault();
+                    var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Arrival = patientCheckedIn.Arrival, Infections = patientCheckedIn.Infections, Time_checked_in = patientCheckedIn.Time_checked_in };
+                    List<Flowchart> flowcharts = GetFlowcharts();
+                    //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
+                    var l = new List<SelectListItem>();
+                    int index = 0;
+                    foreach (var item in flowcharts)
+                    {
+                        l.Add(new SelectListItem { Text = item.Name, Value = index.ToString() });
+                        index++;
+                    }
+                    //ViewBag.FlowchartNames = list.AsEnumerable();
+                    //patientData.Flowcharts = list;
+                    ViewBag.Flowcharts = l;
+                    response = GetPatientHistory(patientCheckedIn.PatientId);
+                    if(response.IsSuccessStatusCode)
+                    {
+                        
+                        var patientHistory = JsonConvert.DeserializeObject<IEnumerable<PatientAdmitted>>(response.Content.ReadAsStringAsync().Result);
+                        patientData.PatientHistory = patientHistory;
+                    }
+
+                    return View(patientData);
+                }
+            }
+            return NotFound();
         }
 
 
         // TODO: refactor to use PatientId rather than pps
         public IActionResult Assessment(PatientWaitingList patientData)
         {
-            var user = _userManager.GetUserAsync(User).Result;
-            //var patientData = user.Staff.Hospital.PatientCheckInList.First(p => p.PatientId == patientId);
-            var flowchart = GetSelectedFlowchart(patientData.FlowchartId);
-            var patient = _context.Patients.Where(p => p.Id == patientData.PatientId).FirstOrDefault();
-            patientData.Patient = patient;
-            patientData.Flowchart = flowchart;
-            //var patient = new PatientWaitingList { PPS = patientData.PPS, Condition = condition, HospitalID = patientData.HospitalID, Flowchart = flowcharts[0] };
-            return View(patientData);
+            var hospitalID = getHospitalID();
+            var response = GetPatientById(patientData.PatientId);
+            if(response.IsSuccessStatusCode)
+            {
+                var patient = JsonConvert.DeserializeObject<Patient>(response.Content.ReadAsStringAsync().Result);
+                var flowchart = GetSelectedFlowchart(patientData.FlowchartId);
+                patientData.Patient = patient;
+                patientData.Flowchart = flowchart;
+                return View(patientData);
+
+            }
+            return NotFound();
         }
 
 
@@ -83,22 +96,29 @@ namespace TriageSystem.Controllers
         // TODO: call signalR, make sure it's called everywhere else where required
         //******************************************************
         [HttpPost]
-        public async Task<IActionResult> GivePriority([FromBody] PatientWaitingList patientData)
+        public IActionResult GivePriority([FromBody] PatientWaitingList patientData)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     patientData.Time_triaged = GetNow();
-                    _context.PatientWaitingList.Add(patientData);
-                    _context.PatientCheckIns.Remove(_context.PatientCheckIns.Where(p => p.PatientId == patientData.PatientId).First());
-                    await _context.SaveChangesAsync();
+                    var response = AddWaiting(patientData);
+                    if(response.IsSuccessStatusCode)
+                    {
+                        response = GetPatientCheckIn(patientData.PatientId);
+                        if(response.IsSuccessStatusCode)
+                        {
+                            var checkIn = JsonConvert.DeserializeObject<PatientCheckIn>(response.Content.ReadAsStringAsync().Result);
+                            response = RemoveCheckIn(checkIn.Id);
+                            return Json("Success");
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
-                return Json("Success");
             }
             return Json(getErrors());
         }
@@ -162,11 +182,64 @@ namespace TriageSystem.Controllers
             return errors;
         }
 
+        private int getHospitalID()
+        {
+            var h = User.Claims.Where(u => u.Type == "HospitalID").FirstOrDefault().Value;
+            int hospitalID = 0;
+            Int32.TryParse(h, out hospitalID);
+            return hospitalID;
+        }
+
         private static DateTime GetNow()
         {
             return DateTime.Now;
         }
+    
 
+        private HttpResponseMessage GetPatientById(int id)
+        {
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/Patients/" + id).Result;
+            return response;
+        }
+
+
+
+        private HttpResponseMessage GetCheckIns(int id)
+        {
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/PatientCheckIns/" + id).Result;
+            return response;
+        }
+
+        private HttpResponseMessage GetPatientCheckIn(int id)
+        {
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/PatientCheckIns/patient/" + id).Result;
+            return response;
+        }
+
+        private HttpResponseMessage GetPatientHistory(int id)
+        {
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/PatientAdmitted/patient/" + id).Result;
+            return response;
+        }
+
+        private HttpResponseMessage AddWaiting(PatientWaitingList patient)
+        {
+            var x = JsonConvert.SerializeObject(patient);
+            var client = new HttpClient();
+            var response = client.PostAsJsonAsync("https://localhost:44342/api/PatientWaitingLists", patient).Result;
+            return response;
+        }
+
+        private HttpResponseMessage RemoveCheckIn(int id)
+        {
+            var client = new HttpClient();
+            var response = client.DeleteAsync("https://localhost:44342/api/PatientCheckIns/" + id).Result;
+            return response;
+        }
 
     }
 }

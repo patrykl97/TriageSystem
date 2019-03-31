@@ -11,7 +11,7 @@ namespace TriageSystem.Models
         public string Location { get; set; }
         public string Coordinates { get; set; }
 
-        public virtual ICollection<Staff> StaffList { get; set; }
+        //public virtual ICollection<Staff> StaffList { get; set; }
         public virtual ICollection<PatientCheckIn> PatientCheckInList { get; set; }
         public virtual ICollection<PatientWaitingList> PatientWaitingList { get; set; }
     }

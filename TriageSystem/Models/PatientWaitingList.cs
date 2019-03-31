@@ -15,7 +15,7 @@ namespace TriageSystem.Models
         private Flowchart _Flowchart;
 
         public int Id { get; set; }
-        [ForeignKey("Patient")]
+        //[ForeignKey("Patient")]
         public int PatientId { get; set; }
         public string Infections { get; set; }
         [Required]
@@ -41,7 +41,7 @@ namespace TriageSystem.Models
         public DateTime Time_triaged { get; set; }
 
 
-        [ForeignKey("Hospital")]
+        //[ForeignKey("Hospital")]
         public int HospitalID { get; set; }
 
         [NotMapped]
@@ -86,9 +86,9 @@ namespace TriageSystem.Models
 
 
         public virtual Patient Patient { get; set; }
-        public virtual Hospital Hospital { get; set; }
+        //public virtual Hospital Hospital { get; set; }
 
 
-     
+
     }
 }

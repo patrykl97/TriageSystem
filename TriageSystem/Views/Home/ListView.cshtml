@@ -1,5 +1,5 @@
-﻿@using TriageSystem.Areas.Identity.Data
-@model TriageSystemUser
+﻿@using TriageSystem.Models
+@model Hospital
 
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <link href="~/css/DetailsPageStyle.css" rel="stylesheet" type="text/css" media="all">
@@ -7,7 +7,7 @@
 
 
 <h2 class="module">
-    @Html.DisplayFor(model => model.Staff.Hospital.Name), @Html.DisplayFor(model => model.Staff.Hospital.Location)
+    @Html.DisplayFor(model => model.Name), @Html.DisplayFor(model => model.Location)
 </h2>
 <hr />
 <p>
@@ -21,25 +21,25 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.Full_name)
+                @Html.DisplayNameFor(model => model.PatientCheckInList.FirstOrDefault().Patient.Full_name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Patient.PPS)
+                @Html.DisplayNameFor(model => model.PatientCheckInList.FirstOrDefault().Patient.PPS)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Infections)
+                @Html.DisplayNameFor(model => model.PatientCheckInList.FirstOrDefault().Infections)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Arrival)
+                @Html.DisplayNameFor(model => model.PatientCheckInList.FirstOrDefault().Arrival)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientCheckInList.FirstOrDefault().Time_checked_in)
+                @Html.DisplayNameFor(model => model.PatientCheckInList.FirstOrDefault().Time_checked_in)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Staff.Hospital.PatientCheckInList)
+        @foreach (var item in Model.PatientCheckInList)
         {
             <tr>
                 <td>
@@ -75,30 +75,30 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.Full_name)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Patient.Full_name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Patient.PPS)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Patient.PPS)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Condition)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Condition)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_checked_in)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Time_checked_in)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Time_triaged)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Time_triaged)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Duration)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Duration)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Staff.Hospital.PatientWaitingList.FirstOrDefault().Priority)
+                @Html.DisplayNameFor(model => model.PatientWaitingList.FirstOrDefault().Priority)
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Staff.Hospital.PatientWaitingList)
+        @foreach (var item in Model.PatientWaitingList)
         {
         <tr class="t">
             <td>
@@ -123,7 +123,7 @@
             <td>
                 <form asp-controller="Patient" asp-action="Actions" id="form" method="post">
                     @*Input id could be helpful, could use it for js to read PatientIds value*@
-                    <input type="hidden" name="id" value="@item.PatientId" />
+                    @*<input type="hidden" name="id" value="@item.PatientId" />*@
                     @*<input type="hidden" asp-for="@item.PatientId" />*@
                     <input id="sendButton" type="submit" value="Action" class="btn btn-default" />
                 </form>
@@ -140,8 +140,8 @@
     Do you want to delete this record?
 </div>
 
-@*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
-@*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>*@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>*@
 @*<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>*@

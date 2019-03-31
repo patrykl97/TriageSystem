@@ -1,91 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TriageSystem.Areas.Identity.Data;
+using Newtonsoft.Json;
 using TriageSystem.Models;
 
 namespace TriageSystem.Controllers
 {
     public class StaffController : Controller
     {
-        UserManager<TriageSystemUser> _userManager;
-        private readonly TriageSystemContext _context;
 
-        public StaffController(TriageSystemContext context, UserManager<TriageSystemUser> userManager)
-        {
-            _context = context;
-            _userManager = userManager;
-        }
 
-        // GET: Staff
+
+        
         public IActionResult Index()
         {
-            var user = _userManager.GetUserAsync(User).Result;
-            var staffList = user.Staff.Hospital.StaffList;
-            return View(staffList);
+            var hospitalID = getHospitalID();
+            var response = GetStaff(hospitalID);
+            if(response.IsSuccessStatusCode)
+            {
+                var staffList = JsonConvert.DeserializeObject<IEnumerable<Staff>>(response.Content.ReadAsStringAsync().Result);
+                return View(staffList);
+            }
+            return NotFound();
         }
 
-        // GET: Staff/Details/5
-        public async Task<IActionResult> Details(int? id)
+        
+        public IActionResult Details(int id)
         {
-            if (id == null)
+            if (id > 0)
             {
-                return NotFound();
+                var response = GetStaffById(id);
+                if(response.IsSuccessStatusCode)
+                {
+                    var staff = JsonConvert.DeserializeObject<Staff>(response.Content.ReadAsStringAsync().Result);
+                    if(staff != null)
+                    {
+                        return View(staff);
+                    }
+                }
             }
-
-            var staff = await _context.Staff
-                .FirstOrDefaultAsync(m => m.StaffID == id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            return View(staff);
+            return NotFound();
         }
 
-        // GET: Staff/Create
+ 
         public IActionResult Create()
         {
-            var user = _userManager.GetUserAsync(User).Result;
-            var staff = new Staff { HospitalID = user.Staff.HospitalID };
+            var hospitalID = getHospitalID();
+            var staff = new Staff { HospitalID = hospitalID };
             return View(staff);
         }
 
-        // POST: Staff/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Staff staff)
+        public IActionResult Create(Staff staff)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(staff);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = AddStaff(staff);
+                if(response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(staff);
         }
 
-        // GET: Staff/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var staff = _context.Staff.Where(s => s.StaffID == id).FirstOrDefault();
-            if (staff == null)
+        public ActionResult Edit(int id)
+        {
+            if (id > 0)
             {
-                return NotFound();
+                var response = GetStaffById(id);
+                if(response.IsSuccessStatusCode)
+                {
+                    var staff = JsonConvert.DeserializeObject<Staff>(response.Content.ReadAsStringAsync().Result);
+                    return View(staff);
+                }
             }
-            return View(staff);
+            return NotFound();
         }
 
 
@@ -102,8 +101,7 @@ namespace TriageSystem.Controllers
             {
                 try
                 {
-                    _context.Update(staff);
-                    await _context.SaveChangesAsync();
+                    var response = await UpdateStaff(id, staff);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,40 +119,83 @@ namespace TriageSystem.Controllers
             return View(staff);
         }
 
-        // GET: Staff/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            if (id > 0 )
             {
-                return NotFound();
+                var response = await DeleteStaff(id);
+                if(response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
+            return NotFound();
 
-            var staff = _context.Staff.Where(m => m.StaffID == id).FirstOrDefault();
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            _context.Staff.Remove(staff);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Home");
         }
 
-        // POST: Staff/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        //// POST: Staff/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var staff = await _context.Staff.FindAsync(id);
+        //    _context.Staff.Remove(staff);
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        private HttpResponseMessage GetStaff(int id)
         {
-            var staff = await _context.Staff.FindAsync(id);
-            _context.Staff.Remove(staff);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/Staff/hospital/" + id).Result;
+            return response;
         }
+
+        private HttpResponseMessage GetStaffById(int id)
+        {
+            var client = new HttpClient();
+            var response = client.GetAsync("https://localhost:44342/api/Staff/" + id).Result;
+            return response;
+        }
+
+        private HttpResponseMessage AddStaff(Staff staff)
+        {
+            var client = new HttpClient();
+            var response = client.PostAsJsonAsync("https://localhost:44342/api/Staff", staff).Result;
+            return response;
+        }
+
+        private async Task<HttpResponseMessage> UpdateStaff(int id, Staff staff)
+        {
+            var client = new HttpClient();
+            var response = await client.PutAsJsonAsync("https://localhost:44342/api/Staff/" + id, staff);
+            return response;
+        }
+
+        private async Task<HttpResponseMessage> DeleteStaff(int id)
+        {
+            var client = new HttpClient();
+            var response = await client.DeleteAsync("https://localhost:44342/api/Staff/" + id);
+            return response;
+        }
+
+        private int getHospitalID()
+        {
+            var h = User.Claims.Where(u => u.Type == "HospitalID").FirstOrDefault().Value;
+            int hospitalID = 0;
+            Int32.TryParse(h, out hospitalID);
+            return hospitalID;
+        }
+
 
         private bool StaffExists(int id)
         {
-            return _context.Staff.Any(e => e.StaffID == id);
+            var response = GetStaffById(id);
+            if(response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

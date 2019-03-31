@@ -17,12 +17,12 @@ namespace TriageSystem.Models
         [Required]
         public string Arrival { get; set; }
         public DateTime Time_checked_in { get; set; }
-        public DateTime Time_triaged { get; set; }
+        public DateTime? Time_triaged { get; set; }
         [ForeignKey("Hospital")]
         public int HospitalID { get; set; }
 
         public virtual Patient Patient { get; set; }
-        public virtual Hospital Hospital { get; set; }
+        //public virtual Hospital Hospital { get; set; }
 
 
 

@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Collections.Generic;
-using TriageSystem.Areas.Identity.Data;
 using TriageSystem.ViewModels;
 
 namespace TriageSystem.Models
 {
-    public class TriageSystemContext : IdentityDbContext<TriageSystemUser>
+    public class TriageSystemContext : IdentityDbContext
     {
 
         public TriageSystemContext() : base()
@@ -40,7 +39,7 @@ namespace TriageSystem.Models
             base.OnModelCreating(modelBuilder);
             //modelBuilder.Entity<Hospital>().ToTable("Hospitals");
             modelBuilder.Entity<Staff>().ToTable("Staff");
-            modelBuilder.Entity<TriageSystemUser>().ToTable("Users").Property(p => p.Id).HasColumnName("UserId");
+            //modelBuilder.Entity<TriageSystemUser>().ToTable("Users").Property(p => p.Id).HasColumnName("UserId");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             //modelBuilder.Entity<IdentityRoleClaim>().ToTable("RoleClaims");
             //modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaims");

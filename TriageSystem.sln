@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriageSystem", "TriageSystem\TriageSystem.csproj", "{69540CC6-3065-4C26-83A7-77D1B1BFA16E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriageSystemUnitTests", "TriageSystemUnitTests\TriageSystemUnitTests.csproj", "{C1EA93F2-9250-458D-90AD-D9493A4787CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriageSystemUnitTests", "TriageSystemUnitTests\TriageSystemUnitTests.csproj", "{C1EA93F2-9250-458D-90AD-D9493A4787CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
