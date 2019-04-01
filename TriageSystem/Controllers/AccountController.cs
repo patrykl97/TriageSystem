@@ -31,13 +31,13 @@ namespace TriageSystem.Controllers
     {
 
         private IMapper _mapper;
-        private readonly string apiUrl;
+        private readonly string apiUrl = "https://triagesystemapi20190401082538.azurewebsites.net/";
 
 
-        public AccountController(IMapper mapper, IOptions<ApiSettings> apiSettings)
+        public AccountController(IMapper mapper /*,IOptions<ApiSettings> apiSettings*/)
         {
             _mapper = mapper;
-            apiUrl = apiSettings.Value.ApiConnection;
+            //apiUrl = apiSettings.Value.ApiConnection;
         }
 
 
