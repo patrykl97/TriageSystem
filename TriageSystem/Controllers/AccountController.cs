@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using System;
@@ -30,10 +31,13 @@ namespace TriageSystem.Controllers
     {
 
         private IMapper _mapper;
+        private readonly string apiUrl;
 
-        public AccountController(IMapper mapper)
+
+        public AccountController(IMapper mapper, IOptions<ApiSettings> apiSettings)
         {
             _mapper = mapper;
+            apiUrl = apiSettings.Value.ApiConnection;
         }
 
 
@@ -61,7 +65,7 @@ namespace TriageSystem.Controllers
             //client.DefaultRequestHeaders.Accept.Add(
             //    new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
             //client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
-            var response = client.PostAsJsonAsync("https://localhost:44342/account/authenticate", user).Result;
+            var response = client.PostAsJsonAsync(apiUrl + "account/authenticate", user).Result;
             if (response.IsSuccessStatusCode)
             {
                 var x = JsonConvert.DeserializeObject<UserSession>(response.Content.ReadAsStringAsync().Result);
@@ -96,7 +100,7 @@ namespace TriageSystem.Controllers
         {
             var user = _mapper.Map<User>(userIn);
             var client = new HttpClient();
-            var response = client.PostAsJsonAsync("https://localhost:44342/account/register", user).Result;
+            var response = client.PostAsJsonAsync(apiUrl + "account/register", user).Result;
             if (response.IsSuccessStatusCode)
             {
                 //var y = response.Content.ReadAsStringAsync().Result;

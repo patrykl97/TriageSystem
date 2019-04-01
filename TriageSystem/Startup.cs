@@ -67,12 +67,12 @@ namespace TriageSystem
 
 
 
-            services.AddDbContext<TriageSystemContext>(options =>
-                options.UseLazyLoadingProxies().UseSqlServer(
-                    Configuration.GetConnectionString("SqlConnection")));
+            //services.AddDbContext<TriageSystemContext>(options =>
+            //    options.UseLazyLoadingProxies().UseSqlServer(
+            //        Configuration.GetConnectionString("SqlConnection")));
             //services.AddDefaultIdentity<TriageSystemUser>()
             //    .AddEntityFrameworkStores<TriageSystemContext>();
-
+            services.Configure<ApiSettings>(Configuration.GetSection("ConnectionStrings"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             //services.AddHttpContextAccessor();

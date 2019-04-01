@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TriageSystem.Models;
 
@@ -20,8 +21,14 @@ namespace TriageSystem.Controllers
     {
 
         private readonly HttpClient _client = new HttpClient();
+        private readonly string apiUrl;
 
-        
+
+        public StaffController(IOptions<ApiSettings> apiSettings)
+        {
+            apiUrl = apiSettings.Value.ApiConnection;
+        }
+
         public IActionResult Index()
         {
             var hospitalID = getHospitalID();
@@ -151,35 +158,35 @@ namespace TriageSystem.Controllers
         private HttpResponseMessage GetStaff(int id)
         {
             AddHeader();
-            var response = _client.GetAsync("https://localhost:44342/api/Staff/hospital/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "Staff/hospital/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetStaffById(int id)
         {
             AddHeader();
-            var response = _client.GetAsync("https://localhost:44342/api/Staff/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "Staff/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage AddStaff(Staff staff)
         {
             AddHeader();
-            var response = _client.PostAsJsonAsync("https://localhost:44342/api/Staff", staff).Result;
+            var response = _client.PostAsJsonAsync(apiUrl + "Staff", staff).Result;
             return response;
         }
 
         private async Task<HttpResponseMessage> UpdateStaff(int id, Staff staff)
         {
             AddHeader();
-            var response = await _client.PutAsJsonAsync("https://localhost:44342/api/Staff/" + id, staff);
+            var response = await _client.PutAsJsonAsync(apiUrl + "Staff/" + id, staff);
             return response;
         }
 
         private async Task<HttpResponseMessage> DeleteStaff(int id)
         {
             AddHeader();
-            var response = await _client.DeleteAsync("https://localhost:44342/api/Staff/" + id);
+            var response = await _client.DeleteAsync(apiUrl + "Staff/" + id);
             return response;
         }
 

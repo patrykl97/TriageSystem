@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TriageSystem.Hubs;
 using TriageSystem.Models;
@@ -25,10 +26,11 @@ namespace TriageSystem.Controllers
 
         //private IHubContext<NotificationHub> HubContext { get; set; }
         private readonly HttpClient _client = new HttpClient();
+        private readonly string apiUrl;
 
-        public TriageController()
+        public TriageController(IOptions<ApiSettings> apiSettings)
         {
-     
+            apiUrl = apiSettings.Value.ApiConnection;
         }
 
         public IActionResult SelectFlowcharts()
@@ -220,7 +222,7 @@ namespace TriageSystem.Controllers
         private HttpResponseMessage GetPatientById(int id)
         {
             AddHeader();
-            var response = _client.GetAsync("https://localhost:44342/api/Patients/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "Patients/" + id).Result;
             return response;
         }
 
@@ -229,21 +231,21 @@ namespace TriageSystem.Controllers
         private HttpResponseMessage GetCheckIns(int id)
         {
             AddHeader();
-            var response = _client.GetAsync("https://localhost:44342/api/PatientCheckIns/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "PatientCheckIns/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetPatientCheckIn(int id)
         {
             AddHeader();
-            var response = _client.GetAsync("https://localhost:44342/api/PatientCheckIns/patient/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "PatientCheckIns/patient/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetPatientHistory(int id)
         {
             AddHeader();
-            var response = _client.GetAsync("https://localhost:44342/api/PatientAdmitted/patient/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "PatientAdmitted/patient/" + id).Result;
             return response;
         }
 
@@ -251,14 +253,14 @@ namespace TriageSystem.Controllers
         {
             var x = JsonConvert.SerializeObject(patient);
             AddHeader();
-            var response = _client.PostAsJsonAsync("https://localhost:44342/api/PatientWaitingLists", patient).Result;
+            var response = _client.PostAsJsonAsync(apiUrl + "PatientWaitingLists", patient).Result;
             return response;
         }
 
         private HttpResponseMessage RemoveCheckIn(int id)
         {
             AddHeader();
-            var response = _client.DeleteAsync("https://localhost:44342/api/PatientCheckIns/" + id).Result;
+            var response = _client.DeleteAsync(apiUrl + "PatientCheckIns/" + id).Result;
             return response;
         }
 

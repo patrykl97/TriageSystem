@@ -18,6 +18,7 @@ using TriageSystem.ViewModels;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Options;
 
 namespace TriageSystem.Controllers
 {
@@ -28,13 +29,14 @@ namespace TriageSystem.Controllers
         //private IConfiguration Configuration { get; set; }
         //private IHubContext<NotificationHub> HubContext { get; set; }
         private readonly HttpClient _client = new HttpClient();
+        private readonly string apiUrl;
 
-        public HomeController()
+        public HomeController(IOptions<ApiSettings> apiSettings)
         {
             //Configuration = configuration;
             //_userManager = userManager;
             //_context = context;
-  
+            apiUrl = apiSettings.Value.ApiConnection;
 
         }
 
@@ -158,7 +160,7 @@ namespace TriageSystem.Controllers
         {
             var token = HttpContext.User.Claims.Where(u => u.Type == "Token").FirstOrDefault().Value;
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = _client.GetAsync("https://localhost:44342/api/Hospital/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "Hospital/" + id).Result;
             return response;
         }
     }
