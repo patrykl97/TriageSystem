@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using TriageSystem.Validations;
 
 namespace TriageSystem.ViewModels
 {
@@ -11,6 +12,7 @@ namespace TriageSystem.ViewModels
     {
         public int PatientId { get; set; }
         //[Required]
+        [PPSAttribute]
         public string PPS { get; set; }
         [Required]
         public string Full_name { get; set; }

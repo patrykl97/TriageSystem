@@ -104,6 +104,8 @@
     @*<script src="~/js/chosen.jquery.min.js"></script>*@
     <script>
 
+        var previouslyEmpty = false;
+
             $(document).ready(function () {
                 $('.dropdown').select2(
                     {
@@ -115,53 +117,37 @@
             $(".dropdown").on('change', function () {
                 //changeSpan();
                 var p = document.getElementById("dropdown").value.toString();
+                console.log(p + " -------------------------------");
                 var selected = $("[id*='dropdown'] :selected").text();
                 if (selected == "Please Select...") {
                     document.getElementById("PPS").value = "";
                     setNullValues();
-                } else if (selected == p) {
+                    console.log("1st if");
+                }
+                else if (selected == p) {
                     document.getElementById("PPS").value = selected;
-                    setNullValues();
-                } else {
-                    //console.log("set values");
-                    var array = p.split(", ");
-                    //var patient = {};
-                    //patient.PPS = array[0];
-                    //patient.Full_name = array[1];
-                    //patient.Gender = array[2];
-                    //patient.Date_of_birth = array[3];
-                    //patient.Nationality = array[4];
-                    //patient.Address = array[5];
-                    //$("[id*='PPS'] :selected") = patient.PPS;    
+                }
+
+                else {
+                    var array = p.split(", ");   
                     document.getElementById("PPS").value = array[0];
                     document.getElementById("Name").value = array[1];
                     document.getElementById("Gender").value = array[2];
                     document.getElementById("DOB").value = array[3];
                     document.getElementById("Nationality").value = array[4];
                     document.getElementById("Address").value = array[5];
-                }
-                //var dropdown = document.getElementById("dropdown");
-                //var array = [];
-                //for (var i = 0; i < dropdown.options.length; i++) {
-                //    var a = [];
-                //    a.push(dropdown.options[i].text);
-                //    a.push(dropdown.options[i].value);
-                //    array.push(a);
-                //    //console.log(dropdown.options[i].text);
-                //}
+                    console.log("3rd if");
 
-                //document.getElementById("List").value = array;
-                //document.getElementById("List").value = '@ViewBag.PPS';
-                //console.log(x);
+                }
             });
 
-            function setNullValues() {
-                document.getElementById("Name").value = "";
-                document.getElementById("Gender").value = "";
-                document.getElementById("DOB").value = "";
-                document.getElementById("Nationality").value = "";
-                document.getElementById("Address").value = "";
-            }
+            //function setNullValues() {
+            //    document.getElementById("Name").value = "";
+            //    document.getElementById("Gender").value = "";
+            //    document.getElementById("DOB").value = "";
+            //    document.getElementById("Nationality").value = "";
+            //    document.getElementById("Address").value = "";
+            //}
 
 
 
