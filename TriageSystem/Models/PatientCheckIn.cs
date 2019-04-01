@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TriageSystem.Validations;
 
 namespace TriageSystem.Models
 {
@@ -10,15 +11,19 @@ namespace TriageSystem.Models
     {
         public int Id { get; set; }
         [Required]
-        [ForeignKey("Patient")]
+        [Display(Name = "Patient ID")]
         public int PatientId { get; set; }
+
+        //[PPSAttribute]
         //public string PPS { get; set; }
         public string Infections { get; set; }
         [Required]
         public string Arrival { get; set; }
+        [Display(Name = "Time checked in")]
         public DateTime Time_checked_in { get; set; }
+        [Display(Name = "Time triaged")]
         public DateTime? Time_triaged { get; set; }
-        [ForeignKey("Hospital")]
+        [Display(Name = "Hospital ID")]
         public int HospitalID { get; set; }
 
         public virtual Patient Patient { get; set; }

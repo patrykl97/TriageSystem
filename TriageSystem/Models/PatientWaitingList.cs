@@ -15,7 +15,7 @@ namespace TriageSystem.Models
         private Flowchart _Flowchart;
 
         public int Id { get; set; }
-        //[ForeignKey("Patient")]
+        [Display(Name = "Patient ID")]
         public int PatientId { get; set; }
         public string Infections { get; set; }
         [Required]
@@ -23,7 +23,7 @@ namespace TriageSystem.Models
         [Required]
         public string Condition { get; set; }
         public Priority Priority { get => _Priority; set => _Priority = value;}
-        [NotMapped]
+        
         public string PriorityString
         {
             get => _PriorityString; 
@@ -35,16 +35,16 @@ namespace TriageSystem.Models
 
         }
 
+        [Display(Name = "Time checked in")]
         public DateTime Time_checked_in { get; set; }
-        //[NotMapped]
-        //public DateTime Time_checked_in { get; set; }
+        [Display(Name = "Time triaged")]
         public DateTime Time_triaged { get; set; }
 
 
-        //[ForeignKey("Hospital")]
+        [Display(Name = "Hospital ID")]
         public int HospitalID { get; set; }
 
-        [NotMapped]
+        
         public int Duration
         {
             get =>_Duration;
@@ -56,18 +56,19 @@ namespace TriageSystem.Models
         }
 
 
-        [NotMapped]
-        public DateTime Expiry_time { get; set; }
+        
+        [Display(Name = "Expiry time")]
+        public DateTime? Expiry_time { get; set; }
 
 
-        [NotMapped]
+        
+        [Display(Name = "Flowchart ID")]
         public int FlowchartId { get; set; }
-
-
+        [Display(Name = "Flowchart Name")]
         public string FlowchartName { get; private set; }
 
 
-        [NotMapped]
+        
         public Flowchart Flowchart
         {
             get => _Flowchart;
@@ -78,10 +79,11 @@ namespace TriageSystem.Models
             }
         }
 
-        [NotMapped]
+        
         public IEnumerable<SelectListItem> Flowcharts { get; set; }
 
-        [NotMapped]
+        
+        [Display(Name = "Patient History")]
         public IEnumerable<PatientAdmitted> PatientHistory { get; set; }
 
 

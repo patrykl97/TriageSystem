@@ -105,17 +105,36 @@ namespace TriageSystem.Controllers
                 try
                 {
                     patientData.Time_triaged = GetNow();
-                    var response = AddWaiting(patientData);
-                    if(response.IsSuccessStatusCode)
+                    var response = GetPatientCheckIn(patientData.PatientId);
+                    if (response.IsSuccessStatusCode)
                     {
-                        response = GetPatientCheckIn(patientData.PatientId);
+                        var checkIn = JsonConvert.DeserializeObject<PatientCheckIn>(response.Content.ReadAsStringAsync().Result);
+                        response = RemoveCheckIn(checkIn.Id);
                         if(response.IsSuccessStatusCode)
                         {
-                            var checkIn = JsonConvert.DeserializeObject<PatientCheckIn>(response.Content.ReadAsStringAsync().Result);
-                            response = RemoveCheckIn(checkIn.Id);
-                            return Json("Success");
+                            response = AddWaiting(patientData);
+                            if(response.IsSuccessStatusCode)
+                            {
+                                return Json("Success");
+
+                            }
+                            else
+                            {
+                                return Json("Patient already exists in the list");
+                            }
                         }
                     }
+                    //    var response = AddWaiting(patientData);
+                    //if(response.IsSuccessStatusCode)
+                    //{
+                    //    response = GetPatientCheckIn(patientData.PatientId);
+                    //    if(response.IsSuccessStatusCode)
+                    //    {
+                    //        var checkIn = JsonConvert.DeserializeObject<PatientCheckIn>(response.Content.ReadAsStringAsync().Result);
+                    //        response = RemoveCheckIn(checkIn.Id);
+                    //        return Json("Success");
+                    //    }
+                    //}
                 }
                 catch (DbUpdateConcurrencyException)
                 {

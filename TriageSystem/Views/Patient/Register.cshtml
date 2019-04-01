@@ -23,11 +23,10 @@
     }
 </style>
 
-<h2>RegisterPatient</h2>
 
-<h4>PatientCheckIn</h4>
+<h2 class="module">Patient Check In</h2>
 <hr />
-<div class="row">
+<div class="row" style="width: 100%; min-height: 300px;">
     <form asp-action="Register" id="form">
 
         <div class="col-md-4">
@@ -106,53 +105,60 @@
 
         var previouslyEmpty = false;
 
-            $(document).ready(function () {
-                $('.dropdown').select2(
-                    {
-                        tags: true
-                    });
-            });
+        $(document).ready(function () {
+            $('.dropdown').select2(
+                {
+                    tags: true
+                });
+        });
 
 
-            $(".dropdown").on('change', function () {
-                //changeSpan();
-                var p = document.getElementById("dropdown").value.toString();
-                console.log(p + " -------------------------------");
-                var selected = $("[id*='dropdown'] :selected").text();
-                if (selected == "Please Select...") {
-                    document.getElementById("PPS").value = "";
-                    setNullValues();
-                    console.log("1st if");
-                }
-                else if (selected == p) {
-                    document.getElementById("PPS").value = selected;
-                }
+        $(".dropdown").on('change', function () {
+            //changeSpan();
+            var p = document.getElementById("dropdown").value.toString();
+            console.log(p + " -------------------------------");
+            var selected = $("[id*='dropdown'] :selected").text();
+            if (selected == "Please Select...") {
+                document.getElementById("PPS").value = "";
+                setNullValues();
+                console.log("1st if");
+            }
+            else if (selected == p) {
+                document.getElementById("PPS").value = selected;
+            }
 
-                else {
-                    var array = p.split(", ");   
-                    document.getElementById("PPS").value = array[0];
-                    document.getElementById("Name").value = array[1];
-                    document.getElementById("Gender").value = array[2];
-                    document.getElementById("DOB").value = array[3];
-                    document.getElementById("Nationality").value = array[4];
-                    document.getElementById("Address").value = array[5];
-                    console.log("3rd if");
+            else {
+                var array = p.split(", ");
+                document.getElementById("PPS").value = array[0];
+                document.getElementById("Name").value = array[1];
+                document.getElementById("Gender").value = array[2];
+                document.getElementById("DOB").value = array[3];
+                document.getElementById("Nationality").value = array[4];
+                document.getElementById("Address").value = array[5];
+                console.log("3rd if");
 
-                }
-            });
+            }
+        });
 
-            //function setNullValues() {
-            //    document.getElementById("Name").value = "";
-            //    document.getElementById("Gender").value = "";
-            //    document.getElementById("DOB").value = "";
-            //    document.getElementById("Nationality").value = "";
-            //    document.getElementById("Address").value = "";
-            //}
+                //function setNullValues() {
+                //    document.getElementById("Name").value = "";
+                //    document.getElementById("Gender").value = "";
+                //    document.getElementById("DOB").value = "";
+                //    document.getElementById("Nationality").value = "";
+                //    document.getElementById("Address").value = "";
+                //}
 
+        @{
+            if (ViewData["Error"] != null)
+            {
+                //Html.RenderPartial("_Error", TempData["Error"]);
+                Html.RenderPartial("~/Views/Home/_Error.cshtml", ViewData["Error"]);
+
+            }
+        }
 
 
     </script>
-}
-
+    }
 
 

@@ -127,6 +127,11 @@ namespace TriageSystem.Controllers
                         await HubContext.Clients.All.SendAsync("ReceiveNotification", patientData.HospitalID);
 
                     }
+                    else
+                    {
+                        ViewData["Error"] = r.Content.ReadAsStringAsync().Result;
+                        return View(patientData);
+                    }
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -212,7 +217,7 @@ namespace TriageSystem.Controllers
         //       
         // ***********************************************
         [HttpPost]
-        public IActionResult PostAjax(int id)
+        public async Task<IActionResult> PostAjax(int id)
         {
             if (id > 0)
             {
@@ -224,10 +229,18 @@ namespace TriageSystem.Controllers
                     {
                         var patient = JsonConvert.DeserializeObject<PatientWaitingList>(response.Content.ReadAsStringAsync().Result);
                         var patientData = new PatientCheckIn { PatientId = patient.PatientId, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged };
-                        var r = AddCheckIn(patientData);
+                        var r = RemoveWaiting(patient.Id);
                         if(r.IsSuccessStatusCode)
                         {
-                            var s = RemoveWaiting(patient.Id);
+                            var s = AddCheckIn(patientData);
+                            if(s.IsSuccessStatusCode)
+                            {
+                                await HubContext.Clients.All.SendAsync("ReceiveNotification", patient.HospitalID);
+                            }
+                        }
+                        else
+                        {
+                            return Json("Patient already exists in the list");
                         }
                     }
                 }
@@ -244,7 +257,7 @@ namespace TriageSystem.Controllers
         // TODO: add check for whether times has expired, perhaphs leave it, re-triage might be done before time expires
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Post(int id)
+        public async Task<IActionResult> Post(int id)
         {
             int i = id;
             //Int32.TryParse(id, out i);
@@ -257,10 +270,16 @@ namespace TriageSystem.Controllers
                     {
                         var patient = JsonConvert.DeserializeObject<PatientWaitingList>(response.Content.ReadAsStringAsync().Result);
                         var patientData = new PatientCheckIn { PatientId = patient.PatientId, Arrival = patient.Arrival, HospitalID = patient.HospitalID, Infections = patient.Infections, Time_checked_in = patient.Time_checked_in, Time_triaged = patient.Time_triaged };
-                        var r = AddCheckIn(patientData);
+                        var r = RemoveWaiting(patient.Id);
                         if (r.IsSuccessStatusCode)
                         {
-                            var s = RemoveWaiting(patient.Id);
+                            var s = AddCheckIn(patientData);
+                            await HubContext.Clients.All.SendAsync("ReceiveNotification", patient.HospitalID);
+                        }
+                        else
+                        {
+                            TempData["Error"] = r.Content.ReadAsStringAsync().Result;
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
                         }
                     }
                 }
@@ -274,17 +293,17 @@ namespace TriageSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Admit(int id)
+        public async Task<IActionResult> Admit(int id)
         {
-            AddToAdmitted(id);
+            await AddToAdmitted(id);
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SendHome(int id)
+        public async Task<IActionResult> SendHome(int id)
         { 
-            AddToAdmitted(id, true);
+            await AddToAdmitted(id, true);
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
@@ -309,7 +328,7 @@ namespace TriageSystem.Controllers
         }
 
 
-        private IActionResult AddToAdmitted(int id, bool sentHome = false)
+        private async Task<IActionResult> AddToAdmitted(int id, bool sentHome = false)
         {
             if (id > 0)
             {
@@ -343,6 +362,7 @@ namespace TriageSystem.Controllers
                     if(response.IsSuccessStatusCode)
                     {
                         response = RemoveWaiting(patientData.Id);
+                        await HubContext.Clients.All.SendAsync("ReceiveNotification", patientData.HospitalID);
                     }
                 }
                 catch (DbUpdateConcurrencyException)

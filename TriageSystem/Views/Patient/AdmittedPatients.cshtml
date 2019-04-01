@@ -5,11 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>AdmittedPatients</h2>
+<h2 class="module">Admitted Patients</h2>
 
-<p>
+@*<p>
     <a asp-action="Create">Create New</a>
-</p>
+</p>*@
 <table class="table">
     <thead>
         <tr>
@@ -43,9 +43,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Time_released)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.HospitalID)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -83,9 +83,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Time_released)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.HospitalID)
-            </td>
+            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

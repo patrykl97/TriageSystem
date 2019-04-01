@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using TriageSystem.Models;
 
 namespace TriageSystem.ViewModels
 {
@@ -21,6 +22,10 @@ namespace TriageSystem.ViewModels
 
         [Required(ErrorMessage = "You need to provide the discrimiantors for this priority level!")]
         public string Green { get; set; }
+
+        //public IEnumerable<Discriminator> Discriminators { get; set; }
+
+        public bool Edit { get; set; }
 
         public string SeeAlso { get; set; }
         public string Notes { get; set; }

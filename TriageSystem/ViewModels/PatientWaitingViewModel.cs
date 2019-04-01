@@ -14,10 +14,13 @@ namespace TriageSystem.ViewModels
         private Priority _Priority;
         private int _Duration;
 
+        [Display(Name = "Patient ID")]
         public int PatientId { get; set; }
         public string PPS { get; set; }
+        [Display(Name = "Full name")]
         public string Full_name { get; set; }
         public string Gender { get; set; }
+        [Display(Name = "Date of birth")]
         public string Date_of_birth { get; set; }
         public string Nationality { get; set; }
         public string Address { get; set; }
@@ -49,7 +52,9 @@ namespace TriageSystem.ViewModels
             }
 
         }
+        [Display(Name = "Time checked in")]
         public DateTime Time_checked_in { get; set; }
+        [Display(Name = "Hospital ID")]
         public int HospitalID { get; set; }
         public int Duration
         {
@@ -63,6 +68,8 @@ namespace TriageSystem.ViewModels
                 Expiry_time = Time_checked_in.AddMinutes(_Duration);
             }
         }
-        public DateTime Expiry_time { get; set; }
+
+        [Display(Name = "Expiry time")]
+        public DateTime? Expiry_time { get; set; }
     }
 }
