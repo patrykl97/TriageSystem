@@ -17,6 +17,7 @@ using TriageSystem.Models;
 using TriageSystem.ViewModels;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace TriageSystem.Controllers
 {
@@ -26,12 +27,14 @@ namespace TriageSystem.Controllers
         //UserManager<TriageSystemUser> _userManager;
         //private IConfiguration Configuration { get; set; }
         //private IHubContext<NotificationHub> HubContext { get; set; }
+        private readonly HttpClient _client = new HttpClient();
 
         public HomeController()
         {
             //Configuration = configuration;
             //_userManager = userManager;
             //_context = context;
+  
 
         }
 
@@ -39,6 +42,7 @@ namespace TriageSystem.Controllers
 
         public ActionResult Index(bool refresh = false)
         {
+
             ViewData["Refresh"] = refresh;
             return View();
         }
@@ -58,6 +62,7 @@ namespace TriageSystem.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                var r = response.Content.ReadAsStringAsync().Result;
                 var hospital = JsonConvert.DeserializeObject<Hospital>(response.Content.ReadAsStringAsync().Result);
 
                 var orderedCheckIns = hospital.PatientCheckInList.OrderBy(t => t.Time_checked_in);
@@ -151,8 +156,9 @@ namespace TriageSystem.Controllers
 
         private HttpResponseMessage GetById(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/Hospital/" + id).Result;
+            var token = HttpContext.User.Claims.Where(u => u.Type == "Token").FirstOrDefault().Value;
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = _client.GetAsync("https://localhost:44342/api/Hospital/" + id).Result;
             return response;
         }
     }

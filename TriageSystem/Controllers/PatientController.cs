@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +23,7 @@ namespace TriageSystem.Controllers
         //UserManager<IdentityUser> _userManager;
         //private TriageSystemContext _context;
         private IHubContext<NotificationHub> HubContext { get; set; }
+        private readonly HttpClient _client = new HttpClient();
 
         public PatientController(IHubContext<NotificationHub> hubContext)
         {
@@ -108,6 +110,14 @@ namespace TriageSystem.Controllers
                     {
                         patient = new Patient { PPS = patientData.PPS, Full_name = patientData.Full_name, Gender = patientData.Gender, Date_of_birth = patientData.Date_of_birth, Nationality = patientData.Nationality, Address = patientData.Address };
                         var response = Add(patient);
+                        if(response.IsSuccessStatusCode)
+                        {
+                            var ee = response.Content;
+                            var bb = response.Content.ReadAsStringAsync().Result;
+                            patient = JsonConvert.DeserializeObject<Patient>(response.Content.ReadAsStringAsync().Result);
+
+                            var ii = 0;
+                        }
                    
                     }
                     var patientCheckIn = new PatientCheckIn { PatientId = patient.Id, HospitalID = patientData.HospitalID, Arrival = patientData.Arrival, Infections = patientData.Infections, Time_checked_in = patientData.Time_checked_in };
@@ -285,7 +295,16 @@ namespace TriageSystem.Controllers
             int hospitalID = 0;
             Int32.TryParse(h, out hospitalID);
             var response = GetHospitalAdmitted(hospitalID);
-            var list = JsonConvert.DeserializeObject<PatientAdmitted>(response.Content.ReadAsStringAsync().Result);
+            var message = response.Content.ReadAsStringAsync().Result;
+            IEnumerable<PatientAdmitted> list = new List<PatientAdmitted>();
+            try
+            {
+                 list = JsonConvert.DeserializeObject<IEnumerable<PatientAdmitted>>(message);
+            }
+            catch
+            {
+                throw;
+            }
             return View(list);
         }
 
@@ -320,7 +339,7 @@ namespace TriageSystem.Controllers
                     {
                         patientAdmitted.Time_admitted = GetNow();
                     }
-                    response = AdmitPatient(patientData);
+                    response = AdmitPatient(patientAdmitted);
                     if(response.IsSuccessStatusCode)
                     {
                         response = RemoveWaiting(patientData.Id);
@@ -336,76 +355,81 @@ namespace TriageSystem.Controllers
 
         private HttpResponseMessage Add(Patient patient)
         {
-            var client = new HttpClient();
-            var response = client.PostAsJsonAsync("https://localhost:44342/api/Patients", patient).Result;
+            AddHeader();
+            var response = _client.PostAsJsonAsync("https://localhost:44342/api/Patients", patient).Result;
             return response;
         }
 
-        private HttpResponseMessage AddCheckIn(PatientCheckIn patient)
+        private HttpResponseMessage AddCheckIn(PatientCheckIn p)
         {
-            var client = new HttpClient();
-            var response = client.PostAsJsonAsync("https://localhost:44342/api/PatientCheckIns", patient).Result;
+            AddHeader();
+            var response = _client.PostAsJsonAsync("https://localhost:44342/api/PatientCheckIns", p).Result;
             return response;
         }
 
-        private HttpResponseMessage AdmitPatient(PatientWaitingList patient)
+        private HttpResponseMessage AdmitPatient(PatientAdmitted patient)
         {
-            var client = new HttpClient();
-            var response = client.PostAsJsonAsync("https://localhost:44342/api/PatientAdmitted", patient).Result;
+            AddHeader();
+            var response = _client.PostAsJsonAsync("https://localhost:44342/api/PatientAdmitted", patient).Result;
             return response;
         }
 
         private HttpResponseMessage GetWaitingPatient(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/PatientWaitingLists/patient/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/PatientWaitingLists/patient/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage RemoveWaiting(int id)
 
         {
-            var client = new HttpClient();
-            var response = client.DeleteAsync("https://localhost:44342/api/PatientWaitingLists/" + id).Result;
+            AddHeader();
+            var response = _client.DeleteAsync("https://localhost:44342/api/PatientWaitingLists/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetAll()
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/Patients").Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/Patients").Result;
             return response;
         }
 
         private HttpResponseMessage GetById(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/Patients/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/Patients/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetByPps(string id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/Patients/pps/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/Patients/pps/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetCheckIn(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/PatientCheckIns/patient/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/PatientCheckIns/patient/" + id).Result;
             return response;
         }
 
 
         private HttpResponseMessage GetHospitalAdmitted(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/PatientAdmitted/hospital/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/PatientAdmitted/hospital/" + id).Result;
             return response;
         }
 
+        private void AddHeader()
+        {
+            var token = HttpContext.User.Claims.Where(u => u.Type == "Token").FirstOrDefault().Value;
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
 
 
         private static DateTime GetNow()

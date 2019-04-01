@@ -5,6 +5,11 @@
     <UserSecretsId>aspnet-TriageSystem-37DDBD39-941B-4B83-9347-BC8324BC8621</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Migrations\20190214163919_InitCreate.cs" />
     <Compile Remove="Migrations\20190214163919_InitCreate.Designer.cs" />

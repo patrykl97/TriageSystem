@@ -123,7 +123,7 @@
             <td>
                 <form asp-controller="Patient" asp-action="Actions" id="form" method="post">
                     @*Input id could be helpful, could use it for js to read PatientIds value*@
-                    @*<input type="hidden" name="id" value="@item.PatientId" />*@
+                    <input type="hidden" name="id" value="@item.PatientId" />
                     @*<input type="hidden" asp-for="@item.PatientId" />*@
                     <input id="sendButton" type="submit" value="Action" class="btn btn-default" />
                 </form>
@@ -141,7 +141,7 @@
 </div>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-@*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>*@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>*@
 @*<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>*@

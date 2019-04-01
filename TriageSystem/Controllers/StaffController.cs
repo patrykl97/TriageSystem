@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,10 +14,12 @@ using TriageSystem.Models;
 
 namespace TriageSystem.Controllers
 {
+
+    [Authorize]
     public class StaffController : Controller
     {
 
-
+        private readonly HttpClient _client = new HttpClient();
 
         
         public IActionResult Index()
@@ -146,36 +150,36 @@ namespace TriageSystem.Controllers
 
         private HttpResponseMessage GetStaff(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/Staff/hospital/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/Staff/hospital/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage GetStaffById(int id)
         {
-            var client = new HttpClient();
-            var response = client.GetAsync("https://localhost:44342/api/Staff/" + id).Result;
+            AddHeader();
+            var response = _client.GetAsync("https://localhost:44342/api/Staff/" + id).Result;
             return response;
         }
 
         private HttpResponseMessage AddStaff(Staff staff)
         {
-            var client = new HttpClient();
-            var response = client.PostAsJsonAsync("https://localhost:44342/api/Staff", staff).Result;
+            AddHeader();
+            var response = _client.PostAsJsonAsync("https://localhost:44342/api/Staff", staff).Result;
             return response;
         }
 
         private async Task<HttpResponseMessage> UpdateStaff(int id, Staff staff)
         {
-            var client = new HttpClient();
-            var response = await client.PutAsJsonAsync("https://localhost:44342/api/Staff/" + id, staff);
+            AddHeader();
+            var response = await _client.PutAsJsonAsync("https://localhost:44342/api/Staff/" + id, staff);
             return response;
         }
 
         private async Task<HttpResponseMessage> DeleteStaff(int id)
         {
-            var client = new HttpClient();
-            var response = await client.DeleteAsync("https://localhost:44342/api/Staff/" + id);
+            AddHeader();
+            var response = await _client.DeleteAsync("https://localhost:44342/api/Staff/" + id);
             return response;
         }
 
@@ -188,6 +192,7 @@ namespace TriageSystem.Controllers
         }
 
 
+
         private bool StaffExists(int id)
         {
             var response = GetStaffById(id);
@@ -196,6 +201,13 @@ namespace TriageSystem.Controllers
                 return true;
             }
             return false;
+        }
+
+
+        private void AddHeader()
+        {
+            var token = HttpContext.User.Claims.Where(u => u.Type == "Token").FirstOrDefault().Value;
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

@@ -45,7 +45,16 @@ namespace TriageSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> SignInUser(LoginViewModel userIn)
         {
+            var authenticated = await Authenticate(userIn);
+            if(authenticated)
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+            return RedirectToAction(nameof(Login));
+        }
 
+        private async Task<bool> Authenticate(LoginViewModel userIn)
+        {
             var user = _mapper.Map<User>(userIn);
             var client = new HttpClient();
             //client.DefaultRequestHeaders.Accept.Clear();
@@ -53,42 +62,6 @@ namespace TriageSystem.Controllers
             //    new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
             //client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
             var response = client.PostAsJsonAsync("https://localhost:44342/account/authenticate", user).Result;
-            if(response.IsSuccessStatusCode)
-            {
-                var x = JsonConvert.DeserializeObject<UserSession>(response.Content.ReadAsStringAsync().Result);
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, userIn.Email),
-                    new Claim("HospitalID", x.HospitalID.ToString()),
-                    new Claim("Token", x.Token)
-                };
-
-                //var claimsIdentity = new ClaimsIdentity(claims, "login");
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                var authProperties = new AuthenticationProperties { };
-
-                ClaimsPrincipal principal = new ClaimsPrincipal(claimsIdentity);
-                await HttpContext.SignInAsync(principal);
-
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-            return RedirectToAction(nameof(Login));
-        }
-
-        public IActionResult Register()
-        {
-            var model = new RegisterViewModel();
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel userIn) 
-        {
-            var user = _mapper.Map<User>(userIn);
-            var client = new HttpClient();
-            var response = client.PostAsJsonAsync("https://localhost:44342/account/register", user).Result;
             if (response.IsSuccessStatusCode)
             {
                 var x = JsonConvert.DeserializeObject<UserSession>(response.Content.ReadAsStringAsync().Result);
@@ -107,8 +80,49 @@ namespace TriageSystem.Controllers
 
                 ClaimsPrincipal principal = new ClaimsPrincipal(claimsIdentity);
                 await HttpContext.SignInAsync(principal);
+                return true;
+            }
+            return false;
+        }
 
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+        public IActionResult Register()
+        {
+            var model = new RegisterViewModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel userIn) 
+        {
+            var user = _mapper.Map<User>(userIn);
+            var client = new HttpClient();
+            var response = client.PostAsJsonAsync("https://localhost:44342/account/register", user).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                //var y = response.Content.ReadAsStringAsync().Result;
+                //var x = JsonConvert.DeserializeObject<UserSession>(response.Content.ReadAsStringAsync().Result);
+                //var claims = new List<Claim>
+                //{
+                //    new Claim(ClaimTypes.Name, userIn.Email),
+                //    new Claim("HospitalID", x.HospitalID.ToString()),
+                //    new Claim("Token", x.Token)
+                //};
+
+                ////var claimsIdentity = new ClaimsIdentity(claims, "login");
+
+                //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                //var authProperties = new AuthenticationProperties { };
+
+                //ClaimsPrincipal principal = new ClaimsPrincipal(claimsIdentity);
+                //await HttpContext.SignInAsync(principal);
+                var model = new LoginViewModel { Email = userIn.Email, Password = userIn.Password};
+                var authenticated = await Authenticate(model);
+                if(authenticated)
+                {
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
+                }
+
             }
             return View();
         }
