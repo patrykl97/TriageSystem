@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TriageSystem.Models;
-using TriageSystem.ViewModels;
-using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
@@ -25,17 +16,12 @@ namespace TriageSystem.Controllers
     [Authorize] // User needs to be singed in to display this view
     public class HomeController : Controller
     {
-        //UserManager<TriageSystemUser> _userManager;
-        //private IConfiguration Configuration { get; set; }
-        //private IHubContext<NotificationHub> HubContext { get; set; }
+
         private readonly HttpClient _client = new HttpClient();
         private readonly string apiUrl;
 
         public HomeController(IOptions<ApiSettings> apiSettings)
         {
-            //Configuration = configuration;
-            //_userManager = userManager;
-            //_context = context;
             apiUrl = apiSettings.Value.ApiConnection;
 
         }

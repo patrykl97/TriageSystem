@@ -1,5 +1,3 @@
-using System;
-
 namespace TriageSystem.Models
 {
     public class ErrorViewModel

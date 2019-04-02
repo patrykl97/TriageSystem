@@ -5,18 +5,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using TriageSystem.Hubs;
 using TriageSystem.Models;
-using TriageSystem.ViewModels;
 
 namespace TriageSystem.Controllers
 {
@@ -47,11 +42,9 @@ namespace TriageSystem.Controllers
                 }
                 else
                 {
-                    //var patientCheckedIn = user.Staff.Hospital.PatientCheckInList.First();
                     var patientCheckedIn = list.Where(p => p.Time_checked_in == list.Min(t => t.Time_checked_in)).FirstOrDefault();
                     var patientData = new PatientWaitingList { PatientId = patientCheckedIn.PatientId, Patient = patientCheckedIn.Patient, HospitalID = patientCheckedIn.HospitalID, Arrival = patientCheckedIn.Arrival, Infections = patientCheckedIn.Infections, Time_checked_in = patientCheckedIn.Time_checked_in };
                     List<Flowchart> flowcharts = GetFlowcharts();
-                    //ViewBag.FlowchartNames = flowchartNames.Select(f => new SelectListItem { Text = f, Value = f });
 
                     var l = new List<SelectListItem>();
                     int index = 0;
@@ -60,8 +53,7 @@ namespace TriageSystem.Controllers
                         l.Add(new SelectListItem { Text = item.Name, Value = index.ToString() });
                         index++;
                     }
-                    //ViewBag.FlowchartNames = list.AsEnumerable();
-                    //patientData.Flowcharts = list;
+                    
                     ViewBag.Flowcharts = l;
                     response = GetPatientHistory(patientCheckedIn.PatientId);
                     if(response.IsSuccessStatusCode)
@@ -126,17 +118,6 @@ namespace TriageSystem.Controllers
                             }
                         }
                     }
-                    //    var response = AddWaiting(patientData);
-                    //if(response.IsSuccessStatusCode)
-                    //{
-                    //    response = GetPatientCheckIn(patientData.PatientId);
-                    //    if(response.IsSuccessStatusCode)
-                    //    {
-                    //        var checkIn = JsonConvert.DeserializeObject<PatientCheckIn>(response.Content.ReadAsStringAsync().Result);
-                    //        response = RemoveCheckIn(checkIn.Id);
-                    //        return Json("Success");
-                    //    }
-                    //}
                 }
                 catch (DbUpdateConcurrencyException)
                 {

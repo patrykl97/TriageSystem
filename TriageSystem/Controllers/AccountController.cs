@@ -1,20 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using TodoListWebApp;
-using TodoListWebApp.Utils;
 using TriageSystem.Models;
 using TriageSystem.ViewModels;
 
@@ -31,13 +25,13 @@ namespace TriageSystem.Controllers
     {
 
         private IMapper _mapper;
-        private readonly string apiUrl = "https://triagesystemapi20190401082538.azurewebsites.net/";
+        private readonly string apiUrl; // = "https://triagesystemapi20190401082538.azurewebsites.net/";
 
 
-        public AccountController(IMapper mapper /*,IOptions<ApiSettings> apiSettings*/)
+        public AccountController(IMapper mapper, IOptions<ApiSettings> apiSettings)
         {
             _mapper = mapper;
-            //apiUrl = apiSettings.Value.ApiConnection;
+            apiUrl = apiSettings.Value.ApiConnection;
         }
 
 
