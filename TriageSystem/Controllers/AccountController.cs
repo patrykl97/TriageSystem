@@ -25,13 +25,13 @@ namespace TriageSystem.Controllers
     {
 
         private IMapper _mapper;
-        private readonly string apiUrl; // = "https://triagesystemapi20190401082538.azurewebsites.net/";
+        private readonly string apiUrl = "https://triagesystemapi.azurewebsites.net/";
 
 
         public AccountController(IMapper mapper, IOptions<ApiSettings> apiSettings)
         {
             _mapper = mapper;
-            apiUrl = apiSettings.Value.ApiConnection;
+            //apiUrl = apiSettings.Value.ApiConnection;
         }
 
 
@@ -97,7 +97,7 @@ namespace TriageSystem.Controllers
             var response = client.PostAsJsonAsync(apiUrl + "account/register", user).Result;
             if (response.IsSuccessStatusCode)
             {
-                //var y = response.Content.ReadAsStringAsync().Result;
+                var y = response.Content.ReadAsStringAsync().Result;
                 //var x = JsonConvert.DeserializeObject<UserSession>(response.Content.ReadAsStringAsync().Result);
                 //var claims = new List<Claim>
                 //{
@@ -116,7 +116,7 @@ namespace TriageSystem.Controllers
                 //await HttpContext.SignInAsync(principal);
                 var model = new LoginViewModel { Email = userIn.Email, Password = userIn.Password};
                 var authenticated = await Authenticate(model);
-                if(authenticated)
+                if (authenticated)
                 {
                     return RedirectToAction(nameof(HomeController.Index), "Home");
                 }

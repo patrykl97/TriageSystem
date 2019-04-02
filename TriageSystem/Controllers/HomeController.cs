@@ -146,7 +146,7 @@ namespace TriageSystem.Controllers
         {
             var token = HttpContext.User.Claims.Where(u => u.Type == "Token").FirstOrDefault().Value;
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = _client.GetAsync(apiUrl + "Hospital/" + id).Result;
+            var response = _client.GetAsync(apiUrl + "hospital/" + id).Result;
             return response;
         }
     }

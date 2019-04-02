@@ -89,7 +89,7 @@ namespace TriageSystem
             builder =>
             {
                 builder.AllowAnyMethod().AllowAnyHeader()
-                       .WithOrigins("https://localhost:44375")
+                       .WithOrigins("https://localhost:44374")
                        .AllowCredentials();
             }));
         }
